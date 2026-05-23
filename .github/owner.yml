@@ -1,0 +1,7 @@
+# Project Owner Contact Information
+# Referenced by GitHub Actions workflows and API user-agents.
+
+owner:
+  name: youngfish42
+  email: im.young@foxmail.com
+  github: https://github.com/youngfish42
