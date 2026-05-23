@@ -21,6 +21,7 @@ import sys
 import time
 import difflib
 from pathlib import Path
+from urllib.parse import urlparse
 from typing import Dict, List, Optional, Set, Tuple
 
 import requests
@@ -113,8 +114,11 @@ def is_title_match(api_title: str, paper_title: str, threshold: float = 0.70) ->
 
 # ---------- DOI 提取 ----------
 def extract_doi(paper_url: str) -> Optional[str]:
-    if "doi.org/" in paper_url:
-        return paper_url.split("doi.org/")[-1].strip("/")
+    parsed = urlparse(paper_url.strip())
+    host = (parsed.netloc or "").lower()
+    if host == "doi.org" or host.endswith(".doi.org"):
+        doi = parsed.path.strip("/")
+        return doi or None
     return None
 
 
