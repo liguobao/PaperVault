@@ -28,20 +28,21 @@ import requests
 from requests.adapters import HTTPAdapter
 
 # ---------- 配置 ----------
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/125.0.0.0 Safari/537.36"
-    )
-}
+CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "im.young@foxmail.com")
 
-CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "")
 CROSSREF_AGENT = (
     f"PaperVault-AbstractBackfill/1.0 (mailto:{CONTACT_EMAIL})"
     if CONTACT_EMAIL
     else "PaperVault-AbstractBackfill/1.0"
 )
+
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/125.0.0.0 Safari/537.36 " + CROSSREF_AGENT
+    )
+}
 
 CACHE_DIR = Path("cache")
 CACHE_FILE = CACHE_DIR / "cache.jsonl"
@@ -74,7 +75,8 @@ def _rate_limited_request(
     if wait > 0:
         time.sleep(wait + random.uniform(0.0, 0.3))
     with _create_session() as session:
-        resp = session.get(url, timeout=timeout, **kwargs)
+        req_headers = kwargs.pop("headers", HEADERS)
+        resp = session.get(url, timeout=timeout, headers=req_headers, **kwargs)
     return resp, time.time()
 
 

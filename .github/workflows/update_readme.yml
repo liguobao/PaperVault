@@ -26,5 +26,10 @@ jobs:
       - name: Update dir
         run: python maintain.py force
 
+      - name: Setup GIT user
+        run: |
+          git config --local user.name "youngfish42"
+          git config --local user.email "youngfish42@users.noreply.github.com"
+
       - name: Commit Updated
         uses: stefanzweifel/git-auto-commit-action@v4
