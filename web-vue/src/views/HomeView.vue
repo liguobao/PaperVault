@@ -215,7 +215,7 @@ const toggleDark = useToggle(isDark)
           <el-link
             type="primary"
             icon="Link"
-            href="https://github.com/MLNLP-World/AI-Paper-Collector"
+            href="https://github.com/youngfish42/PaperVault"
             target="_blank"
           >
             &nbsp;GitHub

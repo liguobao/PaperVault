@@ -4,7 +4,7 @@
  * @LastEditTime: 2023-03-11 23:24:32
  * @LastEditors: 0x3E5
  * @Description: vite config file
- * @FilePath: \AI-Paper-Collector\web-vue\vite.config.ts
+ * @FilePath: \PaperVault\web-vue\vite.config.ts
  */
 import { fileURLToPath, URL } from 'node:url'
 

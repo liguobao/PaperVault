@@ -1,9 +1,9 @@
 <p align="center">
-<h1 align="center"> <img src="./pics/icon/ai.png" width="30" /> AI-Paper-Collector</h1>
+<h1 align="center"> <img src="./pics/icon/ai.png" width="30" /> PaperVault</h1>
 </p>
 <p align="center">
-  	<a href="https://img.shields.io/badge/version-v1.1.2-blue">
-      <img alt="version" src="https://img.shields.io/badge/version-v1.1.2-blue?color=FF8000?color=009922" />
+  	<a href="https://img.shields.io/badge/version-v0.1.0-blue">
+      <img alt="version" src="https://img.shields.io/badge/version-v0.1.0-blue?color=FF8000?color=009922" />
     </a>
   <a >
        <img alt="Status-building" src="https://img.shields.io/badge/Status-building-blue" />
@@ -11,21 +11,20 @@
   <a >
        <img alt="PRs-Welcome" src="https://img.shields.io/badge/PRs-Welcome-red" />
   	</a>
-   	<a href="https://github.com/MLNLP-World/AI-Paper-collector/stargazers">
-       <img alt="stars" src="https://img.shields.io/github/stars/MLNLP-World/AI-Paper-collector" />
+   	<a href="https://github.com/youngfish42/PaperVault/stargazers">
+       <img alt="stars" src="https://img.shields.io/github/stars/youngfish42/PaperVault" />
   	</a>
-  	<a href="https://github.com/MLNLP-World/AI-Paper-collector/network/members">
-       <img alt="FORK" src="https://img.shields.io/github/forks/MLNLP-World/AI-Paper-collector?color=FF8000" />
+  	<a href="https://github.com/youngfish42/PaperVault/network/members">
+       <img alt="FORK" src="https://img.shields.io/github/forks/youngfish42/PaperVault?color=FF8000" />
   	</a>
-    <a href="https://github.com/MLNLP-World/AI-Paper-collector/issues">
-      <img alt="Issues" src="https://img.shields.io/github/issues/MLNLP-World/AI-Paper-collector?color=0088ff"/>
+    <a href="https://github.com/youngfish42/PaperVault/issues">
+      <img alt="Issues" src="https://img.shields.io/github/issues/youngfish42/PaperVault?color=0088ff"/>
     </a>
     <br />
 </p>
 
-**Web demo**: 
-- [https://ai-paper-collector.vercel.app/](https://ai-paper-collector.vercel.app/) (Recommended)
-- [https://aipaper.fun/](https://aipaper.fun/) (No Longer Maintained)
+**Web demo**:
+- Coming soon
 
 
 
@@ -66,7 +65,7 @@ Fully-automated scripts for collecting AI-related papers.
 
 If anyone wants to add a new list of conferences. please raise an issue following the format of this one.
 We will check and label it, then the workflow will run automatically.
-[issue format](https://github.com/MLNLP-World/AI-Paper-Collector/issues/10)
+[issue format](https://github.com/youngfish42/PaperVault/issues/10)
 
 
 ## :warning: Disclaimer
@@ -77,9 +76,17 @@ Since the tool is in the development stage, we can not guarantee that the papers
 ## :cherry_blossom: Contributors
 This project exists thanks to all the people who contribute.
 
- <a href="https://github.com/MLNLP-World/AI-Paper-Collector/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=MLNLP-World/AI-Paper-Collector" />
+ <a href="https://github.com/youngfish42/PaperVault/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=youngfish42/PaperVault" />
  </a>
 
 ## :star2: Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=MLNLP-World/AI-Paper-Collector&type=Date)](https://star-history.com/#MLNLP-World/AI-Paper-Collector&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=youngfish42/PaperVault&type=Date)](https://star-history.com/#youngfish42/PaperVault&Date)
+
+## :scroll: Acknowledgements
+
+This project is forked from [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) and is now developed independently as **PaperVault**.
+
+We sincerely thank all the original authors and contributors of [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) for their excellent work. The original project provided the foundation for the crawler architecture, conference configurations, and web interface design.
+
+This project continues to be licensed under the [GNU General Public License v3.0](LICENSE), consistent with the original project. If you use or distribute this project, please ensure compliance with the GPL v3 license requirements.
