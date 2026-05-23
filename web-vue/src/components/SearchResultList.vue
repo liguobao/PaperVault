@@ -18,7 +18,7 @@ let resultList: any = reactive({
   val: []
 })
 
-let sortMethod = ref('Hot')
+let sortMethod = ref('Year')
 
 const exportFile = (method: string): void => {
   if (method === 'csv') {
@@ -68,11 +68,7 @@ const getAllResult = (target: any): void => {
 }
 
 const changeSortMethod = (method: any): void => {
-  if (method === 'Hot') {
-    resultList.val = resultList.val.sort(
-      (a: any, b: any) => b.citation - a.citation
-    )
-  } else if (method === 'Year') {
+  if (method === 'Year') {
     resultList.val = resultList.val.sort(
       (a: any, b: any) => Number(b.year) - Number(a.year)
     )
@@ -144,7 +140,6 @@ defineExpose({
     >
       <span style="padding-right: 10px">Sort By:</span>
       <el-radio-group v-model="sortMethod" @change="changeSortMethod">
-        <el-radio label="Hot" />
         <el-radio label="Year" />
         <el-radio label="Conf" />
       </el-radio-group>

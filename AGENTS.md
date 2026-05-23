@@ -29,7 +29,7 @@ PaperVault/
 ├── update_cache.py           # CLI tool to add conferences from GitHub issues
 ├── requirements.txt          # Python dependencies
 ├── cache/
-│   └── cache.json            # Local JSON database of all papers
+│   └── cache.jsonl           # Local JSON database of all papers (JSON Lines)
 ├── conf/                     # Conference source configurations
 │   ├── acl_conf.json         # ACL Anthology sources (NLP)
 │   ├── dblp_conf.json        # DBLP sources (mixed venues)
@@ -92,7 +92,7 @@ The Flask server runs on `http://127.0.0.1:5000` by default.
 
 ### Git LFS
 
-The paper cache file (`cache/cache.json`) is managed by [Git LFS](https://git-lfs.github.com) due to its large size. Make sure you have Git LFS installed before cloning:
+The paper cache file (`cache/cache.jsonl`) is managed by [Git LFS](https://git-lfs.github.com) due to its large size. Make sure you have Git LFS installed before cloning:
 
 ```bash
 # Install Git LFS (one-time setup)
@@ -139,7 +139,7 @@ This builds the frontend into the `static/` directory at the project root, which
 | Command | Description |
 |---------|-------------|
 | `python app.py` | Start Flask backend server |
-| `python collector.py` | Run collector to update `cache/cache.json` |
+| `python collector.py` | Run collector to update `cache/cache.jsonl` |
 | `python maintain.py` | Update README conference list from config files |
 | `python maintain.py force` | Force full cache rebuild and README update |
 | `python update_cache.py --issue "..."` | Parse issue body and add new conferences |

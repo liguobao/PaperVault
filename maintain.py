@@ -2,12 +2,12 @@ import os
 import sys
 import json
 import re
-from collector import collect
+from collector import collect, save_cache
 
 COMMENT_CONFS_LIST_START = "<!-- confs-list-start -->"
 COMMENT_CONFS_LIST_END = "<!-- confs-list-end -->"
 
-cache_path = os.path.join(os.path.dirname(__file__), "cache", "cache.json")
+cache_path = os.path.join(os.path.dirname(__file__), "cache", "cache.jsonl")
 readme_path = "README.md"
 acl_conf_path = os.path.join(os.path.dirname(__file__), "conf", "acl_conf.json")
 dblp_conf_path = os.path.join(os.path.dirname(__file__), "conf", "dblp_conf.json")
@@ -71,8 +71,7 @@ def update_readme():
 
 def force_update():
     res = collect(cache_file=None, force=True)
-    with open(cache_path, "w") as f:
-        json.dump(res, f)
+    save_cache(cache_path, res)
 
 
 if __name__ == "__main__":

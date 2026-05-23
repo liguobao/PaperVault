@@ -17,7 +17,6 @@ export default {
       'authors',
       'abstract',
       'code',
-      'citation',
       'conf',
       'year'
     ]

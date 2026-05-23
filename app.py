@@ -8,6 +8,7 @@ import re
 import time
 import asyncio
 import openai
+from collector import load_cache
 from EdgeGPT import Chatbot as ChatbotEdge
 from revChatGPT.Official import Chatbot as ChatbotOfficial
 
@@ -22,7 +23,7 @@ app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-cache_json = os.path.join(base_dir, "cache", "cache.json")
+cache_json = os.path.join(base_dir, "cache", "cache.jsonl")
 
 cache_data = {}
 support_confs = []
@@ -41,14 +42,12 @@ def add_item(item: dict):
             "authors": item["authors"],
             "abstract": item["abstract"],
             "code": item["code"],
-            "citation": item["citation"],
         }
     )
 
 
 def load_data():
-    with open(cache_json, "r") as f:
-        data = json.load(f)
+    data = load_cache(cache_json)
 
     for conf in data:
         year = re.search(r"\d{4}", conf).group()
@@ -68,7 +67,6 @@ def load_data():
                     "authors": paper["paper_authors"],
                     "abstract": paper["paper_abstract"],
                     "code": paper["paper_code"],
-                    "citation": paper["paper_cite"],
                 }
             )
 
@@ -116,7 +114,6 @@ def search(query, confs, year, sp_year=None, sp_author=None, limit=None):
                         "authors": paper["authors"],
                         "abstract": paper["abstract"],
                         "code": paper["code"],
-                        "citation": paper["citation"],
                     })
                     result_count += 1
                     if limit is not None and result_count >= limit:
@@ -130,7 +127,6 @@ def search(query, confs, year, sp_year=None, sp_author=None, limit=None):
                         "authors": paper["authors"],
                         "abstract": paper["abstract"],
                         "code": paper["code"],
-                        "citation": paper["citation"],
                     })
                     result_count += 1
                     if limit is not None and result_count >= limit:
@@ -144,7 +140,6 @@ def search(query, confs, year, sp_year=None, sp_author=None, limit=None):
                         "authors": paper["authors"],
                         "abstract": paper["abstract"],
                         "code": paper["code"],
-                        "citation": paper["citation"],
                     })
                     result_count += 1
                     if limit is not None and result_count >= limit:
