@@ -1,19 +1,27 @@
 """Discovery 基类与通用工具"""
 
 import abc
+import os
 import time
 from typing import List, Dict, Any
 
 import requests
 from requests.adapters import HTTPAdapter
 
+CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "im.young@foxmail.com")
+
+DISCOVERY_AGENT = (
+    "PaperVault/1.0 (+https://github.com/youngfish42/PaperVault; "
+    f"contact: {CONTACT_EMAIL})"
+    if CONTACT_EMAIL
+    else "PaperVault/1.0 (+https://github.com/youngfish42/PaperVault)"
+)
+
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/125.0.0.0 Safari/537.36 "
-        "PaperVault/1.0 (+https://github.com/youngfish42/PaperVault; "
-        "contact: im.young@foxmail.com)"
+        "Chrome/125.0.0.0 Safari/537.36 " + DISCOVERY_AGENT
     )
 }
 

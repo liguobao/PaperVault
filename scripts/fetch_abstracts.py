@@ -40,8 +40,7 @@ HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/125.0.0.0 Safari/537.36 "
-        f"PaperVault-AbstractBackfill/1.0 (mailto:{CONTACT_EMAIL})"
+        "Chrome/125.0.0.0 Safari/537.36 " + CROSSREF_AGENT
     )
 }
 
