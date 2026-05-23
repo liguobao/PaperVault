@@ -11,7 +11,7 @@
   <a >
        <img alt="PRs-Welcome" src="https://img.shields.io/badge/PRs-Welcome-red" />
   	</a>
-   	<a href="https://github.com/youngfish42/PaperVault/stargazers">
+  	<a href="https://github.com/youngfish42/PaperVault/stargazers">
        <img alt="stars" src="https://img.shields.io/github/stars/youngfish42/PaperVault" />
   	</a>
   	<a href="https://github.com/youngfish42/PaperVault/network/members">
@@ -24,23 +24,22 @@
 </p>
 
 <p align="center">
-  <strong>English</strong> | <a href="README.zh-CN.md">简体中文</a>
+  <a href="README.md">English</a> | <strong>简体中文</strong>
 </p>
 
-**Web demo**:
-- Coming soon
+**在线演示**：
+- 即将上线
 
 
 
+## :jack_o_lantern: 项目简介
 
-## :jack_o_lantern: Motivation
+PaperVault 是一个用于收集和检索人工智能领域学术论文的全自动化工具，覆盖 NLP、CV、ML、DM、DB 和语音等多个方向的顶级学术会议。
 
-Fully-automated scripts for collecting AI-related papers.
-
-**Under Construction...Coming soon**
+**正在建设中……敬请期待**
 
 
-## :open_book: Search Categories
+## :open_book: 收录会议范围
 
 <!-- confs-list-start -->
 
@@ -63,34 +62,33 @@ Fully-automated scripts for collecting AI-related papers.
 
 
 
-## :books: How to add new conferences from DBLP
+## :books: 如何从 DBLP 添加新会议
 
-### Automatically Updating via an issue-triggered workflow
+### 通过 issue 触发工作流自动更新
 
-If anyone wants to add a new list of conferences. please raise an issue following the format of this one.
-We will check and label it, then the workflow will run automatically.
-[issue format](https://github.com/youngfish42/PaperVault/issues/10)
-
-
-## :warning: Disclaimer
-
-Since the tool is in the development stage, we can not guarantee that the papers found will meet your needs. I hope for your understanding. In addition, all the results come from [DBLP](https://dblp.org/), [ACL](https://aclanthology.org/), [NIPS](https://papers.nips.cc/), [OpenReview](https://openreview.net/), if this violates your copyright, you can contact us at any time, we will delete it as soon as possible, thank you:)
+如果您希望添加新的会议列表，请按照以下格式提交 issue。我们审核并添加标签后，工作流将自动运行。
+[issue 格式](https://github.com/youngfish42/PaperVault/issues/10)
 
 
-## :cherry_blossom: Contributors
-This project exists thanks to all the people who contribute.
+## :warning: 免责声明
+
+由于本工具仍处于开发阶段，我们无法保证检索到的论文一定能满足您的需求，敬请谅解。此外，所有结果均来源于 [DBLP](https://dblp.org/)、[ACL](https://aclanthology.org/)、[NIPS](https://papers.nips.cc/)、[OpenReview](https://openreview.net/)，如果这侵犯了您的版权，您可以随时联系我们，我们将尽快删除，谢谢:)
+
+
+## :cherry_blossom: 贡献者
+本项目的存在离不开每一位贡献者的付出。
 
  <a href="https://github.com/youngfish42/PaperVault/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=youngfish42/PaperVault" />
  </a>
 
-## :star2: Star History
+## :star2: Star 历史
 [![Star History Chart](https://api.star-history.com/svg?repos=youngfish42/PaperVault&type=Date)](https://star-history.com/#youngfish42/PaperVault&Date)
 
-## :scroll: Acknowledgements
+## :scroll: 致谢
 
-This project is forked from [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) and is now developed independently as **PaperVault**.
+本项目 fork 自 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector)，现已作为 **PaperVault** 独立发展。
 
-We sincerely thank all the original authors and contributors of [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) for their excellent work. The original project provided the foundation for the crawler architecture, conference configurations, and web interface design.
+我们衷心感谢 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) 的所有原作者与贡献者的杰出工作。原项目为爬虫架构、会议配置和 Web 界面设计提供了基础。
 
-This project continues to be licensed under the [GNU General Public License v3.0](LICENSE), consistent with the original project. If you use or distribute this project, please ensure compliance with the GPL v3 license requirements.
+本项目继续采用 [GNU General Public License v3.0](LICENSE) 许可，与原项目保持一致。如果您使用或分发本项目，请确保遵守 GPL v3 许可证的要求。
