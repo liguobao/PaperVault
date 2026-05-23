@@ -90,6 +90,23 @@ The Flask server runs on `http://127.0.0.1:5000` by default.
 - `OPENAI_API_KEY` - OpenAI API key for "Guess You Like" feature
 - `OPENAI_API_BASE` - OpenAI API base URL (optional, defaults to official endpoint)
 
+### Git LFS
+
+The paper cache file (`cache/cache.json`) is managed by [Git LFS](https://git-lfs.github.com) due to its large size. Make sure you have Git LFS installed before cloning:
+
+```bash
+# Install Git LFS (one-time setup)
+git lfs install
+
+# Then clone the repository normally
+git clone https://github.com/youngfish42/PaperVault.git
+```
+
+If you already cloned the repo without LFS, pull the LFS objects with:
+```bash
+git lfs pull
+```
+
 ### Frontend
 
 ```bash
