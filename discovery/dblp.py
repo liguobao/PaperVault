@@ -1,4 +1,4 @@
-"""DBLP 自动发现"""
+"""DBLP 自动发现（会议 + 期刊）"""
 
 from typing import List, Dict, Any
 from .base import BaseDiscovery
@@ -43,10 +43,71 @@ DBLP_PATH_OVERRIDE = {
 # 多卷会议（需要尝试 -1, -2, -3 …）
 MULTI_VOLUME = {"eccv", "miccai", "ecir"}
 
+# 期刊：DBLP path + 卷号计算公式（vol = f(year)）
+# name_map 用于将 DBLP 缩写映射为配置中的会议名前缀
+JOURNALS: Dict[str, Dict[str, Any]] = {
+    "jmlr":  {
+        "path": "journals/jmlr/jmlr",
+        "volume_for": lambda y: y % 100,
+        "name": "JMLR",
+        "start_year": 2019,
+    },
+    "pvldb": {
+        "path": "journals/pvldb/pvldb",
+        "volume_for": lambda y: y - 2006,
+        "name": "VLDB",
+        "start_year": 2019,
+    },
+    "tip":   {
+        "path": "journals/tip/tip",
+        "volume_for": lambda y: y - 1991,
+        "name": "TIP",
+        "start_year": 2019,
+    },
+    "pami":  {
+        "path": "journals/pami/pami",
+        "volume_for": lambda y: y - 1978,
+        "name": "TPAMI",
+        "start_year": 2019,
+    },
+    "tkde":  {
+        "path": "journals/tkde/tkde",
+        "volume_for": lambda y: y - 1988 + 1,
+        "name": "TKDE",
+        "start_year": 2019,
+    },
+    "tois":  {
+        "path": "journals/tois/tois",
+        "volume_for": lambda y: y - 1982 + 1,
+        "name": "TOIS",
+        "start_year": 2019,
+    },
+    "taslp": {
+        "path": "journals/taslp/taslp",
+        "volume_for": lambda y: y - 1992,
+        "name": "TASLP",
+        "start_year": 2019,
+    },
+    "ijcv":  {
+        "path": "journals/ijcv/ijcv",
+        "volume_for": lambda y: y - 1892,
+        "name": "IJCV",
+        "start_year": 2019,
+    },
+    "tnn":   {
+        "path": "journals/tnn/tnn",
+        "volume_for": lambda y: y - 1989 + 1,
+        "name": "TNNLS",
+        "start_year": 2019,
+    },
+}
+
 
 class DBLPDiscovery(BaseDiscovery):
     def discover(self, start_year: int, end_year: int) -> List[Dict[str, Any]]:
         results = []
+
+        # ---------- 会议 ----------
         for abbrev, conf_start in CONFERENCES.items():
             for year in range(max(start_year, conf_start), end_year + 1):
                 name = f"{abbrev.upper()}{year}"
@@ -72,8 +133,17 @@ class DBLPDiscovery(BaseDiscovery):
                 else:
                     if self._head_ok(base_url):
                         results.append({"name": name, "url": base_url})
-        return results
 
-    def discover_journals(self, year: int) -> List[Dict[str, Any]]:
-        """期刊发现需要人工维护卷号映射，此处仅提供辅助提示"""
-        return []
+        # ---------- 期刊 ----------
+        for abbrev, meta in JOURNALS.items():
+            for year in range(max(start_year, meta["start_year"]), end_year + 1):
+                name = f"{meta['name']}{year}"
+                if name in self.existing_names:
+                    continue
+
+                vol = meta["volume_for"](year)
+                url = f"https://dblp.org/db/{meta['path']}{vol}.html"
+                if self._head_ok(url):
+                    results.append({"name": name, "url": url})
+
+        return results
