@@ -2,28 +2,6 @@
 <h1 align="center"> <img src="./pics/icon/ai.png" width="30" /> PaperVault</h1>
 </p>
 <p align="center">
-  	<a href="https://img.shields.io/badge/version-v0.1.0-blue">
-      <img alt="version" src="https://img.shields.io/badge/version-v0.1.0-blue?color=FF8000?color=009922" />
-    </a>
-  <a >
-       <img alt="Status-building" src="https://img.shields.io/badge/Status-building-blue" />
-  	</a>
-  <a >
-       <img alt="PRs-Welcome" src="https://img.shields.io/badge/PRs-Welcome-red" />
-  	</a>
-   	<a href="https://github.com/youngfish42/PaperVault/stargazers">
-       <img alt="stars" src="https://img.shields.io/github/stars/youngfish42/PaperVault" />
-  	</a>
-  	<a href="https://github.com/youngfish42/PaperVault/network/members">
-       <img alt="FORK" src="https://img.shields.io/github/forks/youngfish42/PaperVault?color=FF8000" />
-  	</a>
-    <a href="https://github.com/youngfish42/PaperVault/issues">
-      <img alt="Issues" src="https://img.shields.io/github/issues/youngfish42/PaperVault?color=0088ff"/>
-    </a>
-    <br />
-</p>
-
-<p align="center">
   <strong>English</strong> | <a href="README.md">简体中文</a>
 </p>
 
