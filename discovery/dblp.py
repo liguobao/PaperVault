@@ -32,6 +32,23 @@ CONFERENCES = {
     "fast": 2019,
     "sigmod": 2019,
     "icdm": 2019,
+    # --- 新增（来自 FL-paper-update-tracker） ---
+    "alt": 2019,
+    "uai": 2019,
+    "osdi": 2019,    # 双年（奇数年）
+    "sosp": 2019,    # 双年（奇数年）
+    "isca": 2019,
+    "eurosys": 2019,
+    "sigcomm": 2019,
+    "infocom": 2019,
+    "mobicom": 2019,
+    "nsdi": 2019,
+    "dac": 2019,
+    "ndss": 2019,
+    "sp": 2019,      # IEEE S&P
+    "uss": 2019,     # USENIX Security
+    "icse": 2019,
+    "stoc": 2019,
 }
 
 # 特殊 DBLP path（与缩写不同）
@@ -39,6 +56,9 @@ DBLP_PATH_OVERRIDE = {
     "iswc": "conf/semweb/iswc",
     "icme": "conf/icmcs/icme",
 }
+
+# 双年会议（仅在奇数年举办）
+BIENNIAL_ODD = {"osdi", "sosp"}
 
 # 多卷会议（需要尝试 -1, -2, -3 …）
 MULTI_VOLUME = {"eccv", "miccai", "ecir"}
@@ -100,6 +120,55 @@ JOURNALS: Dict[str, Dict[str, Any]] = {
         "name": "TNNLS",
         "start_year": 2019,
     },
+    # --- 新增（来自 FL-paper-update-tracker） ---
+    "ai":    {
+        "path": "journals/ai/ai",
+        "volume_for": lambda y: y - 1970,
+        "name": "AI",
+        "start_year": 2019,
+    },
+    "ml":    {
+        "path": "journals/ml/ml",
+        "volume_for": lambda y: y - 1986,
+        "name": "MLJ",
+        "start_year": 2019,
+    },
+    "tocs":  {
+        "path": "journals/tocs/tocs",
+        "volume_for": lambda y: y - 1972,
+        "name": "TOCS",
+        "start_year": 2019,
+    },
+    "tos":   {
+        "path": "journals/tos/tos",
+        "volume_for": lambda y: y - 2005,
+        "name": "TOS",
+        "start_year": 2019,
+    },
+    "tpds":  {
+        "path": "journals/tpds/tpds",
+        "volume_for": lambda y: y - 1991,
+        "name": "TPDS",
+        "start_year": 2019,
+    },
+    "tcad":  {
+        "path": "journals/tcad/tcad",
+        "volume_for": lambda y: y - 1981,
+        "name": "TCAD",
+        "start_year": 2019,
+    },
+    "tc":    {
+        "path": "journals/tc/tc",
+        "volume_for": lambda y: y - 1951,
+        "name": "TC",
+        "start_year": 2019,
+    },
+    "focs":  {
+        "path": "journals/focs/focs",
+        "volume_for": lambda y: y - 1960,
+        "name": "FOCS",
+        "start_year": 2019,
+    },
 }
 
 
@@ -116,6 +185,10 @@ class DBLPDiscovery(BaseDiscovery):
 
                 path = DBLP_PATH_OVERRIDE.get(abbrev, f"conf/{abbrev}/{abbrev}")
                 base_url = f"https://dblp.org/db/{path}{year}.html"
+
+                # 跳过双年会议的非举办年份
+                if abbrev in BIENNIAL_ODD and year % 2 == 0:
+                    continue
 
                 if abbrev in MULTI_VOLUME:
                     vol = 1
