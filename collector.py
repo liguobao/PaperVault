@@ -263,50 +263,43 @@ def search_from_thecvf(url, name, res):
     return res
 
 
-def get_code_links(url):
-    r = requests.get(url, headers=HEADERS)
-    texts = [[text.strip().split('\r\n\r\n')[0].split('\n')[0].replace('#','').strip(), 
-              text.strip().split('代码链接')[-1].replace('：',':').replace(':[','').replace(':h','h')
-            ]for text in r.text.split('####') if text != '']
-    for i, text in enumerate(texts):
-        try:
-            idx = texts[i][1].rindex('](')
-            texts[i][1] = texts[i][1][:idx]
-        except:
-            pass
-        try:
-            idx = texts[i][1].rindex(')')
-            texts[i][1] = texts[i][1][:idx]
-        except:
-            pass
-    texts = [text for text in texts if text[1].startswith("http")]
-    return texts
+# ---------- 代码链接提取（参考 FL-paper-update-tracker） ----------
+import re as _re
+
+_GITHUB_RE = _re.compile(
+    r"https?://github\.com/[A-Za-z0-9_.\-]+/[A-Za-z0-9_.\-]+(?:/[^\s\)\]\}>\"'`]*)?"
+)
+
+
+def extract_github_link(text: str) -> str:
+    """从文本中提取第一个 GitHub 仓库链接，清理尾部标点。"""
+    if not text:
+        return ""
+    matches = _GITHUB_RE.findall(text)
+    if not matches:
+        return ""
+    url = matches[0]
+    url = url.rstrip(".,;:'\")]}>")
+    return url
+
 
 def add_code_links(res):
-    url = 'https://github.com/MLNLP-World/Top-AI-Conferences-Paper-with-Code'
-    r = requests.get(url, headers=HEADERS)
-    soup = BeautifulSoup(r.text, "html.parser")
-    urls = [url['href'] for url in soup.find('table').find_all('a')]
-    urls = {url.split('/')[-1][:-3].upper().replace('-','').replace('EUR',''):
-            url.replace('github.com', 'raw.githubusercontent.com').replace('blob/','') for url in urls}
+    """扫描论文 abstract 中的 GitHub 链接，补充 code 字段。
 
-    for conf in urls:
-        code_url = urls[conf]
-        code_data = get_code_links(code_url)
-        flag = False
-        if conf not in res:
-            continue
-        for title, link in code_data:
-            for ii, item in enumerate(res[conf]):
-                paper_name = item['paper_name']
-                if paper_name.endswith('.'):
-                    paper_name = paper_name[:-1]
-                if title.lower() == paper_name.lower():
-                    flag = True
-                    res[conf][ii]['paper_code'] = link
-                    break
-            if not flag:
-                print(f"[!] Warning: no matching paper found in cache for code-link title: {title!r} (conf={conf})")
+    旧逻辑（爬取外部 Markdown 仓库）已废弃，改为直接从 abstract 中
+    正则匹配 GitHub 链接。保留已有非 '#' 的 code_links 不变。
+    """
+    for conf_name, papers in res.items():
+        for ii, item in enumerate(papers):
+            existing = (item.get("paper_code") or "#").strip()
+            if existing and existing != "#":
+                continue
+            abstract = (item.get("paper_abstract") or "").strip()
+            if not abstract:
+                continue
+            link = extract_github_link(abstract)
+            if link:
+                papers[ii]["paper_code"] = link
     return res
 
 def collect(cache_file=None, force=False):
