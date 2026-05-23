@@ -24,7 +24,6 @@ def search_from_iclr(url, name, res):
                 "paper_authors": item["content"]["authors"],
                 "paper_abstract": item['content']['abstract'],
                 "paper_code": "#",
-                "paper_cite": -1,
             }
         )
     return res
@@ -62,7 +61,6 @@ def search_from_nips(url, name, res):
                 "paper_authors": paper_author,
                 "paper_abstract": paper_abstract,
                 "paper_code": "#",
-                "paper_cite": -1,
             }
         )
     return res
@@ -93,7 +91,6 @@ def search_from_acl(url, tag, name, res):
                     "paper_authors": [author.string for author in tp.find_all('a', href=re.compile("people/"))],
                     "paper_abstract": paper_abstract,
                     "paper_code": "#",
-                    "paper_cite": -1,
                 }
             )
     return res
@@ -176,7 +173,6 @@ def search_from_dblp(url, name, res):
                 "paper_authors": paper_authors,
                 "paper_abstract": paper_abstract,
                 "paper_code": "#",
-                "paper_cite": -1,
             }
         )
     return res
@@ -213,7 +209,6 @@ def search_from_thecvf(url, name, res):
                 "paper_authors": paper_authors,
                 "paper_abstract": paper_abstract,
                 "paper_code": "#",
-                "paper_cite": -1,
             }
         )
     return res
@@ -262,32 +257,7 @@ def add_code_links(res):
                     res[conf][ii]['paper_code'] = link
                     break
             if not flag:
-                import pdb; pdb.set_trace();
-    return res
-
-def get_citation(keyword):
-    url = f'https://api.semanticscholar.org/graph/v1/paper/search?query={keyword}&limit=1&fields=title,citationCount'
-    r = requests.get(url, headers=HEADERS)
-    data = r.json()
-    if 'data' in data and len(data['data']):
-        citation = data['data'][0]['citationCount']
-        title = data['data'][0]['title']
-    else:
-        citation = 0
-    time.sleep(3)
-    return citation
-
-def add_citation(res):
-    for conf in res:
-        for ii, item in enumerate(tqdm(res[conf], desc="[+] Collecting Citations", dynamic_ncols=True)):
-            paper_name = item['paper_name']
-            paper_citation = item["paper_cite"]
-            if paper_citation != -1:
-                continue
-            if paper_name.endswith('.'):
-                paper_name = paper_name[:-1]
-            citation = get_citation(paper_name)
-            res[conf][ii]['paper_cite'] = citation
+                print(f"[!] Warning: no matching paper found in cache for code-link title: {title!r} (conf={conf})")
     return res
 
 def collect(cache_file=None, force=False):
@@ -303,7 +273,7 @@ def collect(cache_file=None, force=False):
     cache_res = {}
     if not force and cache_file is not None and os.path.exists(cache_file):
         # incremental update
-        cache_res = json.load(open(cache_file, "r"))
+        cache_res = load_cache(cache_file)
         cache_conf = [name for name in cache_res.keys()]
 
     for conf in tqdm(acl_conf, desc="[+] Collecting ACL", dynamic_ncols=True):
@@ -345,23 +315,53 @@ def collect(cache_file=None, force=False):
     res.update(cache_res)
 
     res = add_code_links(res)
-    # res = add_citation(res) # hard to get citations
 
     return res
+
+
+def load_cache(path):
+    """读取 JSONL，重组为 dict[conf_name] -> list[paper_dict]"""
+    data = {}
+    with open(path, "r", encoding="utf-8") as f:
+        for line_num, line in enumerate(f, start=1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                paper = json.loads(line)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Malformed JSON on line {line_num} of {path}: {e}")
+            if "conf" not in paper or not isinstance(paper["conf"], str):
+                raise ValueError(
+                    f"Missing or invalid 'conf' field on line {line_num} of {path}"
+                )
+            conf = paper.pop("conf")
+            if conf not in data:
+                data[conf] = []
+            data[conf].append(paper)
+    return data
+
+
+def save_cache(path, data):
+    """将 dict[conf_name] -> list[paper_dict] 写入 JSONL"""
+    with open(path, "w", encoding="utf-8") as f:
+        for conf, papers in data.items():
+            for paper in papers:
+                record = dict(paper)
+                record["conf"] = conf
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
 def do_collect(cache_file=None, force=False):
     if force or cache_file is None or not os.path.exists(cache_file):
         print(f"[+] Collecting papers...")
-        res = collect(cache_file)
-        with open(cache_file, "w") as f:
-            json.dump(res, f)
+        res = collect(cache_file, force=force)
+        save_cache(cache_file, res)
     else:
         print(f"[+] Loading from cache...")
-        with open(cache_file, "r") as f:
-            res = json.load(f)
+        res = load_cache(cache_file)
     return res
 
 
 if __name__ == "__main__":
-    do_collect(cache_file="cache/cache.json", force=True)
+    do_collect(cache_file="cache/cache.jsonl", force=True)

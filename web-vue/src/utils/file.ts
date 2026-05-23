@@ -17,7 +17,6 @@ export default {
       'authors',
       'abstract',
       'code',
-      'citation',
       'conf',
       'year'
     ]
@@ -30,7 +29,7 @@ export default {
         if (v[key] instanceof Array) {
           row += `"${v[key].join(',')}\t",`
         } else {
-          row += `"${String(v[key]).replaceAll('"', '"')}\t",`
+          row += `"${String(v[key]).replaceAll('"', '""')}\t",`
         }
       })
       row = row.substring(0, row.length - 1) + '\n'
@@ -50,7 +49,7 @@ export default {
     jsonData.forEach((v: any) => {
       text += `[${v.conf + v.year}]\t${v.title}\r\n`
     })
-    const uri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(text)
+    const uri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
     const link = document.createElement('a')
     link.setAttribute('href', uri)
     link.setAttribute('download', fileName)

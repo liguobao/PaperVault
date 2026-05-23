@@ -61,7 +61,7 @@ def add_list(args):
 def main():
     args = set_args()
     add_list(args)
-    do_collect(cache_file="cache/cache.json", force=True)
+    do_collect(cache_file="cache/cache.jsonl", force=True)
 
 
 if __name__ == "__main__":
