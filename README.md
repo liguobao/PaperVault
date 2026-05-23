@@ -52,3 +52,7 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 我们衷心感谢 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) 的所有原作者与贡献者的杰出工作。原项目为数据采集架构、会议配置和 Web 界面设计提供了基础。
 
 本项目继续采用 [GNU General Public License v3.0](LICENSE) 许可，与原项目保持一致。如果您使用或分发本项目，请确保遵守 GPL v3 许可证的要求。
+
+---
+
+📄 [技术细节](TECHNICAL.md)
