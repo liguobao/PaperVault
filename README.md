@@ -27,17 +27,9 @@
   <a href="README.en.md">English</a> | <strong>简体中文</strong>
 </p>
 
-**在线演示**：
-- 即将上线
-
-
-
 ## :jack_o_lantern: 项目简介
 
 PaperVault 是一个用于收集和检索人工智能领域学术论文的全自动化工具，覆盖 NLP、CV、ML、DM、DB 和语音等多个方向的顶级学术会议。
-
-**正在建设中……敬请期待**
-
 
 ## :open_book: 收录会议范围
 
@@ -74,16 +66,6 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 
 由于本工具仍处于开发阶段，我们无法保证检索到的论文一定能满足您的需求，敬请谅解。此外，所有结果均来源于 [DBLP](https://dblp.org/)、[ACL](https://aclanthology.org/)、[NIPS](https://papers.nips.cc/)、[OpenReview](https://openreview.net/)，如果这侵犯了您的版权，您可以随时联系我们，我们将尽快删除，谢谢:)
 
-
-## :cherry_blossom: 贡献者
-本项目的存在离不开每一位贡献者的付出。
-
- <a href="https://github.com/youngfish42/PaperVault/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=youngfish42/PaperVault" />
- </a>
-
-## :star2: Star 历史
-[![Star History Chart](https://api.star-history.com/svg?repos=youngfish42/PaperVault&type=Date)](https://star-history.com/#youngfish42/PaperVault&Date)
 
 ## :scroll: 致谢
 

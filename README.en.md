@@ -27,18 +27,10 @@
   <strong>English</strong> | <a href="README.md">简体中文</a>
 </p>
 
-**Web demo**:
-- Coming soon
-
-
-
 
 ## :jack_o_lantern: Motivation
 
 Fully-automated scripts for collecting AI-related papers.
-
-**Under Construction...Coming soon**
-
 
 ## :open_book: Search Categories
 
@@ -76,16 +68,6 @@ We will check and label it, then the workflow will run automatically.
 
 Since the tool is in the development stage, we can not guarantee that the papers found will meet your needs. I hope for your understanding. In addition, all the results come from [DBLP](https://dblp.org/), [ACL](https://aclanthology.org/), [NIPS](https://papers.nips.cc/), [OpenReview](https://openreview.net/), if this violates your copyright, you can contact us at any time, we will delete it as soon as possible, thank you:)
 
-
-## :cherry_blossom: Contributors
-This project exists thanks to all the people who contribute.
-
- <a href="https://github.com/youngfish42/PaperVault/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=youngfish42/PaperVault" />
- </a>
-
-## :star2: Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=youngfish42/PaperVault&type=Date)](https://star-history.com/#youngfish42/PaperVault&Date)
 
 ## :scroll: Acknowledgements
 
