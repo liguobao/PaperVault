@@ -5,8 +5,8 @@ env:
 
 on:
   schedule:
-    # 每月 1 号 UTC 08:00 运行
-    - cron: "0 8 1 * *"
+    # 每天 UTC 08:00 运行
+    - cron: "0 8 * * *"
   workflow_dispatch:
     inputs:
       start_year:
