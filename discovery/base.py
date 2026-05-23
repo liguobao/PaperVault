@@ -15,11 +15,14 @@ HEADERS = {
     )
 }
 
-# 复用 Session 以提升性能并统一禁用系统代理（避免 Windows 自动代理导致连接失败）
-_SESSION = requests.Session()
-_SESSION.trust_env = False
-_SESSION.mount("https://", HTTPAdapter(max_retries=2))
-_SESSION.mount("http://", HTTPAdapter(max_retries=2))
+
+def _create_session() -> requests.Session:
+    """创建一个新的 Session，禁用系统代理，避免 Windows 自动代理问题"""
+    session = requests.Session()
+    session.trust_env = False
+    session.mount("https://", HTTPAdapter(max_retries=2))
+    session.mount("http://", HTTPAdapter(max_retries=2))
+    return session
 
 
 class BaseDiscovery(abc.ABC):
@@ -37,17 +40,19 @@ class BaseDiscovery(abc.ABC):
 
     def _head_ok(self, url: str, timeout: int = 15) -> bool:
         try:
-            resp = _SESSION.head(url, headers=HEADERS, timeout=timeout, allow_redirects=True)
-            return resp.status_code == 200
+            with _create_session() as session:
+                resp = session.head(url, headers=HEADERS, timeout=timeout, allow_redirects=True)
+                return resp.status_code == 200
         except Exception:
             return False
 
     def _get_json(self, url: str, timeout: int = 30, retries: int = 3) -> Any:
         for attempt in range(retries):
             try:
-                resp = _SESSION.get(url, headers=HEADERS, timeout=timeout)
-                resp.raise_for_status()
-                return resp.json()
+                with _create_session() as session:
+                    resp = session.get(url, headers=HEADERS, timeout=timeout)
+                    resp.raise_for_status()
+                    return resp.json()
             except Exception as e:
                 if attempt == retries - 1:
                     raise
@@ -57,9 +62,10 @@ class BaseDiscovery(abc.ABC):
     def _get_text(self, url: str, timeout: int = 15, retries: int = 2) -> str:
         for attempt in range(retries):
             try:
-                resp = _SESSION.get(url, headers=HEADERS, timeout=timeout)
-                resp.raise_for_status()
-                return resp.text
+                with _create_session() as session:
+                    resp = session.get(url, headers=HEADERS, timeout=timeout)
+                    resp.raise_for_status()
+                    return resp.text
             except Exception:
                 if attempt == retries - 1:
                     return ""
