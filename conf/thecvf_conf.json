@@ -22,5 +22,25 @@
     {
         "name": "CVPR2023",
         "url": "https://openaccess.thecvf.com/CVPR2023?day=all"
+    },
+    {
+        "name": "CVPR2024",
+        "url": "https://openaccess.thecvf.com/CVPR2024?day=all"
+    },
+    {
+        "name": "CVPR2025",
+        "url": "https://openaccess.thecvf.com/CVPR2025?day=all"
+    },
+    {
+        "name": "ICCV2025",
+        "url": "https://openaccess.thecvf.com/ICCV2025?day=all"
+    },
+    {
+        "name": "WACV2024",
+        "url": "https://openaccess.thecvf.com/WACV2024?day=all"
+    },
+    {
+        "name": "WACV2025",
+        "url": "https://openaccess.thecvf.com/WACV2025?day=all"
     }
 ]

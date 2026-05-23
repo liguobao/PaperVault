@@ -66,33 +66,82 @@ def search_from_nips(url, name, res):
     return res
 
 
+def _parse_acl_volume(volume_url: str, tag: str, name: str, res: dict):
+    """解析 ACL Anthology 单个 volume 页面"""
+    if name not in res:
+        res[name] = []
+    r = requests.get(volume_url, headers=HEADERS)
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    # 新版页面：论文链接在 <strong> 下的 <a>，href 格式如 /2023.acl-long.1/
+    strongs = soup.find_all("strong")
+    for strong in strongs:
+        a = strong.find("a", href=re.compile(r"^/\d{4}\.[a-zA-Z0-9-]+\.\d+/$"))
+        if not a:
+            continue
+        paper = a.text.strip()
+        if not paper:
+            continue
+        # 跳过 volume 封面页（Proceedings of ...）
+        if paper.lower().startswith("proceedings of"):
+            continue
+        # tag 过滤：如 ^/2023.acl* 只匹配 acl 相关 volume
+        href = a["href"]
+        tag_pattern = tag.lstrip("^").rstrip("*")
+        if tag_pattern not in href:
+            continue
+
+        paper_url = "https://aclanthology.org" + href
+
+        # 作者：在 strong 的父容器中查找 people 链接
+        container = strong.find_parent()
+        paper_authors = []
+        if container:
+            for author in container.find_all("a", href=re.compile("people/")):
+                author_text = author.string or author.text
+                if author_text:
+                    paper_authors.append(author_text.strip())
+
+        # abstract：根据 href 构造 div id，如 /2023.acl-long.1/ -> abstract-2023--acl-long--1
+        paper_id = href.strip("/").replace(".", "--")
+        abstract_div = soup.find(id=f"abstract-{paper_id}")
+        paper_abstract = abstract_div.text.strip() if abstract_div else ""
+
+        res[name].append(
+            {
+                "paper_name": paper,
+                "paper_url": paper_url,
+                "paper_authors": paper_authors,
+                "paper_abstract": paper_abstract,
+                "paper_code": "#",
+            }
+        )
+    return res
+
+
 def search_from_acl(url, tag, name, res):
+    """解析 ACL Anthology events 页面，自动跳转各 volume"""
     r = requests.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
     if name not in res:
         res[name] = []
-    for tp in soup.find_all("p", class_="d-sm-flex align-items-stretch"):
-        cls = tp.find("strong")
-        for paper_item in cls.find_all(href=re.compile(tag), class_="align-middle"):
-            items = [item.string if item.string else item for item in paper_item.contents]
 
-            paper = "".join([item for item in items if isinstance(item, str)])
-            paper_url = "https://aclanthology.org" + paper_item["href"]
-            if tp.next_sibling is not None and tp.next_sibling.has_attr("id") and "abstract" in tp.next_sibling["id"]:
-                paper_abstract = tp.next_sibling.text
-            else:
-                # print(f"Skip url:{paper_url}")
-                paper_abstract = ""
-            
-            res[name].append(
-                {
-                    "paper_name": paper,
-                    "paper_url": paper_url,
-                    "paper_authors": [author.string for author in tp.find_all('a', href=re.compile("people/"))],
-                    "paper_abstract": paper_abstract,
-                    "paper_code": "#",
-                }
-            )
+    # 提取所有 volume 链接（新版 events 页面结构）
+    volume_links = set()
+    for a in soup.find_all("a", href=re.compile(r"/volumes/")):
+        href = a["href"]
+        if not href.startswith("http"):
+            href = "https://aclanthology.org" + href
+        volume_links.add(href)
+
+    if volume_links:
+        # 新版：遍历各 volume 页面
+        for volume_url in sorted(volume_links):
+            res = _parse_acl_volume(volume_url, tag, name, res)
+    else:
+        # 旧版 fallback：直接解析当前页面（兼容早期年份）
+        res = _parse_acl_volume(url, tag, name, res)
+
     return res
 
 
@@ -153,7 +202,7 @@ def search_from_dblp(url, name, res):
         paper_name = paper_item.find(class_="title", itemprop="name")
 
         paper_authors = [
-            re.sub("\d", "", author["title"]).strip()
+            re.sub(r"\d", "", author["title"]).strip()
             for author in paper_item.find_all(class_=None, itemprop="name") if author.has_attr("title")]
 
         items = [item.string if item.string else item for item in paper_name.contents]
@@ -214,50 +263,43 @@ def search_from_thecvf(url, name, res):
     return res
 
 
-def get_code_links(url):
-    r = requests.get(url, headers=HEADERS)
-    texts = [[text.strip().split('\r\n\r\n')[0].split('\n')[0].replace('#','').strip(), 
-              text.strip().split('代码链接')[-1].replace('：',':').replace(':[','').replace(':h','h')
-            ]for text in r.text.split('####') if text != '']
-    for i, text in enumerate(texts):
-        try:
-            idx = texts[i][1].rindex('](')
-            texts[i][1] = texts[i][1][:idx]
-        except:
-            pass
-        try:
-            idx = texts[i][1].rindex(')')
-            texts[i][1] = texts[i][1][:idx]
-        except:
-            pass
-    texts = [text for text in texts if text[1].startswith("http")]
-    return texts
+# ---------- 代码链接提取（参考 FL-paper-update-tracker） ----------
+import re as _re
+
+_GITHUB_RE = _re.compile(
+    r"https?://github\.com/[A-Za-z0-9_.\-]+/[A-Za-z0-9_.\-]+(?:/[^\s\)\]\}>\"'`]*)?"
+)
+
+
+def extract_github_link(text: str) -> str:
+    """从文本中提取第一个 GitHub 仓库链接，清理尾部标点。"""
+    if not text:
+        return ""
+    matches = _GITHUB_RE.findall(text)
+    if not matches:
+        return ""
+    url = matches[0]
+    url = url.rstrip(".,;:'\")]}>")
+    return url
+
 
 def add_code_links(res):
-    url = 'https://github.com/MLNLP-World/Top-AI-Conferences-Paper-with-Code'
-    r = requests.get(url, headers=HEADERS)
-    soup = BeautifulSoup(r.text, "html.parser")
-    urls = [url['href'] for url in soup.find('table').find_all('a')]
-    urls = {url.split('/')[-1][:-3].upper().replace('-','').replace('EUR',''):
-            url.replace('github.com', 'raw.githubusercontent.com').replace('blob/','') for url in urls}
+    """扫描论文 abstract 中的 GitHub 链接，补充 code 字段。
 
-    for conf in urls:
-        code_url = urls[conf]
-        code_data = get_code_links(code_url)
-        flag = False
-        if conf not in res:
-            continue
-        for title, link in code_data:
-            for ii, item in enumerate(res[conf]):
-                paper_name = item['paper_name']
-                if paper_name.endswith('.'):
-                    paper_name = paper_name[:-1]
-                if title.lower() == paper_name.lower():
-                    flag = True
-                    res[conf][ii]['paper_code'] = link
-                    break
-            if not flag:
-                print(f"[!] Warning: no matching paper found in cache for code-link title: {title!r} (conf={conf})")
+    旧逻辑（爬取外部 Markdown 仓库）已废弃，改为直接从 abstract 中
+    正则匹配 GitHub 链接。保留已有非 '#' 的 code_links 不变。
+    """
+    for conf_name, papers in res.items():
+        for ii, item in enumerate(papers):
+            existing = (item.get("paper_code") or "#").strip()
+            if existing and existing != "#":
+                continue
+            abstract = (item.get("paper_abstract") or "").strip()
+            if not abstract:
+                continue
+            link = extract_github_link(abstract)
+            if link:
+                papers[ii]["paper_code"] = link
     return res
 
 def collect(cache_file=None, force=False):
