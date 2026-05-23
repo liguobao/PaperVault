@@ -22,5 +22,21 @@
     {
         "name": "MLSys2020",
         "url": "https://proceedings.mlsys.org/paper/2020"
+    },
+    {
+        "name": "NIPS2024",
+        "url": "https://papers.nips.cc/paper/2024"
+    },
+    {
+        "name": "NIPS2025",
+        "url": "https://papers.nips.cc/paper/2025"
+    },
+    {
+        "name": "MLSys2024",
+        "url": "https://proceedings.mlsys.org/paper/2024"
+    },
+    {
+        "name": "MLSys2025",
+        "url": "https://proceedings.mlsys.org/paper/2025"
     }
 ]

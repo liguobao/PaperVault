@@ -93,5 +93,85 @@
         "name": "ACL2023",
         "url": "https://aclanthology.org/events/acl-2023/",
         "tag": "^/2023.acl*"
+    },
+    {
+        "name": "ACL2024",
+        "tag": "^2024.acl*",
+        "url": "https://aclanthology.org/events/acl-2024/"
+    },
+    {
+        "name": "ACL2024",
+        "tag": "^2024.findings*",
+        "url": "https://aclanthology.org/volumes/2024.findings-acl/"
+    },
+    {
+        "name": "ACL2025",
+        "tag": "^2025.acl*",
+        "url": "https://aclanthology.org/events/acl-2025/"
+    },
+    {
+        "name": "ACL2025",
+        "tag": "^2025.findings*",
+        "url": "https://aclanthology.org/volumes/2025.findings-acl/"
+    },
+    {
+        "name": "EMNLP2024",
+        "tag": "^2024.emnlp*",
+        "url": "https://aclanthology.org/events/emnlp-2024/"
+    },
+    {
+        "name": "EMNLP2024",
+        "tag": "^2024.findings*",
+        "url": "https://aclanthology.org/volumes/2024.findings-emnlp/"
+    },
+    {
+        "name": "EMNLP2025",
+        "tag": "^2025.emnlp*",
+        "url": "https://aclanthology.org/events/emnlp-2025/"
+    },
+    {
+        "name": "EMNLP2025",
+        "tag": "^2025.findings*",
+        "url": "https://aclanthology.org/volumes/2025.findings-emnlp/"
+    },
+    {
+        "name": "NAACL2024",
+        "tag": "^2024.naacl*",
+        "url": "https://aclanthology.org/events/naacl-2024/"
+    },
+    {
+        "name": "NAACL2024",
+        "tag": "^2024.findings*",
+        "url": "https://aclanthology.org/volumes/2024.findings-naacl/"
+    },
+    {
+        "name": "NAACL2025",
+        "tag": "^2025.naacl*",
+        "url": "https://aclanthology.org/events/naacl-2025/"
+    },
+    {
+        "name": "NAACL2025",
+        "tag": "^2025.findings*",
+        "url": "https://aclanthology.org/volumes/2025.findings-naacl/"
+    },
+    {
+        "name": "EACL2024",
+        "tag": "^2024.eacl*",
+        "url": "https://aclanthology.org/events/eacl-2024/"
+    },
+    {
+        "name": "EACL2024",
+        "tag": "^2024.findings*",
+        "url": "https://aclanthology.org/volumes/2024.findings-eacl/"
+    },
+    {
+        "name": "COLING2024",
+        "tag": "^2024.coling*",
+        "url": "https://aclanthology.org/events/coling-2024/"
+    },
+    {
+        "name": "COLING2025",
+        "tag": "^2025.coling*",
+        "url": "https://aclanthology.org/events/coling-2025/"
     }
 ]

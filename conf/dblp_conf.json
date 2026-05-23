@@ -786,5 +786,181 @@
     {
         "name": "WSDM2023",
         "url": "https://dblp.org/db/conf/wsdm/wsdm2023.html"
+    },
+    {
+        "name": "CVPR2024",
+        "url": "https://dblp.org/db/conf/cvpr/cvpr2024.html"
+    },
+    {
+        "name": "CVPR2025",
+        "url": "https://dblp.org/db/conf/cvpr/cvpr2025.html"
+    },
+    {
+        "name": "ICCV2025",
+        "url": "https://dblp.org/db/conf/iccv/iccv2025.html"
+    },
+    {
+        "name": "MM2024",
+        "url": "https://dblp.org/db/conf/mm/mm2024.html"
+    },
+    {
+        "name": "MM2025",
+        "url": "https://dblp.org/db/conf/mm/mm2025.html"
+    },
+    {
+        "name": "KDD2024",
+        "url": "https://dblp.org/db/conf/kdd/kdd2024.html"
+    },
+    {
+        "name": "CIKM2024",
+        "url": "https://dblp.org/db/conf/cikm/cikm2024.html"
+    },
+    {
+        "name": "CIKM2025",
+        "url": "https://dblp.org/db/conf/cikm/cikm2025.html"
+    },
+    {
+        "name": "SIGIR2024",
+        "url": "https://dblp.org/db/conf/sigir/sigir2024.html"
+    },
+    {
+        "name": "SIGIR2025",
+        "url": "https://dblp.org/db/conf/sigir/sigir2025.html"
+    },
+    {
+        "name": "WSDM2024",
+        "url": "https://dblp.org/db/conf/wsdm/wsdm2024.html"
+    },
+    {
+        "name": "WSDM2025",
+        "url": "https://dblp.org/db/conf/wsdm/wsdm2025.html"
+    },
+    {
+        "name": "ECIR2024",
+        "url": "https://dblp.org/db/conf/ecir/ecir2024-1.html"
+    },
+    {
+        "name": "ECIR2025",
+        "url": "https://dblp.org/db/conf/ecir/ecir2025-1.html"
+    },
+    {
+        "name": "ECIR2025",
+        "url": "https://dblp.org/db/conf/ecir/ecir2025-2.html"
+    },
+    {
+        "name": "ECIR2025",
+        "url": "https://dblp.org/db/conf/ecir/ecir2025-3.html"
+    },
+    {
+        "name": "ECIR2025",
+        "url": "https://dblp.org/db/conf/ecir/ecir2025-4.html"
+    },
+    {
+        "name": "ECIR2025",
+        "url": "https://dblp.org/db/conf/ecir/ecir2025-5.html"
+    },
+    {
+        "name": "ECCV2024",
+        "url": "https://dblp.org/db/conf/eccv/eccv2024-1.html"
+    },
+    {
+        "name": "ECCV2024",
+        "url": "https://dblp.org/db/conf/eccv/eccv2024-2.html"
+    },
+    {
+        "name": "ECCV2024",
+        "url": "https://dblp.org/db/conf/eccv/eccv2024-3.html"
+    },
+    {
+        "name": "ECCV2024",
+        "url": "https://dblp.org/db/conf/eccv/eccv2024-4.html"
+    },
+    {
+        "name": "ECCV2024",
+        "url": "https://dblp.org/db/conf/eccv/eccv2024-5.html"
+    },
+    {
+        "name": "ECCV2024",
+        "url": "https://dblp.org/db/conf/eccv/eccv2024-6.html"
+    },
+    {
+        "name": "ECCV2024",
+        "url": "https://dblp.org/db/conf/eccv/eccv2024-7.html"
+    },
+    {
+        "name": "ECCV2024",
+        "url": "https://dblp.org/db/conf/eccv/eccv2024-8.html"
+    },
+    {
+        "name": "ECCV2024",
+        "url": "https://dblp.org/db/conf/eccv/eccv2024-9.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-1.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-2.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-3.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-4.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-5.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-6.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-7.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-8.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-9.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-10.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-11.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-12.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-13.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-14.html"
+    },
+    {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-15.html"
+    },
+    {
+        "name": "FAST2025",
+        "url": "https://dblp.org/db/conf/fast/fast2025.html"
+    },
+    {
+        "name": "ICDM2024",
+        "url": "https://dblp.org/db/conf/icdm/icdm2024.html"
     }
 ]
