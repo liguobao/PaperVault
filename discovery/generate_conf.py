@@ -1,0 +1,114 @@
+"""自动发现新会议并生成 conf/*.json"""
+
+import argparse
+import json
+import os
+from datetime import datetime
+from pathlib import Path
+
+from discovery import (
+    ACLDiscovery,
+    CVFDiscovery,
+    NeurIPSDiscovery,
+    MLSysDiscovery,
+    OpenReviewDiscovery,
+    DBLPDiscovery,
+)
+
+CONF_DIR = Path("conf")
+
+
+def load_conf(filename: str) -> list:
+    path = CONF_DIR / filename
+    if path.exists():
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+
+def save_conf(filename: str, data: list):
+    path = CONF_DIR / filename
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    print(f"[+] Saved {path} ({len(data)} entries)")
+
+
+def merge_conf(existing: list, new: list, key: str = "url") -> list:
+    """合并配置，以 url 为唯一键去重"""
+    seen = {item[key] for item in existing if key in item}
+    merged = list(existing)
+    for item in new:
+        if item.get(key) not in seen:
+            merged.append(item)
+            seen.add(item[key])
+    return merged
+
+
+def run(
+    start_year: int = None,
+    end_year: int = None,
+    dry_run: bool = False,
+    only: str = None,
+):
+    if end_year is None:
+        end_year = datetime.now().year
+    if start_year is None:
+        start_year = end_year - 1  # 默认只检查最近两年
+
+    print(f"[*] Discovery range: {start_year} ~ {end_year}")
+
+    tasks = [
+        ("acl_conf.json", ACLDiscovery),
+        ("thecvf_conf.json", CVFDiscovery),
+        ("nips_conf.json", NeurIPSDiscovery),
+        ("nips_conf.json", MLSysDiscovery),  # 合并到 nips_conf.json
+        ("iclr_conf.json", OpenReviewDiscovery),
+        ("dblp_conf.json", DBLPDiscovery),
+    ]
+
+    # 按文件名分组
+    grouped = {}
+    for filename, cls in tasks:
+        if only and filename != only:
+            continue
+        grouped.setdefault(filename, []).append(cls)
+
+    for filename, classes in grouped.items():
+        existing = load_conf(filename)
+        all_new = []
+        for cls in classes:
+            print(f"[*] Running {cls.__name__} for {filename} ...")
+            inst = cls(existing_conf=existing)
+            try:
+                new = inst.discover(start_year, end_year)
+            except Exception as e:
+                print(f"[!] {cls.__name__} failed: {e}")
+                continue
+            print(f"    Found {len(new)} new entries")
+            all_new.extend(new)
+
+        merged = merge_conf(existing, all_new)
+        if dry_run:
+            print(f"[DRY-RUN] {filename}: would add {len(merged) - len(existing)} entries")
+            for item in all_new[:5]:
+                print(f"    + {item}")
+            if len(all_new) > 5:
+                print(f"    ... and {len(all_new) - 5} more")
+        else:
+            save_conf(filename, merged)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Auto-discover conference configs")
+    parser.add_argument("--start-year", type=int, help="Start year (inclusive)")
+    parser.add_argument("--end-year", type=int, help="End year (inclusive)")
+    parser.add_argument("--dry-run", action="store_true", help="Do not write files")
+    parser.add_argument("--only", type=str, help="Only process one conf file, e.g. acl_conf.json")
+    args = parser.parse_args()
+
+    run(
+        start_year=args.start_year,
+        end_year=args.end_year,
+        dry_run=args.dry_run,
+        only=args.only,
+    )
