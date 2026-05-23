@@ -180,9 +180,6 @@ class DBLPDiscovery(BaseDiscovery):
         for abbrev, conf_start in CONFERENCES.items():
             for year in range(max(start_year, conf_start), end_year + 1):
                 name = f"{abbrev.upper()}{year}"
-                if name in self.existing_names:
-                    continue
-
                 path = DBLP_PATH_OVERRIDE.get(abbrev, f"conf/{abbrev}/{abbrev}")
                 base_url = f"https://dblp.org/db/{path}{year}.html"
 
@@ -211,9 +208,6 @@ class DBLPDiscovery(BaseDiscovery):
         for abbrev, meta in JOURNALS.items():
             for year in range(max(start_year, meta["start_year"]), end_year + 1):
                 name = f"{meta['name']}{year}"
-                if name in self.existing_names:
-                    continue
-
                 vol = meta["volume_for"](year)
                 url = f"https://dblp.org/db/{meta['path']}{vol}.html"
                 if self._head_ok(url):

@@ -72,7 +72,8 @@ def _rate_limited_request(
     wait = max(0.0, min_interval - (time.time() - last_time))
     if wait > 0:
         time.sleep(wait + random.uniform(0.0, 0.3))
-    resp = _create_session().get(url, timeout=timeout, **kwargs)
+    with _create_session() as session:
+        resp = session.get(url, timeout=timeout, **kwargs)
     return resp, time.time()
 
 
@@ -367,7 +368,12 @@ def filter_papers_by_phase(papers: List[dict], phase: str, target_conf: Optional
     return results
 
 
-def run(phase: str = "a", target_conf: Optional[str] = None, chunk_size: int = 500) -> None:
+def run(
+    phase: str = "a",
+    target_conf: Optional[str] = None,
+    chunk_size: int = 500,
+    retry_failed: bool = False,
+) -> None:
     print(f"[*] Phase: {phase}, conf: {target_conf or 'all'}")
 
     # 1. 读取所有论文
@@ -392,7 +398,8 @@ def run(phase: str = "a", target_conf: Optional[str] = None, chunk_size: int = 5
 
     # 3. 加载进度
     processed = load_progress()
-    targets = [p for p in targets if p.get("paper_url") not in processed]
+    if not retry_failed:
+        targets = [p for p in targets if p.get("paper_url") not in processed]
     print(f"[*] Targets after skipping processed: {len(targets)}")
     if not targets:
         print("[!] All target papers already processed. Exiting.")
@@ -442,5 +449,7 @@ if __name__ == "__main__":
                         help="Phase: a=2024-2025, b=core 2020-2023, c=remaining, all=everything")
     parser.add_argument("--conf", type=str, default=None, help="Process only one conference, e.g. AAAI2024")
     parser.add_argument("--chunk-size", type=int, default=500, help="Save progress every N papers")
+    parser.add_argument("--retry-failed", action="store_true",
+                        help="Retry all targets including those already in progress file")
     args = parser.parse_args()
-    run(phase=args.phase, target_conf=args.conf, chunk_size=args.chunk_size)
+    run(phase=args.phase, target_conf=args.conf, chunk_size=args.chunk_size, retry_failed=args.retry_failed)

@@ -55,7 +55,7 @@ jobs:
             END_ARG="--end-year ${{ github.event.inputs.end_year }}"
           fi
           python -m discovery.generate_conf $START_ARG $END_ARG
-          echo "changed=$(git diff --name-only | grep '^conf/' | wc -l)" >> "$GITHUB_OUTPUT"
+          echo "changed=$(git diff --name-only -- conf/ | wc -l)" >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request
         if: steps.discover.outputs.changed != '0'

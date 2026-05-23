@@ -49,7 +49,7 @@ class OpenReviewDiscovery(BaseDiscovery):
 
     def _generate_urls(self, name: str, venue: str, invitation: str, count: int) -> List[Dict[str, Any]]:
         limit = 1000
-        pages = (count // limit) + 1
+        pages = (count + limit - 1) // limit
         results = []
         for i in range(pages):
             offset = i * limit
@@ -72,8 +72,6 @@ class OpenReviewDiscovery(BaseDiscovery):
         for prefix, invitation_tpl in sources:
             for year in range(start_year, end_year + 1):
                 name = f"{prefix}{year}"
-                if name in self.existing_names:
-                    continue
                 invitation = invitation_tpl.format(year=year)
                 venues = self._fetch_venues(invitation_tpl, year)
                 if not venues:

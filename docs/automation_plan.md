@@ -117,20 +117,20 @@
 
 - [x] **Step 1.1**: 完成数据来源分析（`docs/source_analysis.md`）。
 - [x] **Step 1.2**: 完成自动化规划文档（`docs/automation_plan.md`）。
-- [ ] **Step 1.3**: 创建 `discovery/` 目录，实现 `BaseDiscovery` 抽象类。
-- [ ] **Step 1.4**: 实现各数据源的 Discovery 类：
+- [x] **Step 1.3**: 创建 `discovery/` 目录，实现 `BaseDiscovery` 抽象类。
+- [x] **Step 1.4**: 实现各数据源的 Discovery 类：
   - `ACLDiscovery`
   - `CVFDiscovery`
   - `NeurIPSDiscovery`
   - `MLSysDiscovery`
   - `OpenReviewDiscovery`
   - `DBLPDiscovery`
-- [ ] **Step 1.5**: 实现 `generate_conf.py`，合并自动发现结果并生成新的 `conf/*.json`。
-- [ ] **Step 1.6**: 验证新配置与现有 `collector.py` 兼容。
+- [x] **Step 1.5**: 实现 `generate_conf.py`，合并自动发现结果并生成新的 `conf/*.json`。
+- [x] **Step 1.6**: 验证新配置与现有 `collector.py` 兼容。
 
 ### Phase 2: 集成与优化（后续迭代）
 
-- [ ] **Step 2.1**: 在 GitHub Actions 中新增 `discover_and_update.yml`，每月运行一次自动发现，生成 PR。
+- [x] **Step 2.1**: 在 GitHub Actions 中新增 `discover_and_update.yml`，每日运行一次自动发现，生成 PR。
 - [ ] **Step 2.2**: 接入 Semantic Scholar / OpenAlex API，批量补全 DBLP 来源论文的 abstract。
 - [ ] **Step 2.3**: 接入 PapersWithCode API，替换现有的 GitHub Markdown 代码链接匹配逻辑。
 - [ ] **Step 2.4**: 优化增量更新粒度，支持单会议强制刷新。
