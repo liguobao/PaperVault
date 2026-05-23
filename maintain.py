@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import re
-from crawler import crawl
+from collector import collect
 
 COMMENT_CONFS_LIST_START = "<!-- confs-list-start -->"
 COMMENT_CONFS_LIST_END = "<!-- confs-list-end -->"
@@ -70,7 +70,7 @@ def update_readme():
 
 
 def force_update():
-    res = crawl(cache_file=None, force=True)
+    res = collect(cache_file=None, force=True)
     with open(cache_path, "w") as f:
         json.dump(res, f)
 

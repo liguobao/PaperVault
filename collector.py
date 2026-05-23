@@ -279,7 +279,7 @@ def get_citation(keyword):
 
 def add_citation(res):
     for conf in res:
-        for ii, item in enumerate(tqdm(res[conf], desc="[+] Crawling Citation", dynamic_ncols=True)):
+        for ii, item in enumerate(tqdm(res[conf], desc="[+] Collecting Citations", dynamic_ncols=True)):
             paper_name = item['paper_name']
             paper_citation = item["paper_cite"]
             if paper_citation != -1:
@@ -290,7 +290,7 @@ def add_citation(res):
             res[conf][ii]['paper_cite'] = citation
     return res
 
-def crawl(cache_file=None, force=False):
+def collect(cache_file=None, force=False):
     res = {}
 
     acl_conf = json.load(open("conf/acl_conf.json", "r"))
@@ -306,21 +306,21 @@ def crawl(cache_file=None, force=False):
         cache_res = json.load(open(cache_file, "r"))
         cache_conf = [name for name in cache_res.keys()]
 
-    for conf in tqdm(acl_conf, desc="[+] Crawling ACL", dynamic_ncols=True):
+    for conf in tqdm(acl_conf, desc="[+] Collecting ACL", dynamic_ncols=True):
         assert conf.get("name") and conf.get("url") and conf.get("tag")
         url, tag, name = conf["url"], conf["tag"], conf["name"]
         if name in cache_conf:
             continue
         res = search_from_acl(url, tag, name, res)
         
-    for conf in tqdm(iclr_conf, desc="[+] Crawling ICLR", dynamic_ncols=True):
+    for conf in tqdm(iclr_conf, desc="[+] Collecting ICLR", dynamic_ncols=True):
         assert conf.get("name") and conf.get("url")
         url, name = conf["url"], conf["name"]
         if name in cache_conf:
             continue
         res = search_from_iclr(url, name, res)
         
-    for conf in tqdm(thecvf_conf, desc="[+] Crawling openacess.thecvf", dynamic_ncols=True):
+    for conf in tqdm(thecvf_conf, desc="[+] Collecting openaccess.thecvf", dynamic_ncols=True):
         assert conf.get("name") and conf.get("url")
         url, name = conf["url"], conf["name"]
         if name in cache_conf:
@@ -328,14 +328,14 @@ def crawl(cache_file=None, force=False):
         res = search_from_thecvf(url, name, res)
         
 
-    for conf in tqdm(nips_conf, desc="[+] Crawling NeurIPS", dynamic_ncols=True):
+    for conf in tqdm(nips_conf, desc="[+] Collecting NeurIPS", dynamic_ncols=True):
         assert conf.get("name") and conf.get("url")
         url, name = conf["url"], conf["name"]
         if name in cache_conf:
             continue
         res = search_from_nips(url, name, res)
 
-    for conf in tqdm(dblp_conf, desc="[+] Crawling DBLP", dynamic_ncols=True):
+    for conf in tqdm(dblp_conf, desc="[+] Collecting DBLP", dynamic_ncols=True):
         assert conf.get("name") and conf.get("url")
         url, name = conf["url"], conf["name"]
         if name in cache_conf:
@@ -350,10 +350,10 @@ def crawl(cache_file=None, force=False):
     return res
 
 
-def do_crawl(cache_file=None, force=False):
+def do_collect(cache_file=None, force=False):
     if force or cache_file is None or not os.path.exists(cache_file):
-        print(f"[+] Crawling papers...")
-        res = crawl(cache_file)
+        print(f"[+] Collecting papers...")
+        res = collect(cache_file)
         with open(cache_file, "w") as f:
             json.dump(res, f)
     else:
@@ -364,4 +364,4 @@ def do_crawl(cache_file=None, force=False):
 
 
 if __name__ == "__main__":
-    do_crawl(cache_file="cache/cache.json", force=True)
+    do_collect(cache_file="cache/cache.json", force=True)

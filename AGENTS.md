@@ -14,7 +14,7 @@ This project was originally forked from [MLNLP-World/AI-Paper-Collector](https:/
 | **Frontend** | Vue 3 (Composition API + `<script setup>`), TypeScript, Vite 4 |
 | **UI Framework** | Element Plus 2.2.30 |
 | **HTTP Client** | Axios |
-| **Web Crawling** | BeautifulSoup4, Requests, PyYAML |
+| **Data Collection** | BeautifulSoup4, Requests, PyYAML |
 | **AI Features** | OpenAI GPT-3.5-turbo API (for "Guess You Like" keyword suggestions) |
 | **Build Tool** | Vite with compression plugin |
 | **Deployment** | Aliyun server via GitHub Actions (SSH deploy) |
@@ -24,7 +24,7 @@ This project was originally forked from [MLNLP-World/AI-Paper-Collector](https:/
 ```
 PaperVault/
 ├── app.py                    # Flask backend API server
-├── crawler.py                # Multi-source web crawler for paper metadata
+├── collector.py              # Multi-source data collector for paper metadata
 ├── maintain.py               # README updater and force cache refresh utility
 ├── update_cache.py           # CLI tool to add conferences from GitHub issues
 ├── requirements.txt          # Python dependencies
@@ -122,7 +122,7 @@ This builds the frontend into the `static/` directory at the project root, which
 | Command | Description |
 |---------|-------------|
 | `python app.py` | Start Flask backend server |
-| `python crawler.py` | Run crawler to update `cache/cache.json` |
+| `python collector.py` | Run collector to update `cache/cache.json` |
 | `python maintain.py` | Update README conference list from config files |
 | `python maintain.py force` | Force full cache rebuild and README update |
 | `python update_cache.py --issue "..."` | Parse issue body and add new conferences |
@@ -138,7 +138,7 @@ This builds the frontend into the `static/` directory at the project root, which
 
 ## Data Sources
 
-The crawler fetches paper metadata from:
+The collector fetches paper metadata from:
 - [ACL Anthology](https://aclanthology.org/) - NLP conferences
 - [OpenReview](https://openreview.net/) - ICLR, NeurIPS
 - [OpenAccess.thecvf](https://openaccess.thecvf.com/) - CVPR, ICCV, WACV

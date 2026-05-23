@@ -73,6 +73,6 @@ Since the tool is in the development stage, we can not guarantee that the papers
 
 This project is forked from [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) and is now developed independently as **PaperVault**.
 
-We sincerely thank all the original authors and contributors of [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) for their excellent work. The original project provided the foundation for the crawler architecture, conference configurations, and web interface design.
+We sincerely thank all the original authors and contributors of [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) for their excellent work. The original project provided the foundation for the collection architecture, conference configurations, and web interface design.
 
 This project continues to be licensed under the [GNU General Public License v3.0](LICENSE), consistent with the original project. If you use or distribute this project, please ensure compliance with the GPL v3 license requirements.

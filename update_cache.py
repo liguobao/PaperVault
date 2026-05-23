@@ -2,7 +2,7 @@ import os
 import json
 import ast
 import argparse
-from crawler import do_crawl
+from collector import do_collect
 
 
 def set_args():
@@ -61,7 +61,7 @@ def add_list(args):
 def main():
     args = set_args()
     add_list(args)
-    do_crawl(cache_file="cache/cache.json", force=True)
+    do_collect(cache_file="cache/cache.json", force=True)
 
 
 if __name__ == "__main__":
