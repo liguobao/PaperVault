@@ -29,7 +29,8 @@ const exportFile = (method: string): void => {
 }
 
 const deleteResult = (index: number): void => {
-  resultList.val.splice(index, 1)
+  const absoluteIndex = (page.current - 1) * page.size + index
+  resultList.val.splice(absoluteIndex, 1)
 }
 
 const jumpUrl = (url: string) => {
@@ -48,18 +49,16 @@ const filterResult: (target: any, option: any) => void = (target, option) => {
   } else if (Number(level) === 2) {
     for (let k in target[key]) {
       resultList.val = resultList.val.concat(target[key][k])
-      changeSortMethod(sortMethod.value)
     }
-  } else if (Number(level === 3)) {
+  } else if (Number(level) === 3) {
     resultList.val = resultList.val.concat(target[parent][key])
-    changeSortMethod(sortMethod.value)
   }
+  changeSortMethod(sortMethod.value)
 }
 
 const getAllResult = (target: any): void => {
   if (Array.isArray(target)) {
     resultList.val = resultList.val.concat(target as never)
-    changeSortMethod(sortMethod.value)
   } else {
     for (let k in target) {
       getAllResult(target[k])
@@ -73,7 +72,6 @@ const changeSortMethod = (method: any): void => {
       (a: any, b: any) => Number(b.year) - Number(a.year)
     )
   } else if (method === 'Conf') {
-    console.log(11)
     resultList.val = resultList.val.sort((a: any, b: any) => {
       let a1 = a.conf.toUpperCase()
       let b1 = b.conf.toUpperCase()

@@ -23,7 +23,7 @@ app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-cache_json = os.path.join(base_dir, "cache", "cache.jsonl")
+cache_path = os.path.join(base_dir, "cache", "cache.jsonl")
 
 cache_data = {}
 support_confs = []
@@ -47,7 +47,7 @@ def add_item(item: dict):
 
 
 def load_data():
-    data = load_cache(cache_json)
+    data = load_cache(cache_path)
 
     for conf in data:
         year = re.search(r"\d{4}", conf).group()

@@ -257,7 +257,7 @@ def add_code_links(res):
                     res[conf][ii]['paper_code'] = link
                     break
             if not flag:
-                import pdb; pdb.set_trace();
+                print(f"[!] Warning: no matching paper found in cache for code-link title: {title!r} (conf={conf})")
     return res
 
 def collect(cache_file=None, force=False):
@@ -323,11 +323,18 @@ def load_cache(path):
     """读取 JSONL，重组为 dict[conf_name] -> list[paper_dict]"""
     data = {}
     with open(path, "r", encoding="utf-8") as f:
-        for line in f:
+        for line_num, line in enumerate(f, start=1):
             line = line.strip()
             if not line:
                 continue
-            paper = json.loads(line)
+            try:
+                paper = json.loads(line)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Malformed JSON on line {line_num} of {path}: {e}")
+            if "conf" not in paper or not isinstance(paper["conf"], str):
+                raise ValueError(
+                    f"Missing or invalid 'conf' field on line {line_num} of {path}"
+                )
             conf = paper.pop("conf")
             if conf not in data:
                 data[conf] = []
@@ -348,7 +355,7 @@ def save_cache(path, data):
 def do_collect(cache_file=None, force=False):
     if force or cache_file is None or not os.path.exists(cache_file):
         print(f"[+] Collecting papers...")
-        res = collect(cache_file)
+        res = collect(cache_file, force=force)
         save_cache(cache_file, res)
     else:
         print(f"[+] Loading from cache...")
