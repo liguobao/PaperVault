@@ -33,7 +33,6 @@ conf/*.json  ──►  collector.py  ──►  cache/cache.jsonl
 | `app.py` | Flask 服务入口，加载缓存、暴露 API |
 | `collector.py` | 多源论文采集器 |
 | `maintain.py` | README 会议列表自动更新工具 |
-| `update_cache.py` | 通过 GitHub Issue 批量添加新会议的 CLI 工具 |
 
 ### 2.2 API 接口
 
@@ -216,6 +215,5 @@ git lfs pull
 
 | 工作流 | 触发条件 | 行为 |
 |--------|----------|------|
-| `update_cache.yml` | Issue 被标记 `require to update cache` | 解析 Issue 内容，更新 `conf/*.json`，运行 `collector.py` 重建缓存 |
+| `discover_and_update.yml` | 每日定时 / 手动触发 | 自动发现新会议配置并创建 PR |
 | `update_readme.yml` | 手动触发 | 运行 `maintain.py force`，更新 README 会议列表 |
-| `aliyun_deploy.yml` | `main` 分支推送 / `update_cache` 完成 | 构建前端，SSH 部署到阿里云服务器并重启服务 |

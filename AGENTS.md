@@ -17,7 +17,6 @@ This project was originally forked from [MLNLP-World/AI-Paper-Collector](https:/
 | **Data Collection** | BeautifulSoup4, Requests, PyYAML |
 | **AI Features** | OpenAI GPT-3.5-turbo API (for "Guess You Like" keyword suggestions) |
 | **Build Tool** | Vite with compression plugin |
-| **Deployment** | Aliyun server via GitHub Actions (SSH deploy) |
 
 ## Project Structure
 
@@ -26,7 +25,6 @@ PaperVault/
 ├── app.py                    # Flask backend API server
 ├── collector.py              # Multi-source data collector for paper metadata
 ├── maintain.py               # README updater and force cache refresh utility
-├── update_cache.py           # CLI tool to add conferences from GitHub issues
 ├── requirements.txt          # Python dependencies
 ├── cache/
 │   └── cache.jsonl           # Local JSON database of all papers (JSON Lines)
@@ -57,14 +55,8 @@ PaperVault/
 │   └── public/               # Static assets
 ├── .github/
 │   ├── workflows/
-│   │   ├── aliyun_deploy.yml     # Deploy on push / cache update
-│   │   ├── update_cache.yml      # Triggered by labeled issues
+│   │   ├── discover_and_update.yml  # Auto-discover new conferences
 │   │   └── update_readme.yml     # Manual README refresh
-│   └── ISSUE_TEMPLATE/
-│       ├── bug_report.md
-│       ├── conference.md         # Template for adding new conferences
-│       ├── feature_request.md
-│       └── question.md
 ├── pics/                     # Icons, screenshots, profile images
 └── README.md
 ```
@@ -142,7 +134,6 @@ This builds the frontend into the `static/` directory at the project root, which
 | `python collector.py` | Run collector to update `cache/cache.jsonl` |
 | `python maintain.py` | Update README conference list from config files |
 | `python maintain.py force` | Force full cache rebuild and README update |
-| `python update_cache.py --issue "..."` | Parse issue body and add new conferences |
 | `cd web-vue && npm run dev` | Start frontend dev server |
 | `cd web-vue && npm run build` | Build frontend for production |
 
@@ -168,9 +159,8 @@ Code links are enriched from [MLNLP-World/Top-AI-Conferences-Paper-with-Code](ht
 
 | Workflow | Trigger | Action |
 |----------|---------|--------|
-| `update_cache.yml` | Issue labeled `require to update cache` | Parses issue, updates configs, rebuilds cache |
+| `discover_and_update.yml` | Daily schedule / Manual | Auto-discovers new conference configs and creates PR |
 | `update_readme.yml` | Manual (`workflow_dispatch`) | Rebuilds cache and updates README conference list |
-| `aliyun_deploy.yml` | Push to `main` or `update_cache` completion | Builds Vue frontend, SSH deploys to Aliyun, restarts service |
 
 ## License
 
