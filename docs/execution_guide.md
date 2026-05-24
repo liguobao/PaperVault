@@ -1,6 +1,6 @@
 # PaperVault 后续任务执行指南
 
-> 分支：`analyze-sources`
+> 分支：`backfill-data`
 > 本文件记录已完成的任务和待执行的后续操作，供随时恢复工作时参考。
 
 ---
@@ -22,69 +22,113 @@
 | `057feae` | 补充 FL-tracker 参考的 16 个会议 + 8 个期刊到 DBLP 发现模块 |
 | `b7de928` | 实现 Abstract 批量回填脚本（Crossref→SS→arXiv→OpenAlex） |
 | `8108f99` | 替换废弃的代码链接采集方案为基于 Abstract 的正则扫描 |
+| `0e0bb7c` | 自动发现新会议配置（2019–2025，共新增 401 条配置） |
+| *(当前分支)* | **修复 abstract 回填流程**：安全写入、进度文件 v2、预检统计、新 Phase 定义 |
 
 ---
 
 ## 二、待执行任务
 
-### 任务 1：生成新会议/期刊配置（Phase 1B）
+### 任务 1：生成新会议/期刊配置（Phase 1B） ✅ 已完成
 
-在 `discovery/dblp.py` 中已新增以下 venue 定义，但**尚未执行查询生成配置**：
-
-- **会议（16 个）**：ALT, UAI, OSDI, SOSP, ISCA, EuroSys, SIGCOMM, INFOCOM, MobiCom, NSDI, DAC, NDSS, IEEE S&P, USENIX Security, ICSE, STOC
-- **期刊（8 个）**：AI, MLJ, TOCS, TOS, TPDS, TCAD, TC, FOCS
-
-**执行命令**：
-```bash
-source F:/Miniforge3/etc/profile.d/conda.sh && conda activate llm
-python -m discovery.generate_conf --start-year 2019 --end-year 2025
-```
-
-**预期结果**：`conf/dblp_conf.json` 自动追加新发现的 venue 条目。
-**前置检查**：可先 review `discovery/dblp.py` 中的 `CONFERENCES` 和 `JOURNALS` 定义，确认 venue 名称和卷号公式无误。
+`conf/dblp_conf.json` 已追加新发现的 venue 条目（+236 条，含 16 个新会议 + 8 个新期刊）。
 
 ---
 
-### 任务 2：Abstract 批量回填（分三阶段执行）
+### 任务 2：Abstract 批量回填（按 conf 粒度执行）
 
-当前 `cache/cache.jsonl` 中共有 **63,906** 条论文缺少 abstract（占 67.5%）。
+当前 `cache/cache.jsonl` 中共有约 **63,000+** 条论文缺少 abstract。
 脚本位置：`scripts/fetch_abstracts.py`
 
-#### Phase A — 暖身轮（最新年份，约 5,000 条，预计 2–4 小时）
+**执行原则**：以单个 `conf`（会议+年份，如 `AAAI2020`）为最小单元，**逐个处理**，优先选择 DOI 比例高的 conf。
+
+#### 执行前必读：预检与备份
+
 ```bash
 source F:/Miniforge3/etc/profile.d/conda.sh && conda activate llm
-python scripts/fetch_abstracts.py --phase a --chunk-size 500
-```
-- 目标：2024–2025 年所有会议的论文
-- 特点：新论文 DOI 命中率高，Crossref/Semantic Scholar 通常一次成功
 
-#### Phase B — 核心会议（约 25,000 条，预计 8–15 小时）
+# 1. 自动备份当前 cache（脚本运行时也会自动做原子写入，但手动备份更保险）
+cp cache/cache.jsonl "cache/cache.jsonl.bak.$(date +%Y%m%d_%H%M%S)"
+
+# 2. 查看待处理 conf 列表（按优先级排序，DOI 比例高的在前）
+python scripts/fetch_abstracts.py --list
+```
+
+运行任何命令时，脚本会自动输出 **Preflight Check**，包含：
+- 总论文数 / 已有 abstract 数 / 缺 abstract 数
+- 按 URL 类型统计（DOI vs 非 DOI）
+- 按年份、会议统计缺 abstract 分布
+
+**进度查看**：随时打开 `docs/abstract_backfill_progress.md` 查看各 conf 的完成状态。
+
+#### 方式 1：处理单个 conf（推荐，最可控）
+
 ```bash
 source F:/Miniforge3/etc/profile.d/conda.sh && conda activate llm
-python scripts/fetch_abstracts.py --phase b --chunk-size 1000
+python scripts/fetch_abstracts.py --conf ICASSP2022 --chunk-size 500
 ```
-- 目标：NeurIPS, ICML, ICLR, CVPR, ICCV, ECCV, ACL, EMNLP, NAACL, COLING, AAAI, IJCAI, KDD, SIGIR, WWW, MM（2020–2023）
+- **目标**：仅处理 `ICASSP2022` 这 1,866 条论文
+- **特点**：最保守可控，处理完一个 conf 后立即看到结果，可随时决定是否继续
 
-#### Phase C — 广泛回填（约 30,000 条，预计 10–20 小时）
+#### 方式 2：批量处理同会议多年份
+
 ```bash
-source F:/Miniforge3/etc/profile.d/conda.sh && conda activate llm
-python scripts/fetch_abstracts.py --phase c --chunk-size 1000
+# 处理 AAAI 的所有年份（AAAI2019 + AAAI2020 + AAAI2021 + AAAI2022）
+python scripts/fetch_abstracts.py --conf "AAAI*" --chunk-size 500
 ```
-- 目标：剩余所有 2019–2023 年论文（ICASSP, INTERSPEECH, MICCAI, CIKM, WSDM, BMVC, 期刊等）
+- `*` 为通配符，支持任意模式匹配
 
-#### 可选：重试失败项 / 单个会议
+#### 方式 3：自动按优先级批量处理（谨慎使用）
+
 ```bash
-# 重试所有之前未获取到 abstract 的论文
-python scripts/fetch_abstracts.py --phase all --retry-failed
+# 自动处理优先级最高的前 5 个 conf
+python scripts/fetch_abstracts.py --batch --top 5 --chunk-size 500
 
-# 只处理单个会议
-python scripts/fetch_abstracts.py --conf AAAI2024 --chunk-size 500
+# 自动处理全部待处理 conf（耗时极长，不建议一次性执行）
+python scripts/fetch_abstracts.py --batch --chunk-size 500
+```
+
+#### 方式 4：按 Phase 处理（全局模式，仍保留）
+
+如需一次性处理大量论文，仍可使用原有的 Phase 模式：
+
+```bash
+# Phase 1: 全部 DOI 论文（~42,000 条，预计 12–20 小时）
+python scripts/fetch_abstracts.py --phase 1 --chunk-size 500
+
+# Phase 2: 核心会议非 DOI 论文（~15,000 条）
+python scripts/fetch_abstracts.py --phase 2 --chunk-size 500
+
+# Phase 3: 剩余非 DOI 论文（~7,000 条）
+python scripts/fetch_abstracts.py --phase 3 --chunk-size 500
+```
+
+#### 可选：标题查询 DOI（更慢，谨慎使用）
+
+对非 DOI 论文，可尝试用标题向 Crossref 查询 DOI（限流更严格）：
+```bash
+python scripts/fetch_abstracts.py --conf "CVPR*" --chunk-size 200 --query-doi-by-title
+```
+
+#### 可选：重试失败项 / 断点续传
+
+```bash
+# 重试之前标记为 failed 的论文（仅重试 failed，跳过已成功的）
+python scripts/fetch_abstracts.py --conf ICASSP2022 --retry-failed --chunk-size 500
+
+# 重试上次中断导致进度已记录但 cache 未更新的论文
+python scripts/fetch_abstracts.py --conf ICASSP2022 --retry-partial --chunk-size 500
 ```
 
 **断点续传**：
-- 进度自动保存到 `cache/abstract_backfill_progress.json`
-- 每次启动脚本会自动跳过已处理的论文
-- 可随时中断（Ctrl+C），下次运行自动恢复
+- 进度自动保存到 `cache/abstract_backfill_progress.json`（v2 格式，记录 success/failed 状态）
+- 默认自动跳过已成功（`status == "success"`）的论文
+- 失败项默认跳过，可用 `--retry-failed` 仅重试失败项
+- 可随时中断（Ctrl+C），下次运行自动恢复；若担心中断导致 cache 不一致，可用 `--retry-partial`
+
+**Cache 安全写入**：
+- 每 chunk 先写入 `cache/cache.jsonl.tmp`，再通过原子重命名替换原文件
+- 即使进程崩溃，最多丢失当前 chunk，不会损坏整个 cache
 
 **环境建议**：
 ```bash
@@ -104,7 +148,7 @@ source F:/Miniforge3/etc/profile.d/conda.sh && conda activate llm
 python scripts/fetch_code_links.py --year all
 ```
 
-**执行时机**：建议在 **Phase A/B/C abstract 回填完成后**运行，这样新补充的 abstract 中的 GitHub 链接也能被扫描到。
+**执行时机**：建议在 **Phase 1/2/3 abstract 回填完成后**运行，这样新补充的 abstract 中的 GitHub 链接也能被扫描到。
 
 **特点**：
 - 纯正则匹配，无网络请求，处理全部 9 万条论文仅需数分钟
@@ -140,10 +184,10 @@ source F:/Miniforge3/etc/profile.d/conda.sh && conda activate llm
 # 生成新配置（新增 venue）
 python -m discovery.generate_conf --start-year 2019 --end-year 2025
 
-# Abstract 回填（三阶段）
-python scripts/fetch_abstracts.py --phase a --chunk-size 500   # 2-4h
-python scripts/fetch_abstracts.py --phase b --chunk-size 1000  # 8-15h
-python scripts/fetch_abstracts.py --phase c --chunk-size 1000  # 10-20h
+# Abstract 回填（三阶段，保守策略）
+python scripts/fetch_abstracts.py --phase 1 --chunk-size 500   # DOI 论文，12-20h
+python scripts/fetch_abstracts.py --phase 2 --chunk-size 500   # 核心会议非 DOI，8-15h
+python scripts/fetch_abstracts.py --phase 3 --chunk-size 500   # 剩余非 DOI，4-8h
 
 # 代码链接扫描（快）
 python scripts/fetch_code_links.py --year all
@@ -159,3 +203,6 @@ python -c "import json; [json.load(open(f)) for f in ['conf/acl_conf.json','conf
 1. **Abstract 回填耗时长**：63,906 条空 abstract 全部处理完预计需要 **20–40 小时**的墙钟时间。请利用断点续传机制分多次执行。
 2. **API 限流**：Crossref / Semantic Scholar / OpenAlex 均有可能返回 429。脚本已内置指数退避（遇到 429 自动等待），请勿频繁重启脚本。
 3. **Cache 文件大**：`cache.jsonl` 约数百 MB，Git LFS 推送可能需要较长时间。
+4. **Cache 写入安全**：脚本已改为原子重命名写入，但执行前仍建议手动备份 `cache/cache.jsonl`。
+5. **标题匹配误差**：API 返回的标题与本地标题可能存在细微差异，脚本已记录匹配日志，如遇大批量不匹配请检查日志并调整阈值。
+6. **进度文件格式**：进度文件已升级为 v2 格式（记录 success/failed），兼容旧版 `processed_urls` 列表格式。
