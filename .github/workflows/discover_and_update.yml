@@ -5,8 +5,8 @@ env:
 
 on:
   schedule:
-    # 每天 UTC 08:00 运行
-    - cron: "0 8 * * *"
+    # 每天北京时间 02:00 (UTC 18:00) 运行
+    - cron: "0 18 * * *"
   workflow_dispatch:
     inputs:
       start_year:
@@ -21,6 +21,8 @@ on:
 jobs:
   discover:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
     permissions:
       contents: write
       pull-requests: write
