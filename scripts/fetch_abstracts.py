@@ -28,6 +28,12 @@ from typing import Dict, List, Optional, Set, Tuple
 import requests
 from requests.adapters import HTTPAdapter
 
+# Windows 控制台 UTF-8 编码修复
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
+
 # ---------- 配置 ----------
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "im.young@foxmail.com")
 
