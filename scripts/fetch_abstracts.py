@@ -321,7 +321,7 @@ def fetch_openalex_abstract(
 
 def fetch_abstract_for_paper(
     paper: dict, last_time: dict, sleep_sec: float = 1.5, max_retries: int = 3,
-    query_doi_by_title: bool = False,
+    query_doi_by_title_enabled: bool = False,
 ) -> Tuple[Optional[str], dict, str]:
     """
     返回: (abstract, last_time, source)
@@ -333,7 +333,7 @@ def fetch_abstract_for_paper(
     source = ""
 
     # 可选：对非 DOI 论文尝试用标题查询 DOI
-    if not doi and query_doi_by_title and title:
+    if not doi and query_doi_by_title_enabled and title:
         queried_doi, last_time["crossref"] = query_doi_by_title(title, last_time["crossref"])
         if queried_doi:
             doi = queried_doi
@@ -418,7 +418,8 @@ def preflight_check(papers: List[dict]):
         url = p.get("paper_url", "")
         host = urlparse(url).netloc.lower()
         conf = p.get("conf", "UNKNOWN")
-        year = conf[-4:] if len(conf) >= 4 else "UNKNOWN"
+        year_match = re.search(r"\d{4}", conf)
+        year = year_match.group(0) if year_match else "UNKNOWN"
 
         host_counts[host] = host_counts.get(host, 0) + 1
         year_counts[year] = year_counts.get(year, 0) + 1
@@ -434,7 +435,8 @@ def preflight_check(papers: List[dict]):
     print("=" * 60)
     print(f"    Total papers in cache      : {total}")
     print(f"    Papers with abstract       : {total - empty_count}")
-    print(f"    Papers with EMPTY abstract : {empty_count} ({empty_count/total*100:.1f}%)")
+    empty_ratio = (empty_count / total * 100) if total else 0.0
+    print(f"    Papers with EMPTY abstract : {empty_count} ({empty_ratio:.1f}%)")
     print(f"")
     print(f"    Empty abstract by URL type:")
     print(f"      DOI (doi.org)            : {doi_empty}")
@@ -593,7 +595,7 @@ def _process_targets(
         print(f"[{i}/{len(targets)}] {title[:60]}...")
 
         abstract, last_time, source = fetch_abstract_for_paper(
-            paper, last_time, query_doi_by_title=query_doi_by_title
+            paper, last_time, query_doi_by_title_enabled=query_doi_by_title
         )
 
         if abstract and len(abstract.strip()) >= 5:

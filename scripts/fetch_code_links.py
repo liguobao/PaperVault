@@ -54,7 +54,8 @@ def run(year: str = None, retry_failed: bool = False) -> None:
 
     targets = []
     for p in papers:
-        paper_year = str(p.get("conf", ""))[-4:]
+        year_match = re.search(r"\d{4}", str(p.get("conf", "")))
+        paper_year = year_match.group(0) if year_match else ""
         if year != "all" and paper_year != year:
             continue
         code = p.get("paper_code", "#")

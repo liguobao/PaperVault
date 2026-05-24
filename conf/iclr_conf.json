@@ -1,142 +1,102 @@
 [
     {
-        "name": "ICLR2022",
-        "url": "https://api.openreview.net/notes?content.venue=ICLR 2022 Poster&offset=0&limit=1000&invitation=ICLR.cc/2022/Conference/-/Blind_Submission"
-    },
-    {
-        "name": "ICLR2022",
-        "url": "https://api.openreview.net/notes?content.venue=ICLR 2022 Oral&offset=0&limit=1000&invitation=ICLR.cc/2022/Conference/-/Blind_Submission"
-    },
-    {
-        "name": "ICLR2022",
-        "url": "https://api.openreview.net/notes?content.venue=ICLR 2022 Spotlight&offset=0&limit=1000&invitation=ICLR.cc/2022/Conference/-/Blind_Submission"
-    },
-    {
-        "name": "NIPS2022",
-        "url": "https://api.openreview.net/notes?content.venue=NeurIPS+2022+Accept&details=replyCount&offset=0&limit=1000&invitation=NeurIPS.cc%2F2022%2FConference%2F-%2FBlind_Submission"
-    },
-    {
-        "name": "NIPS2022",
-        "url": "https://api.openreview.net/notes?content.venue=NeurIPS+2022+Accept&details=replyCount&offset=1000&limit=1000&invitation=NeurIPS.cc%2F2022%2FConference%2F-%2FBlind_Submission"
-    },
-    {
-        "name": "NIPS2022",
-        "url": "https://api.openreview.net/notes?content.venue=NeurIPS+2022+Accept&details=replyCount&offset=2000&limit=1000&invitation=NeurIPS.cc%2F2022%2FConference%2F-%2FBlind_Submission"
-    },
-    {
-        "name": "ICLR2023",
-        "url": "https://api.openreview.net/notes?content.venue=ICLR+2023+notable+top+5%25&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
-    },
-    {
-        "name": "ICLR2023",
-        "url": "https://api.openreview.net/notes?content.venue=ICLR+2023+notable+top+25%25&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
-    },
-    {
-        "name": "ICLR2023",
-        "url": "https://api.openreview.net/notes?content.venue=ICLR+2023+poster&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
-    },
-    {
-        "name": "ICLR2023",
-        "url": "https://api.openreview.net/notes?content.venue=ICLR+2023+poster&details=replyCount&offset=1000&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
-    },
-    {
-        "name": "ICLR2021",
+        "name": "ICLR2021-Oral",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202021%20Oral&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2021%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2021",
+        "name": "ICLR2021-Poster",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202021%20Poster&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2021%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2021",
+        "name": "ICLR2021-Spotlight",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202021%20Spotlight&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2021%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2022",
+        "name": "ICLR2022-Oral",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202022%20Oral&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2022%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2022",
+        "name": "ICLR2022-Poster",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202022%20Poster&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2022%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2022",
+        "name": "ICLR2022-Spotlight",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202022%20Spotlight&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2022%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2022",
+        "name": "ICLR2022-Submitted",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202022%20Submitted&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2022%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2022",
+        "name": "ICLR2022-Submitted",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202022%20Submitted&details=replyCount&offset=1000&limit=1000&invitation=ICLR.cc%2F2022%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2023",
+        "name": "ICLR2023-Top25",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202023%20notable%20top%2025%25&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2023",
+        "name": "ICLR2023-Top5",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202023%20notable%20top%205%25&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2023",
+        "name": "ICLR2023-Poster",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202023%20poster&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2023",
+        "name": "ICLR2023-Poster",
         "url": "https://api.openreview.net/notes?content.venue=ICLR%202023%20poster&details=replyCount&offset=1000&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2023",
+        "name": "ICLR2023-Submitted",
         "url": "https://api.openreview.net/notes?content.venue=Submitted%20to%20ICLR%202023&details=replyCount&offset=0&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2023",
+        "name": "ICLR2023-Submitted",
         "url": "https://api.openreview.net/notes?content.venue=Submitted%20to%20ICLR%202023&details=replyCount&offset=1000&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "ICLR2023",
+        "name": "ICLR2023-Submitted",
         "url": "https://api.openreview.net/notes?content.venue=Submitted%20to%20ICLR%202023&details=replyCount&offset=2000&limit=1000&invitation=ICLR.cc%2F2023%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2021",
+        "name": "NIPS2021-Oral",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202021%20Oral&details=replyCount&offset=0&limit=1000&invitation=NeurIPS.cc%2F2021%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2021",
+        "name": "NIPS2021-Poster",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202021%20Poster&details=replyCount&offset=0&limit=1000&invitation=NeurIPS.cc%2F2021%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2021",
+        "name": "NIPS2021-Poster",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202021%20Poster&details=replyCount&offset=1000&limit=1000&invitation=NeurIPS.cc%2F2021%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2021",
+        "name": "NIPS2021-Poster",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202021%20Poster&details=replyCount&offset=2000&limit=1000&invitation=NeurIPS.cc%2F2021%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2021",
+        "name": "NIPS2021-Spotlight",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202021%20Spotlight&details=replyCount&offset=0&limit=1000&invitation=NeurIPS.cc%2F2021%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2021",
+        "name": "NIPS2021-Submitted",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202021%20Submitted&details=replyCount&offset=0&limit=1000&invitation=NeurIPS.cc%2F2021%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2022",
+        "name": "NIPS2022-Accept",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202022%20Accept&details=replyCount&offset=0&limit=1000&invitation=NeurIPS.cc%2F2022%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2022",
+        "name": "NIPS2022-Accept",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202022%20Accept&details=replyCount&offset=1000&limit=1000&invitation=NeurIPS.cc%2F2022%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2022",
+        "name": "NIPS2022-Accept",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202022%20Accept&details=replyCount&offset=2000&limit=1000&invitation=NeurIPS.cc%2F2022%2FConference%2F-%2FBlind_Submission"
     },
     {
-        "name": "NIPS2022",
+        "name": "NIPS2022-Submitted",
         "url": "https://api.openreview.net/notes?content.venue=NeurIPS%202022%20Submitted&details=replyCount&offset=0&limit=1000&invitation=NeurIPS.cc%2F2022%2FConference%2F-%2FBlind_Submission"
     }
 ]
