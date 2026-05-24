@@ -198,5 +198,15 @@
         "name": "EACL2023",
         "tag": "^2023.findings*",
         "url": "https://aclanthology.org/volumes/2023.findings-eacl/"
+    },
+    {
+        "name": "EACL2026",
+        "tag": "^2026.eacl*",
+        "url": "https://aclanthology.org/events/eacl-2026/"
+    },
+    {
+        "name": "EACL2026",
+        "tag": "^2026.findings*",
+        "url": "https://aclanthology.org/volumes/2026.findings-eacl/"
     }
 ]
