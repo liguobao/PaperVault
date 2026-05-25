@@ -8,7 +8,7 @@
 
 ## :jack_o_lantern: Motivation
 
-Fully-automated scripts for collecting AI-related papers, spanning Natural Language Processing (NLP), Computer Vision (CV), Machine Learning (ML), Data Mining (DM), Database (DB), Speech, systems, security, networking, and theoretical computer science.
+Fully-automated scripts for collecting AI-related papers, spanning natural language processing, computer vision, machine learning, data mining, database, speech, systems, security, networking, and theoretical computer science.
 
 ## 🚧 Project Status
 
@@ -17,14 +17,14 @@ Fully-automated scripts for collecting AI-related papers, spanning Natural Langu
 ### Current Phase
 - Expanding paper coverage from 2020 onward, especially high-quality **journals** (e.g., TIP, TPAMI, TKDE, TNNLS, TASLP, IJCV, etc.) and major **publishers** (e.g., IEEE, ACM, Springer, Elsevier).
 - Backfilling **abstracts** for existing papers via automated scripts and GitHub Actions to enhance searchability.
-- The database contains **94,000+** papers spanning 40+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
+- The database contains **94,000+** papers spanning 60+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
 
 ### Next Steps
 - Upgrade the frontend and backend stack for a better search experience and UI.
 - Redeploy and relaunch the web search service.
 
 ### Project History
-PaperVault is evolving it from a static paper list into a fully-featured, data-rich online academic search engine (see Acknowledgements below for project origin).
+PaperVault is evolving it from a static paper list into a fully-featured, data-rich online academic search engine.
 
 ## :open_book: Search Categories
 
@@ -63,16 +63,6 @@ PaperVault is evolving it from a static paper list into a fully-featured, data-r
 - **Journals**: AI
 
 <!-- confs-list-end -->
-
-
-
-## :books: How to add new conferences from DBLP
-
-### Automatically Updating via an issue-triggered workflow
-
-If anyone wants to add a new list of conferences. please raise an issue following the format of this one.
-We will check and label it, then the workflow will run automatically.
-[issue format](https://github.com/youngfish42/PaperVault/issues/10)
 
 
 ## :warning: Disclaimer
