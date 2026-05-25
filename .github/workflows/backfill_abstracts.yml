@@ -57,12 +57,22 @@ jobs:
             python scripts/fetch_abstracts.py --batch --top 1 --chunk-size 500
           fi
 
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [ -n "$(git diff --name-only)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Setup GIT user
         run: |
           git config --local user.name "youngfish42"
           git config --local user.email "youngfish42@users.noreply.github.com"
 
       - name: Create Pull Request
+        if: steps.check_changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
