@@ -35,7 +35,7 @@ def save_conf(filename: str, data: list):
     print(f"[+] Saved {path} ({len(data)} entries)")
 
 
-def _parse_name(name: str):
+def _parse_conf_name_year(name: str):
     m = NAME_PATTERN.match(name or "")
     if m is None:
         return None, None
@@ -43,20 +43,27 @@ def _parse_name(name: str):
 
 
 def _find_insert_index(merged: list, item: dict) -> int:
+    """Find a stable insertion index to keep related conferences grouped.
+
+    Priority:
+    1) Append after the last item with exactly the same `name`.
+    2) Otherwise, insert among same-prefix conference years in chronological order.
+    3) Fallback to appending at the end.
+    """
     name = item.get("name")
 
     for i in range(len(merged) - 1, -1, -1):
         if merged[i].get("name") == name:
             return i + 1
 
-    prefix, year = _parse_name(name)
+    prefix, year = _parse_conf_name_year(name)
     if prefix is None:
         return len(merged)
 
     insert_after = -1
     first_greater = None
     for i, conf in enumerate(merged):
-        conf_prefix, conf_year = _parse_name(conf.get("name"))
+        conf_prefix, conf_year = _parse_conf_name_year(conf.get("name"))
         if conf_prefix != prefix or conf_year is None:
             continue
         if conf_year <= year:

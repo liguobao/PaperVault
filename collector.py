@@ -320,7 +320,7 @@ def collect(cache_file=None, force=False):
         cache_conf = [name for name in cache_res.keys()]
 
     dblp_name_counter = Counter(conf["name"] for conf in dblp_conf if conf.get("name"))
-    multi_url_dblp_names = {
+    multi_volume_dblp_names = {
         name for name, count in dblp_name_counter.items() if count > 1
     }
 
@@ -356,10 +356,11 @@ def collect(cache_file=None, force=False):
     for conf in tqdm(dblp_conf, desc="[+] Collecting DBLP", dynamic_ncols=True):
         assert conf.get("name") and conf.get("url")
         url, name = conf["url"], conf["name"]
-        if name in cache_conf and name not in multi_url_dblp_names:
+        if name in cache_conf and name not in multi_volume_dblp_names:
             continue
         res = search_from_dblp(url, name, res)
 
+    # Keep freshly collected conferences and only backfill untouched cached ones.
     for conf_name, papers in cache_res.items():
         if conf_name not in res:
             res[conf_name] = papers
