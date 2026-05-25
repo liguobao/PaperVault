@@ -24,7 +24,7 @@ Fully-automated scripts for collecting AI-related papers.
 - Redeploy and relaunch the web search service.
 
 ### Project History
-PaperVault was originally forked from [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) and is now developed independently. We are evolving it from a static paper list into a fully-featured, data-rich online academic search engine.
+PaperVault is evolving it from a static paper list into a fully-featured, data-rich online academic search engine (see Acknowledgements below for project origin).
 
 ## :open_book: Search Categories
 
