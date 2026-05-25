@@ -15,7 +15,7 @@ Fully-automated scripts for collecting AI-related papers.
 > **This project is actively under construction.**
 
 ### Current Phase
-- Expanding the paper coverage, with a focus on high-quality **journals and publishers from 2020 onward** (e.g., TIP, TPAMI, TKDE, TNNLS, TASLP, IJCV, etc.).
+- Expanding paper coverage from 2020 onward, especially high-quality **journals** (e.g., TIP, TPAMI, TKDE, TNNLS, TASLP, IJCV, etc.) and major **publishers** (e.g., IEEE, ACM, Springer, Elsevier).
 - Backfilling **abstracts** for existing papers via automated scripts and GitHub Actions to enhance searchability.
 - The database currently contains **94,000+** papers spanning 40+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
 
