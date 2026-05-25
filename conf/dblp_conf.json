@@ -1498,5 +1498,21 @@
     {
         "name": "AAAI2026",
         "url": "https://dblp.org/db/conf/aaai/aaai2026.html"
+    },
+    {
+        "name": "IJCAI2024",
+        "url": "https://dblp.org/db/conf/ijcai/ijcai2024.html"
+    },
+    {
+        "name": "ECIR2024",
+        "url": "https://dblp.org/db/conf/ecir/ecir2024-2.html"
+    },
+    {
+        "name": "ECIR2024",
+        "url": "https://dblp.org/db/conf/ecir/ecir2024-3.html"
+    },
+    {
+        "name": "ECIR2024",
+        "url": "https://dblp.org/db/conf/ecir/ecir2024-4.html"
     }
 ]
