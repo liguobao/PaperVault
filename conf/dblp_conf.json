@@ -1400,8 +1400,16 @@
         "url": "https://dblp.org/db/conf/ndss/ndss2019.html"
     },
     {
+        "name": "NDSS2020",
+        "url": "https://dblp.org/db/conf/ndss/ndss2020.html"
+    },
+    {
         "name": "NDSS2021",
         "url": "https://dblp.org/db/conf/ndss/ndss2021.html"
+    },
+    {
+        "name": "NDSS2022",
+        "url": "https://dblp.org/db/conf/ndss/ndss2022.html"
     },
     {
         "name": "NDSS2023",
@@ -1416,8 +1424,16 @@
         "url": "https://dblp.org/db/conf/ndss/ndss2025.html"
     },
     {
+        "name": "NDSS2026",
+        "url": "https://dblp.org/db/conf/ndss/ndss2026.html"
+    },
+    {
         "name": "SP2019",
         "url": "https://dblp.org/db/conf/sp/sp2019.html"
+    },
+    {
+        "name": "SP2020",
+        "url": "https://dblp.org/db/conf/sp/sp2020.html"
     },
     {
         "name": "STOC2025",
@@ -1462,6 +1478,10 @@
     {
         "name": "MLJ2025",
         "url": "https://dblp.org/db/journals/ml/ml39.html"
+    },
+    {
+        "name": "TCAD2020",
+        "url": "https://dblp.org/db/journals/tcad/tcad39.html"
     },
     {
         "name": "TCAD2021",
@@ -1514,5 +1534,45 @@
     {
         "name": "AAAI2026",
         "url": "https://dblp.org/db/conf/aaai/aaai2026.html"
+    },
+    {
+        "name": "TOS2024",
+        "url": "https://dblp.org/db/journals/tos/tos19.html"
+    },
+    {
+        "name": "TOS2025",
+        "url": "https://dblp.org/db/journals/tos/tos20.html"
+    },
+    {
+        "name": "TOS2026",
+        "url": "https://dblp.org/db/journals/tos/tos21.html"
+    },
+    {
+        "name": "TPDS2020",
+        "url": "https://dblp.org/db/journals/tpds/tpds29.html"
+    },
+    {
+        "name": "TPDS2021",
+        "url": "https://dblp.org/db/journals/tpds/tpds30.html"
+    },
+    {
+        "name": "TPDS2022",
+        "url": "https://dblp.org/db/journals/tpds/tpds31.html"
+    },
+    {
+        "name": "TPDS2023",
+        "url": "https://dblp.org/db/journals/tpds/tpds32.html"
+    },
+    {
+        "name": "TPDS2024",
+        "url": "https://dblp.org/db/journals/tpds/tpds33.html"
+    },
+    {
+        "name": "TPDS2025",
+        "url": "https://dblp.org/db/journals/tpds/tpds34.html"
+    },
+    {
+        "name": "TPDS2026",
+        "url": "https://dblp.org/db/journals/tpds/tpds35.html"
     }
 ]
