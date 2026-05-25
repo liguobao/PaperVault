@@ -1490,5 +1490,13 @@
     {
         "name": "TC2025",
         "url": "https://dblp.org/db/journals/tc/tc74.html"
+    },
+    {
+        "name": "WWW2026",
+        "url": "https://dblp.org/db/conf/www/www2026.html"
+    },
+    {
+        "name": "AAAI2026",
+        "url": "https://dblp.org/db/conf/aaai/aaai2026.html"
     }
 ]

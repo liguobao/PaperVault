@@ -66,5 +66,13 @@
     {
         "name": "WACV2023",
         "url": "https://openaccess.thecvf.com/WACV2023?day=all"
+    },
+    {
+        "name": "CVPR2026",
+        "url": "https://openaccess.thecvf.com/CVPR2026?day=all"
+    },
+    {
+        "name": "WACV2026",
+        "url": "https://openaccess.thecvf.com/WACV2026?day=all"
     }
 ]
