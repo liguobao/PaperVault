@@ -840,6 +840,18 @@
         "url": "https://dblp.org/db/conf/ecir/ecir2024-1.html"
     },
     {
+        "name": "ECIR2024",
+        "url": "https://dblp.org/db/conf/ecir/ecir2024-2.html"
+    },
+    {
+        "name": "ECIR2024",
+        "url": "https://dblp.org/db/conf/ecir/ecir2024-3.html"
+    },
+    {
+        "name": "ECIR2024",
+        "url": "https://dblp.org/db/conf/ecir/ecir2024-4.html"
+    },
+    {
         "name": "ECIR2025",
         "url": "https://dblp.org/db/conf/ecir/ecir2025-1.html"
     },
@@ -1022,6 +1034,10 @@
     {
         "name": "IJCAI2023",
         "url": "https://dblp.org/db/conf/ijcai/ijcai2023.html"
+    },
+    {
+        "name": "IJCAI2024",
+        "url": "https://dblp.org/db/conf/ijcai/ijcai2024.html"
     },
     {
         "name": "IJCAI2025",

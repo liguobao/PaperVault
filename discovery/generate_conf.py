@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -16,6 +17,7 @@ from discovery import (
 )
 
 CONF_DIR = Path("conf")
+NAME_PATTERN = re.compile(r"^([A-Za-z]+)(\d+)$")
 
 
 def load_conf(filename: str) -> list:
@@ -33,13 +35,57 @@ def save_conf(filename: str, data: list):
     print(f"[+] Saved {path} ({len(data)} entries)")
 
 
+def _parse_conf_name_year(name: str):
+    m = NAME_PATTERN.match(name or "")
+    if m is None:
+        return None, None
+    return m.group(1), int(m.group(2))
+
+
+def _find_insert_index(merged: list, item: dict) -> int:
+    """Find a stable insertion index to keep related conferences grouped.
+
+    Priority:
+    1) Append after the last item with exactly the same `name`.
+    2) Otherwise, insert among same-prefix conference years in chronological order.
+    3) Fallback to appending at the end.
+    """
+    name = item.get("name")
+
+    for i in range(len(merged) - 1, -1, -1):
+        if merged[i].get("name") == name:
+            return i + 1
+
+    prefix, year = _parse_conf_name_year(name)
+    if prefix is None:
+        return len(merged)
+
+    insert_after = -1
+    first_greater = None
+    for i, conf in enumerate(merged):
+        conf_prefix, conf_year = _parse_conf_name_year(conf.get("name"))
+        if conf_prefix != prefix or conf_year is None:
+            continue
+        if conf_year <= year:
+            insert_after = i
+        elif first_greater is None:
+            first_greater = i
+
+    if insert_after >= 0:
+        return insert_after + 1
+    if first_greater is not None:
+        return first_greater
+    return len(merged)
+
+
 def merge_conf(existing: list, new: list, key: str = "url") -> list:
     """合并配置，以 url 为唯一键去重"""
     seen = {item[key] for item in existing if key in item}
     merged = list(existing)
     for item in new:
         if item.get(key) not in seen:
-            merged.append(item)
+            insert_index = _find_insert_index(merged, item)
+            merged.insert(insert_index, item)
             seen.add(item[key])
     return merged
 

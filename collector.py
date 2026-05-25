@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from collections import Counter
 import yaml
 import requests
 import time
@@ -318,6 +319,11 @@ def collect(cache_file=None, force=False):
         cache_res = load_cache(cache_file)
         cache_conf = [name for name in cache_res.keys()]
 
+    dblp_name_counter = Counter(conf["name"] for conf in dblp_conf if conf.get("name"))
+    multi_volume_dblp_names = {
+        name for name, count in dblp_name_counter.items() if count > 1
+    }
+
     for conf in tqdm(acl_conf, desc="[+] Collecting ACL", dynamic_ncols=True):
         assert conf.get("name") and conf.get("url") and conf.get("tag")
         url, tag, name = conf["url"], conf["tag"], conf["name"]
@@ -350,11 +356,14 @@ def collect(cache_file=None, force=False):
     for conf in tqdm(dblp_conf, desc="[+] Collecting DBLP", dynamic_ncols=True):
         assert conf.get("name") and conf.get("url")
         url, name = conf["url"], conf["name"]
-        if name in cache_conf:
+        if name in cache_conf and name not in multi_volume_dblp_names:
             continue
         res = search_from_dblp(url, name, res)
-     
-    res.update(cache_res)
+
+    # Keep freshly collected conferences and only backfill untouched cached ones.
+    for conf_name, papers in cache_res.items():
+        if conf_name not in res:
+            res[conf_name] = papers
 
     res = add_code_links(res)
 
