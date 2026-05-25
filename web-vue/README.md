@@ -9,7 +9,7 @@
 # AI-Paper-Search-web
 
 This project was developed using Vue3 + Vite4 + Typescript.
-If you want develop the front end page you should install Node.js enviroment. And then in the web folder run some commands.
+If you want develop the front end page you should install Node.js enviroment (>= 20.19.0). And then in the web folder run some commands.
 
 ## Project Setup
 
