@@ -10,6 +10,22 @@
 
 Fully-automated scripts for collecting AI-related papers.
 
+## 🚧 Project Status
+
+> **This project is actively under construction.**
+
+### Current Phase
+- Expanding the paper coverage, with a focus on high-quality **journals and publishers from 2020 onward** (e.g., TIP, TPAMI, TKDE, TNNLS, TASLP, IJCV, etc.).
+- Backfilling **abstracts** for existing papers via automated scripts and GitHub Actions to enhance searchability.
+- The database currently contains **94,000+** papers spanning 40+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
+
+### Next Steps
+- Upgrade the frontend and backend stack for a better search experience and UI.
+- Redeploy and relaunch the web search service.
+
+### Project History
+PaperVault was originally forked from [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) and is now developed independently. We are evolving it from a static paper list into a fully-featured, data-rich online academic search engine.
+
 ## :open_book: Search Categories
 
 <!-- confs-list-start -->
