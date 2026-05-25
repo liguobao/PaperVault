@@ -7,7 +7,7 @@
 
 ## :jack_o_lantern: 项目简介
 
-PaperVault 是一个用于收集和检索人工智能领域学术论文的全自动化工具，覆盖 NLP、CV、ML、DM、DB 和语音等多个方向的顶级学术会议。
+PaperVault 是一个用于收集和检索人工智能领域学术论文的全自动化工具，覆盖自然语言处理（NLP）、计算机视觉（CV）、机器学习（ML）、数据挖掘（DM）、数据库（DB）、语音以及系统、安全、网络、理论计算机科学等多个方向的顶级学术会议与期刊。
 
 ## 🚧 项目状态
 
@@ -29,20 +29,37 @@ PaperVault 由 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/A
 
 <!-- confs-list-start -->
 
-```text
-- [EMNLP 2019-2022] [ACL 2019-2023] [NAACL 2019-2022] [COLING 2020-2022] 
-- [ICASSP 2019-2022] [WWW 2019-2022] [ICLR 2019-2023] [ICML 2019-2022] 
-- [AAAI 2019-2022] [IJCAI 2019-2022] [CVPR 2019-2023] [ICCV 2019-2021] 
-- [MM 2019-2022] [KDD 2019-2022] [CIKM 2019-2022] [SIGIR 2019-2022] 
-- [WSDM 2019-2023] [ECIR 2019-2022] [ECCV 2020-2022] [COLT 2019-2022] 
-- [AISTATS 2019-2022] [INTERSPEECH 2019-2022] [ISWC 2019-2022] [JMLR 2019-2022] 
-- [VLDB 2019-2021] [ICME 2019-2022] [TIP 2020-2022] [TPAMI 2020-2022] 
-- [RECSYS 2019-2022] [TKDE 2020-2022] [TOIS 2020-2022] [ICDM 2019-2021] 
-- [TASLP 2020-2022] [BMVC 2019-2021] [MICCAI 2019-2022] [IJCV 2020-2022] 
-- [TNNLS 2020-2022] [FAST 2019-2023] [SIGMOD 2019-2022] [NIPS 2019-2022] 
-- [MLSYS 2020-2022] [WACV 2020-2022] 
-```
+> 当前数据库覆盖 **2019-2026** 年，共收录 **60+** 个顶级会议与期刊。
 
+### 自然语言处理 (NLP)
+- **会议**：ACL · EMNLP · NAACL · COLING · EACL
+- **期刊**：TASLP
+
+### 计算机视觉 (CV)
+- **会议**：CVPR · ICCV · ECCV · WACV · BMVC
+- **期刊**：TIP · TPAMI · IJCV
+
+### 机器学习 (ML)
+- **会议**：ICML · ICLR · NIPS · COLT · AISTATS
+- **期刊**：JMLR · MLJ · TNNLS
+
+### 数据挖掘与信息检索 (DM & IR)
+- **会议**：KDD · CIKM · SIGIR · WSDM · ECIR · RECSYS · ICDM
+- **期刊**：TKDE · TOIS
+
+### 数据库与系统 (DB & Systems)
+- **会议**：SIGMOD · VLDB · FAST · NSDI
+- **期刊**：TPDS · TC · TOS
+
+### 语音与多媒体 (Speech & Multimedia)
+- **会议**：ICASSP · INTERSPEECH · MM · ICME
+
+### 网络与安全 (Networking & Security)
+- **会议**：SIGCOMM · INFOCOM · MOBICOM · NDSS · SP
+
+### 跨领域与其他 (Interdisciplinary & Others)
+- **会议**：AAAI · IJCAI · WWW · ISWC · DAC · MICCAI · STOC
+- **期刊**：AI
 
 <!-- confs-list-end -->
 
@@ -58,16 +75,12 @@ PaperVault 由 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/A
 
 ## :warning: 免责声明
 
-由于本工具仍处于开发阶段，我们无法保证检索到的论文一定能满足您的需求，敬请谅解。此外，所有结果均来源于 [DBLP](https://dblp.org/)、[ACL](https://aclanthology.org/)、[NIPS](https://papers.nips.cc/)、[OpenReview](https://openreview.net/)，如果这侵犯了您的版权，您可以随时联系我们，我们将尽快删除，谢谢:)
+由于数据来源和检索机制的限制，我们无法保证检索到的论文一定能满足您的需求，敬请谅解。此外，所有结果均来源于 [DBLP](https://dblp.org/)、[ACL](https://aclanthology.org/)、[NIPS](https://papers.nips.cc/)、[OpenReview](https://openreview.net/)，如果这侵犯了您的版权，您可以随时联系我们，我们将尽快删除，谢谢:)
 
 
 ## :scroll: 致谢
 
-本项目 fork 自 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector)，现已作为 **PaperVault** 独立发展。
-
-我们衷心感谢 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) 的所有原作者与贡献者的杰出工作。原项目为数据采集架构、会议配置和 Web 界面设计提供了基础。
-
-本项目继续采用 [GNU General Public License v3.0](LICENSE) 许可，与原项目保持一致。如果您使用或分发本项目，请确保遵守 GPL v3 许可证的要求。
+本项目 fork 自 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector)，现已作为 **PaperVault** 独立发展。我们衷心感谢原项目所有作者与贡献者为本项目奠定的基础。本项目继续采用 [GNU General Public License v3.0](LICENSE) 许可。
 
 ---
 

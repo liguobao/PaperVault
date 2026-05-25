@@ -36,7 +36,7 @@ def get_one_line(confs):
 
 def update_readme():
     readme_path = "README.md"
-    with open(readme_path, "r") as f:
+    with open(readme_path, "r", encoding="utf-8") as f:
         src = f.read()
 
     confs_list = {}
@@ -64,7 +64,7 @@ def update_readme():
         confs_list_str += get_one_line(waiting_list) + "\n"
     confs_list_str += "```\n"
 
-    with open(readme_path, "w") as f:
+    with open(readme_path, "w", encoding="utf-8") as f:
         src = generate_new_readme(src, confs_list_str, COMMENT_CONFS_LIST_START, COMMENT_CONFS_LIST_END)
         f.write(src)
 

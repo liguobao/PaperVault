@@ -8,7 +8,7 @@
 
 ## :jack_o_lantern: Motivation
 
-Fully-automated scripts for collecting AI-related papers.
+Fully-automated scripts for collecting AI-related papers, spanning Natural Language Processing (NLP), Computer Vision (CV), Machine Learning (ML), Data Mining (DM), Database (DB), Speech, systems, security, networking, and theoretical computer science.
 
 ## 🚧 Project Status
 
@@ -30,20 +30,37 @@ PaperVault is evolving it from a static paper list into a fully-featured, data-r
 
 <!-- confs-list-start -->
 
-```text
-- [EMNLP 2019-2022] [ACL 2019-2023] [NAACL 2019-2022] [COLING 2020-2022] 
-- [ICASSP 2019-2022] [WWW 2019-2022] [ICLR 2019-2023] [ICML 2019-2022] 
-- [AAAI 2019-2022] [IJCAI 2019-2022] [CVPR 2019-2023] [ICCV 2019-2021] 
-- [MM 2019-2022] [KDD 2019-2022] [CIKM 2019-2022] [SIGIR 2019-2022] 
-- [WSDM 2019-2023] [ECIR 2019-2022] [ECCV 2020-2022] [COLT 2019-2022] 
-- [AISTATS 2019-2022] [INTERSPEECH 2019-2022] [ISWC 2019-2022] [JMLR 2019-2022] 
-- [VLDB 2019-2021] [ICME 2019-2022] [TIP 2020-2022] [TPAMI 2020-2022] 
-- [RECSYS 2019-2022] [TKDE 2020-2022] [TOIS 2020-2022] [ICDM 2019-2021] 
-- [TASLP 2020-2022] [BMVC 2019-2021] [MICCAI 2019-2022] [IJCV 2020-2022] 
-- [TNNLS 2020-2022] [FAST 2019-2023] [SIGMOD 2019-2022] [NIPS 2019-2022] 
-- [MLSYS 2020-2022] [WACV 2020-2022] 
-```
+> Current database covers **2019-2026**, with **60+** top-tier conferences and journals.
 
+### Natural Language Processing (NLP)
+- **Conferences**: ACL · EMNLP · NAACL · COLING · EACL
+- **Journals**: TASLP
+
+### Computer Vision (CV)
+- **Conferences**: CVPR · ICCV · ECCV · WACV · BMVC
+- **Journals**: TIP · TPAMI · IJCV
+
+### Machine Learning (ML)
+- **Conferences**: ICML · ICLR · NIPS · COLT · AISTATS
+- **Journals**: JMLR · MLJ · TNNLS
+
+### Data Mining & Information Retrieval (DM & IR)
+- **Conferences**: KDD · CIKM · SIGIR · WSDM · ECIR · RECSYS · ICDM
+- **Journals**: TKDE · TOIS
+
+### Database & Systems (DB & Systems)
+- **Conferences**: SIGMOD · VLDB · FAST · NSDI
+- **Journals**: TPDS · TC · TOS
+
+### Speech & Multimedia
+- **Conferences**: ICASSP · INTERSPEECH · MM · ICME
+
+### Networking & Security
+- **Conferences**: SIGCOMM · INFOCOM · MOBICOM · NDSS · SP
+
+### Interdisciplinary & Others
+- **Conferences**: AAAI · IJCAI · WWW · ISWC · DAC · MICCAI · STOC
+- **Journals**: AI
 
 <!-- confs-list-end -->
 
@@ -60,16 +77,12 @@ We will check and label it, then the workflow will run automatically.
 
 ## :warning: Disclaimer
 
-Since the tool is in the development stage, we can not guarantee that the papers found will meet your needs. I hope for your understanding. In addition, all the results come from [DBLP](https://dblp.org/), [ACL](https://aclanthology.org/), [NIPS](https://papers.nips.cc/), [OpenReview](https://openreview.net/), if this violates your copyright, you can contact us at any time, we will delete it as soon as possible, thank you:)
+Due to limitations in data sources and retrieval mechanisms, we can not guarantee that the papers found will meet your needs. In addition, all the results come from [DBLP](https://dblp.org/), [ACL](https://aclanthology.org/), [NIPS](https://papers.nips.cc/), [OpenReview](https://openreview.net/), if this violates your copyright, you can contact us at any time, we will delete it as soon as possible, thank you:)
 
 
 ## :scroll: Acknowledgements
 
-This project is forked from [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) and is now developed independently as **PaperVault**.
-
-We sincerely thank all the original authors and contributors of [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) for their excellent work. The original project provided the foundation for the collection architecture, conference configurations, and web interface design.
-
-This project continues to be licensed under the [GNU General Public License v3.0](LICENSE), consistent with the original project. If you use or distribute this project, please ensure compliance with the GPL v3 license requirements.
+This project is forked from [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) and is now developed independently as **PaperVault**. We sincerely thank the original authors and contributors for laying the foundation. This project continues under the [GNU General Public License v3.0](LICENSE).
 
 ---
 
