@@ -23,7 +23,7 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 - 重新部署并上线 Web 搜索服务，支持更高效的论文检索与浏览。
 
 ### 项目历程
-PaperVault 最初 fork 自 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector)，现已作为独立项目持续发展。我们正在将其从一个静态论文清单工具，逐步建设为一个功能完善、数据丰富的在线学术搜索引擎。
+PaperVault 由 [MLNLP-World/AI-Paper-Collector](https://github.com/MLNLP-World/AI-Paper-Collector) 演进而来（fork 来源详见下方致谢），正在将其从一个静态论文清单工具逐步建设为一个功能完善、数据丰富的在线学术搜索引擎。
 
 ## :open_book: 收录会议范围
 
