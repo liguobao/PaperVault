@@ -791,7 +791,7 @@ def run(
         elapsed = time.time() - start_ts
         if attempted > 0:
             print(f"[*] Conf {conf} summary: Success={success}, Failed={failed}, Time={elapsed:.0f}s")
-            update_conf_progress_md(conf, attempted, success, failed, elapsed)
+            update_conf_progress_md(conf, len(conf_papers), success, failed, elapsed)
 
 
 if __name__ == "__main__":
