@@ -169,7 +169,10 @@ const toggleDark = useToggle(isDark)
 
 <template>
   <main class="full pos-relative">
-    <el-row justify="center" :class="['mb-15 pos-absolute', firstEntry ? 'first-entry' : 'normal']">
+    <el-row
+      justify="center"
+      :class="['mb-15 pos-absolute', firstEntry ? 'first-entry' : 'normal']"
+    >
       <el-col class="gutter-20" :xs="24" :sm="16" :md="14" :lg="10" :xl="8">
         <h1 class="title mb-15"><a href="/">AI-Paper-Search</a></h1>
         <!-- Search Bar -->
