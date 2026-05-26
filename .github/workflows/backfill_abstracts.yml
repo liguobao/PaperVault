@@ -71,10 +71,10 @@ jobs:
               if git cat-file -e "origin/${{ env.AUTO_BACKFILL_BRANCH }}:$file" 2>/dev/null; then
                 git checkout "origin/${{ env.AUTO_BACKFILL_BRANCH }}" -- "$file"
               else
-                echo "Skip missing tracked file from ${AUTO_BACKFILL_BRANCH}: $file"
+                echo "Skip missing tracked file from ${{ env.AUTO_BACKFILL_BRANCH }}: $file"
               fi
             done
-            echo "Restored latest auto backfill state from ${AUTO_BACKFILL_BRANCH}."
+            echo "Restored latest auto backfill state from ${{ env.AUTO_BACKFILL_BRANCH }}."
           else
             echo "No existing auto backfill branch found; starting from main."
           fi
