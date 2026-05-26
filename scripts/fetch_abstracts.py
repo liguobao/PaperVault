@@ -89,10 +89,11 @@ def _get_conf_tier(conf: str) -> int:
     """获取会议/期刊的优先级 tier（1-4），数值越小越优先。"""
     prefix = re.sub(r"\d{4}$", "", conf).upper()
     # 优先返回最长匹配项，避免短前缀误匹配
-    matches = {k: v for k, v in CONF_PRIORITY.items() if prefix.startswith(k)}
+    matches = [k for k in CONF_PRIORITY if prefix.startswith(k)]
     if not matches:
         return 4
-    return min(matches.values())
+    best = max(matches, key=len)
+    return CONF_PRIORITY[best]
 
 
 def _create_session() -> requests.Session:
@@ -496,7 +497,7 @@ def list_pending_confs(papers: List[dict]) -> List[Tuple[str, dict]]:
 
     排序规则（优先级从高到低）：
         1. Tier 越小越优先（顶级会议 > 重要会议 > 期刊 > 其他）
-        2. DOI empty 数量越多越优先（API 获取成功率高）
+        2. DOI empty 比例越高越优先（API 获取成功率高）
         3. Empty 总数越多越优先（ROI 高）
     """
     conf_stats: Dict[str, dict] = {}
@@ -520,7 +521,11 @@ def list_pending_confs(papers: List[dict]) -> List[Tuple[str, dict]]:
     empty_confs = {k: v for k, v in conf_stats.items() if v["empty"] > 0}
     return sorted(
         empty_confs.items(),
-        key=lambda x: (_get_conf_tier(x[0]), -x[1]["doi_empty"], -x[1]["empty"]),
+        key=lambda x: (
+            _get_conf_tier(x[0]),
+            -(x[1]["doi_empty"] / x[1]["empty"]),
+            -x[1]["empty"],
+        ),
     )
 
 
@@ -781,11 +786,12 @@ def run(
         success, failed = _process_targets(
             conf_papers, all_papers, chunk_size, retry_failed, retry_partial, query_doi_by_title
         )
-        processed_total += len(conf_papers)
+        attempted = success + failed
+        processed_total += attempted
         elapsed = time.time() - start_ts
-        if success > 0 or failed > 0:
+        if attempted > 0:
             print(f"[*] Conf {conf} summary: Success={success}, Failed={failed}, Time={elapsed:.0f}s")
-            update_conf_progress_md(conf, len(conf_papers), success, failed, elapsed)
+            update_conf_progress_md(conf, attempted, success, failed, elapsed)
 
 
 if __name__ == "__main__":
