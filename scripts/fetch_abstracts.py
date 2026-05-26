@@ -63,6 +63,37 @@ CORE_CONFS = {
     "AAAI", "IJCAI", "KDD", "SIGIR", "WWW", "MM",
 }
 
+# ---------- 会议/期刊优先度分解（Tier） ----------
+# 数值越小优先级越高。用于 list_pending_confs / batch 模式排序。
+# 匹配规则：去掉年份后的 conf prefix，取最长匹配项。
+CONF_PRIORITY: Dict[str, int] = {
+    # Tier 1 — 顶级会议 (ML三大 + CV三大 + NLP三大)
+    "NIPS": 1, "ICML": 1, "ICLR": 1,
+    "CVPR": 1, "ICCV": 1, "ECCV": 1,
+    "ACL": 1, "EMNLP": 1, "NAACL": 1, "COLING": 1,
+    # Tier 2 — 重要会议
+    "AAAI": 2, "IJCAI": 2,
+    "KDD": 2, "SIGIR": 2, "WWW": 2, "WSDM": 2, "CIKM": 2,
+    "MM": 2, "ICASSP": 2, "INTERSPEECH": 2, "MICCAI": 2,
+    "BMVC": 2, "AISTATS": 2, "COLT": 2,
+    "VLDB": 2, "SIGMOD": 2, "ICDE": 2, "ICDM": 2,
+    # Tier 3 — 期刊 (Journal)
+    "TPAMI": 3, "TNNLS": 3, "TIP": 3, "TKDE": 3, "TASLP": 3,
+    "TOIS": 3, "IJCV": 3, "JMLR": 3, "TMM": 3, "TCYB": 3,
+    "TCSVT": 3, "TIST": 3, "TKDD": 3, "TWEB": 3,
+    # Tier 4 — 其他 (默认)
+}
+
+
+def _get_conf_tier(conf: str) -> int:
+    """获取会议/期刊的优先级 tier（1-4），数值越小越优先。"""
+    prefix = re.sub(r"\d{4}$", "", conf).upper()
+    # 优先返回最长匹配项，避免短前缀误匹配
+    matches = {k: v for k, v in CONF_PRIORITY.items() if prefix.startswith(k)}
+    if not matches:
+        return 4
+    return min(matches.values())
+
 
 def _create_session() -> requests.Session:
     session = requests.Session()
@@ -461,7 +492,13 @@ def preflight_check(papers: List[dict]):
 
 # ---------- Conf 粒度辅助函数 ----------
 def list_pending_confs(papers: List[dict]) -> List[Tuple[str, dict]]:
-    """扫描所有论文，返回按优先级排序的待处理 conf 列表（DOI 比例高的优先）。"""
+    """扫描所有论文，返回按优先级排序的待处理 conf 列表。
+
+    排序规则（优先级从高到低）：
+        1. Tier 越小越优先（顶级会议 > 重要会议 > 期刊 > 其他）
+        2. DOI empty 数量越多越优先（API 获取成功率高）
+        3. Empty 总数越多越优先（ROI 高）
+    """
     conf_stats: Dict[str, dict] = {}
     for p in papers:
         conf = p.get("conf", "UNKNOWN")
@@ -481,7 +518,10 @@ def list_pending_confs(papers: List[dict]) -> List[Tuple[str, dict]]:
                 conf_stats[conf]["doi_empty"] += 1
 
     empty_confs = {k: v for k, v in conf_stats.items() if v["empty"] > 0}
-    return sorted(empty_confs.items(), key=lambda x: (x[1]["doi_empty"], x[1]["empty"]), reverse=True)
+    return sorted(
+        empty_confs.items(),
+        key=lambda x: (_get_conf_tier(x[0]), -x[1]["doi_empty"], -x[1]["empty"]),
+    )
 
 
 def update_conf_progress_md(conf: str, total: int, success: int, failed: int, elapsed_sec: float):
@@ -650,8 +690,9 @@ def run(
     list_mode: bool = False,
     batch: bool = False,
     top_n: Optional[int] = None,
+    max_papers: Optional[int] = None,
 ) -> None:
-    print(f"[*] Phase: {phase}, conf: {target_conf or 'all'}, chunk_size: {chunk_size}")
+    print(f"[*] Phase: {phase}, conf: {target_conf or 'all'}, chunk_size: {chunk_size}, max_papers: {max_papers or 'unlimited'}")
     if query_doi_by_title:
         print("[*] DOI query by title: ENABLED (slower, use with caution)")
 
@@ -674,14 +715,15 @@ def run(
     # --- list_mode: 只输出待处理 conf 列表 ---
     if list_mode:
         pending = list_pending_confs(all_papers)
-        print("\n[*] Pending conferences (sorted by priority, DOI-first):")
-        hdr = "{:<6} {:<20} {:>6} {:>6} {:>6} {:>8}".format("Rank", "Conf", "Total", "Empty", "DOI_E", "Pct")
+        print("\n[*] Pending conferences (sorted by priority, Tier > DOI-first):")
+        hdr = "{:<6} {:<6} {:<20} {:>6} {:>6} {:>6} {:>8}".format("Rank", "Tier", "Conf", "Total", "Empty", "DOI_E", "Pct")
         print(hdr)
-        print("-" * 60)
+        print("-" * 66)
         for i, (conf, s) in enumerate(pending, 1):
             pct = s["doi_empty"] / s["empty"] * 100 if s["empty"] > 0 else 0
-            print("{:<6} {:<20} {:>6} {:>6} {:>6} {:>7.0f}%".format(
-                i, conf, s["total"], s["empty"], s["doi_empty"], pct
+            tier = _get_conf_tier(conf)
+            print("{:<6} {:<6} {:<20} {:>6} {:>6} {:>6} {:>7.0f}%".format(
+                i, f"T{tier}", conf, s["total"], s["empty"], s["doi_empty"], pct
             ))
         print(f"\n[*] Total: {len(pending)} conferences, {sum(s['empty'] for _, s in pending)} papers")
         return
@@ -705,7 +747,11 @@ def run(
     else:
         # phase 模式（原有逻辑）
         targets = filter_papers_by_phase(empty_papers, phase)
-        print(f"[*] Targets after phase filter: {len(targets)}")
+        if max_papers is not None:
+            targets = targets[:max_papers]
+            print(f"[*] Targets after phase filter & max_papers limit: {len(targets)}")
+        else:
+            print(f"[*] Targets after phase filter: {len(targets)}")
         if not targets:
             print("[!] No papers to process. Exiting.")
             return
@@ -713,10 +759,21 @@ def run(
         return
 
     # --- 逐个 conf 处理 ---
+    processed_total = 0
     for conf in target_confs:
         conf_papers = [p for p in empty_papers if p.get("conf") == conf]
         if not conf_papers:
             continue
+        # 若指定了 max_papers，按全局剩余额度截断
+        if max_papers is not None:
+            remaining = max_papers - processed_total
+            if remaining <= 0:
+                print(f"[*] Max papers limit ({max_papers}) reached. Stopping.")
+                break
+            if len(conf_papers) > remaining:
+                conf_papers = conf_papers[:remaining]
+                print(f"[*] Truncated to {remaining} papers due to max_papers limit")
+
         print(f"\n{'='*60}")
         print(f"[*] Processing conf: {conf} ({len(conf_papers)} papers)")
         print(f"{'='*60}")
@@ -724,6 +781,7 @@ def run(
         success, failed = _process_targets(
             conf_papers, all_papers, chunk_size, retry_failed, retry_partial, query_doi_by_title
         )
+        processed_total += len(conf_papers)
         elapsed = time.time() - start_ts
         if success > 0 or failed > 0:
             print(f"[*] Conf {conf} summary: Success={success}, Failed={failed}, Time={elapsed:.0f}s")
@@ -748,6 +806,8 @@ if __name__ == "__main__":
                         help="Batch process all pending conferences in priority order")
     parser.add_argument("--top", type=int, default=None, dest="top_n",
                         help="With --batch, only process top N conferences")
+    parser.add_argument("--max-papers", "-n", type=int, default=None, dest="max_papers",
+                        help="Maximum number of papers to process in this run (global limit)")
     args = parser.parse_args()
     run(
         phase=args.phase,
@@ -759,4 +819,5 @@ if __name__ == "__main__":
         list_mode=args.list_mode,
         batch=args.batch,
         top_n=args.top_n,
+        max_papers=args.max_papers,
     )
