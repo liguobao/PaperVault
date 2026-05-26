@@ -3,6 +3,7 @@ name: Backfill Abstracts
 env:
   PYTHON_VERSION: "3.10"
   AUTO_BACKFILL_BRANCH: "auto-backfill-abstracts"
+  AUTO_BACKFILL_FILES: "cache/cache.jsonl cache/abstract_backfill_progress.json docs/abstract_backfill_progress.md"
 
 on:
   schedule:
@@ -52,16 +53,33 @@ jobs:
 
       - name: Restore in-progress auto backfill state
         run: |
+          write_hashes() {
+            local output_file="$1"
+            : > "$output_file"
+            for file in ${{ env.AUTO_BACKFILL_FILES }}; do
+              if [ -f "$file" ]; then
+                sha256sum "$file" >> "$output_file"
+              else
+                printf 'missing  %s\n' "$file" >> "$output_file"
+              fi
+            done
+          }
+
           if git ls-remote --exit-code --heads origin "${{ env.AUTO_BACKFILL_BRANCH }}" >/dev/null 2>&1; then
             git fetch --no-tags origin "${{ env.AUTO_BACKFILL_BRANCH }}"
-            git checkout "origin/${{ env.AUTO_BACKFILL_BRANCH }}" -- \
-              cache/cache.jsonl \
-              cache/abstract_backfill_progress.json \
-              docs/abstract_backfill_progress.md
+            for file in ${{ env.AUTO_BACKFILL_FILES }}; do
+              if git cat-file -e "origin/${{ env.AUTO_BACKFILL_BRANCH }}:$file" 2>/dev/null; then
+                git checkout "origin/${{ env.AUTO_BACKFILL_BRANCH }}" -- "$file"
+              else
+                echo "Skip missing tracked file from ${AUTO_BACKFILL_BRANCH}: $file"
+              fi
+            done
             echo "Restored latest auto backfill state from ${AUTO_BACKFILL_BRANCH}."
           else
             echo "No existing auto backfill branch found; starting from main."
           fi
+
+          write_hashes "$RUNNER_TEMP/backfill_baseline.sha256"
 
       - name: Run abstract backfill
         run: |
@@ -74,16 +92,17 @@ jobs:
       - name: Check for changes
         id: check_changes
         run: |
-          if git ls-remote --exit-code --heads origin "${{ env.AUTO_BACKFILL_BRANCH }}" >/dev/null 2>&1; then
-            git fetch --no-tags origin "${{ env.AUTO_BACKFILL_BRANCH }}"
-            DIFF_TARGET="origin/${{ env.AUTO_BACKFILL_BRANCH }}"
-          else
-            DIFF_TARGET="HEAD"
-          fi
+          : > "$RUNNER_TEMP/backfill_current.sha256"
+          for file in ${{ env.AUTO_BACKFILL_FILES }}; do
+            if [ -f "$file" ]; then
+              sha256sum "$file" >> "$RUNNER_TEMP/backfill_current.sha256"
+            else
+              printf 'missing  %s\n' "$file" >> "$RUNNER_TEMP/backfill_current.sha256"
+            fi
+          done
 
-          if [ -n "$(git diff --name-only "$DIFF_TARGET")" ]; then
+          if ! cmp --silent "$RUNNER_TEMP/backfill_baseline.sha256" "$RUNNER_TEMP/backfill_current.sha256"; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "diff_target=$DIFF_TARGET" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
