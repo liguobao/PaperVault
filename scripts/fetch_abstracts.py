@@ -523,7 +523,7 @@ def list_pending_confs(papers: List[dict]) -> List[Tuple[str, dict]]:
         empty_confs.items(),
         key=lambda x: (
             _get_conf_tier(x[0]),
-            -(x[1]["doi_empty"] / x[1]["empty"]),
+            -(x[1]["doi_empty"] / x[1]["empty"] if x[1]["empty"] > 0 else 0),
             -x[1]["empty"],
         ),
     )
