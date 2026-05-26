@@ -88,6 +88,10 @@ python scripts/fetch_abstracts.py --batch --top 5 --chunk-size 500
 python scripts/fetch_abstracts.py --batch --chunk-size 500
 ```
 
+对于仓库里的 `backfill_abstracts` 自动工作流，默认每轮只处理 `--top 1`，并且会先恢复
+`auto-backfill-abstracts` 分支上的最新进度文件与 cache，再继续选择**新的**最高优先级 conf，
+避免在 PR 未合并时反复从 `main` 重新处理同一批会议/期刊。
+
 #### 方式 4：按 Phase 处理（全局模式，仍保留）
 
 如需一次性处理大量论文，仍可使用原有的 Phase 模式：
