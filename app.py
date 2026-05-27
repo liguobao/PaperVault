@@ -1,13 +1,11 @@
 from flask import Flask, render_template, request, make_response, jsonify
-from flask_bootstrap import Bootstrap
 import os
 import pytz
 import datetime
 import json
 import re
 import time
-import asyncio
-import openai
+from openai import OpenAI
 from collector import load_cache
 from EdgeGPT import Chatbot as ChatbotEdge
 from revChatGPT.Official import Chatbot as ChatbotOfficial
@@ -19,7 +17,6 @@ app = Flask(__name__, static_folder='static', static_url_path="")
 
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["CACHE_TYPE"] = "null"
-app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -189,10 +186,12 @@ def get_guess_you_like_api():
 def askChatGPTAPI(query):
     engine = "gpt-3.5-turbo"
     temperature = 0.5
-    openai.api_key = os.environ.get("OPENAI_API_KEY")
-    openai.api_base = os.environ.get("OPENAI_API_BASE")
+    client = OpenAI(
+        api_key=os.environ.get("OPENAI_API_KEY"),
+        base_url=os.environ.get("OPENAI_API_BASE"),
+    )
     prompt = f'Please just return the top-10 related keywords of papers on "{query}" in JSON format with the key named "keywords". The output must start with "```json" and end with "```".'
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model=engine,
         messages=[
             {"role": "system", "content": "You are a helpful assistant for search suggestion of paper in the field of artificial intelligence"},
@@ -200,7 +199,7 @@ def askChatGPTAPI(query):
         ],
         temperature=temperature
     )
-    response = response['choices'][0]['message']['content']
+    response = response.choices[0].message.content
     keywords = re.search("```json(.*)```", response, flags=re.DOTALL).group(1)
     keywords = json.loads(keywords)
     return keywords
