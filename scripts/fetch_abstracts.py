@@ -613,8 +613,11 @@ def _process_targets(
     retry_failed: bool,
     retry_partial: bool,
     query_doi_by_title: bool,
-) -> Tuple[int, int]:
-    """处理一组目标论文，返回 (success_count, failed_count)。"""
+    start_time: float = None,
+    soft_timeout: float = None,
+    max_failed_attempts: int = 3,
+) -> Tuple[int, int, bool]:
+    """处理一组目标论文，返回 (success_count, failed_count, timed_out)。"""
     progress = load_progress()
     if not retry_failed and not retry_partial:
         targets = [p for p in targets if p.get("paper_url") not in progress]
@@ -627,13 +630,16 @@ def _process_targets(
         targets = [p for p in targets if p.get("paper_url") in partial_urls]
         print(f"[*] Retry partial mode: {len(targets)} papers need retry")
     else:
-        failed_urls = {url for url, meta in progress.items() if meta.get("status") == "failed"}
+        failed_urls = {
+            url for url, meta in progress.items()
+            if meta.get("status") == "failed" and meta.get("attempts", 0) < max_failed_attempts
+        }
         targets = [p for p in targets if p.get("paper_url") in failed_urls]
-        print(f"[*] Retry failed mode: {len(targets)} failed papers to retry")
+        print(f"[*] Retry failed mode: {len(targets)} failed papers to retry (max_attempts={max_failed_attempts})")
 
     if not targets:
         print("[!] All target papers already processed. Exiting.")
-        return 0, 0
+        return 0, 0, False
 
     last_time = {"crossref": 0.0, "semanticscholar": 0.0, "arxiv": 0.0, "openalex": 0.0}
     success = 0
@@ -641,6 +647,18 @@ def _process_targets(
     chunk_success = 0
 
     for i, paper in enumerate(targets, 1):
+        # 软超时检查：达到时限后保存当前进度并优雅退出
+        if soft_timeout and start_time is not None and (time.time() - start_time) >= soft_timeout:
+            print(f"[!] Soft timeout ({soft_timeout}s) reached at paper {i}/{len(targets)}. Saving progress and exiting.")
+            save_progress(progress)
+            tmp_file = CACHE_FILE.with_suffix(".jsonl.tmp")
+            with open(tmp_file, "w", encoding="utf-8") as f:
+                for p in all_papers:
+                    f.write(json.dumps(p, ensure_ascii=False) + "\n")
+            os.replace(str(tmp_file), str(CACHE_FILE))
+            print(f"[*] Graceful exit. Total success: {success}, failed: {failed}")
+            return success, failed, True
+
         title = (paper.get("paper_name") or "").strip()
         url = paper.get("paper_url", "")
         print(f"[{i}/{len(targets)}] {title[:60]}...")
@@ -682,7 +700,7 @@ def _process_targets(
             chunk_success = 0
 
     print(f"[*] Done. Success: {success}, Failed: {failed}")
-    return success, failed
+    return success, failed, False
 
 
 def run(
@@ -696,10 +714,16 @@ def run(
     batch: bool = False,
     top_n: Optional[int] = None,
     max_papers: Optional[int] = None,
+    soft_timeout: float = None,
+    max_failed_attempts: int = 3,
 ) -> None:
+    global_start = time.time()
     print(f"[*] Phase: {phase}, conf: {target_conf or 'all'}, chunk_size: {chunk_size}, max_papers: {max_papers or 'unlimited'}")
     if query_doi_by_title:
         print("[*] DOI query by title: ENABLED (slower, use with caution)")
+    if soft_timeout:
+        print(f"[*] Soft timeout: {soft_timeout}s ({soft_timeout/3600:.1f}h)")
+    print(f"[*] Max failed attempts before permanently skipping: {max_failed_attempts}")
 
     # 1. 读取所有论文
     all_papers = []
@@ -716,6 +740,29 @@ def run(
 
     empty_papers = [p for p in all_papers if not (p.get("paper_abstract") or "").strip()]
     print(f"[*] Papers with empty abstract: {len(empty_papers)}")
+
+    # batch 模式下预先过滤掉已成功或已永久失败的论文，避免反复选中
+    if batch:
+        progress = load_progress()
+        cache_has_abs = {
+            p.get("paper_url", ""): (p.get("paper_abstract") or "").strip()
+            for p in all_papers
+        }
+        skip_urls = set()
+        for url, meta in progress.items():
+            if meta.get("status") == "success" and cache_has_abs.get(url, ""):
+                skip_urls.add(url)
+            elif (
+                not retry_partial
+                and meta.get("status") == "failed"
+                and meta.get("attempts", 0) >= max_failed_attempts
+            ):
+                skip_urls.add(url)
+        if skip_urls:
+            before = len(empty_papers)
+            empty_papers = [p for p in empty_papers if p.get("paper_url") not in skip_urls]
+            print(f"[*] Filtered {before - len(empty_papers)} already-success/permanently-failed papers from batch queue")
+            print(f"[*] Papers with empty abstract after filtering: {len(empty_papers)}")
 
     # --- list_mode: 只输出待处理 conf 列表 ---
     if list_mode:
@@ -760,12 +807,27 @@ def run(
         if not targets:
             print("[!] No papers to process. Exiting.")
             return
-        _process_targets(targets, all_papers, chunk_size, retry_failed, retry_partial, query_doi_by_title)
+        _process_targets(
+            targets,
+            all_papers,
+            chunk_size,
+            retry_failed,
+            retry_partial,
+            query_doi_by_title,
+            start_time=global_start,
+            soft_timeout=soft_timeout,
+            max_failed_attempts=max_failed_attempts,
+        )
         return
 
     # --- 逐个 conf 处理 ---
     processed_total = 0
     for conf in target_confs:
+        # 软超时检查
+        if soft_timeout and global_start is not None and (time.time() - global_start) >= soft_timeout:
+            print(f"[*] Soft timeout ({soft_timeout}s) reached. Stopping before conf: {conf}")
+            break
+
         conf_papers = [p for p in empty_papers if p.get("conf") == conf]
         if not conf_papers:
             continue
@@ -783,15 +845,20 @@ def run(
         print(f"[*] Processing conf: {conf} ({len(conf_papers)} papers)")
         print(f"{'='*60}")
         start_ts = time.time()
-        success, failed = _process_targets(
-            conf_papers, all_papers, chunk_size, retry_failed, retry_partial, query_doi_by_title
+        success, failed, timed_out = _process_targets(
+            conf_papers, all_papers, chunk_size, retry_failed, retry_partial, query_doi_by_title,
+            start_time=global_start, soft_timeout=soft_timeout, max_failed_attempts=max_failed_attempts
         )
         attempted = success + failed
         processed_total += attempted
         elapsed = time.time() - start_ts
         if attempted > 0:
             print(f"[*] Conf {conf} summary: Success={success}, Failed={failed}, Time={elapsed:.0f}s")
-            update_conf_progress_md(conf, len(conf_papers), success, failed, elapsed)
+            if not timed_out:
+                update_conf_progress_md(conf, len(conf_papers), success, failed, elapsed)
+            else:
+                print(f"[*] Conf {conf} interrupted by soft timeout; skip marking as completed.")
+                break
 
 
 if __name__ == "__main__":
@@ -814,6 +881,10 @@ if __name__ == "__main__":
                         help="With --batch, only process top N conferences")
     parser.add_argument("--max-papers", "-n", type=int, default=None, dest="max_papers",
                         help="Maximum number of papers to process in this run (global limit)")
+    parser.add_argument("--soft-timeout", type=float, default=None,
+                        help="Soft timeout in seconds. Save progress and exit gracefully when reached (e.g. 18000 for 5h)")
+    parser.add_argument("--max-failed-attempts", type=int, default=3,
+                        help="Max retry attempts for failed papers before permanently skipping them (default: 3)")
     args = parser.parse_args()
     run(
         phase=args.phase,
@@ -826,4 +897,6 @@ if __name__ == "__main__":
         batch=args.batch,
         top_n=args.top_n,
         max_papers=args.max_papers,
+        soft_timeout=args.soft_timeout,
+        max_failed_attempts=args.max_failed_attempts,
     )
