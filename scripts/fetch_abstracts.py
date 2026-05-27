@@ -648,7 +648,7 @@ def _process_targets(
 
     for i, paper in enumerate(targets, 1):
         # 软超时检查：达到时限后保存当前进度并优雅退出
-        if soft_timeout and start_time and (time.time() - start_time) >= soft_timeout:
+        if soft_timeout and start_time is not None and (time.time() - start_time) >= soft_timeout:
             print(f"[!] Soft timeout ({soft_timeout}s) reached at paper {i}/{len(targets)}. Saving progress and exiting.")
             save_progress(progress)
             tmp_file = CACHE_FILE.with_suffix(".jsonl.tmp")
@@ -824,7 +824,7 @@ def run(
     processed_total = 0
     for conf in target_confs:
         # 软超时检查
-        if soft_timeout and (time.time() - global_start) >= soft_timeout:
+        if soft_timeout and global_start is not None and (time.time() - global_start) >= soft_timeout:
             print(f"[*] Soft timeout ({soft_timeout}s) reached. Stopping before conf: {conf}")
             break
 
