@@ -152,7 +152,7 @@ defineExpose({
         <!-- Delete button -->
         <el-icon
           class="pos-absoulte delete pointer no-select"
-          @click="deleteResult(index)"
+          @click="deleteResult(Number(index))"
           ><CloseBold
         /></el-icon>
         <el-row class="mb-5">
