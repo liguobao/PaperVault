@@ -19,8 +19,10 @@ import os
 import random
 import re
 import sys
+import threading
 import time
 import difflib
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from urllib.parse import urlparse
 from typing import Dict, List, Optional, Set, Tuple
@@ -96,11 +98,15 @@ def _get_conf_tier(conf: str) -> int:
     return CONF_PRIORITY[best]
 
 
-def _create_session() -> requests.Session:
-    session = requests.Session()
-    session.trust_env = False
-    session.mount("https://", HTTPAdapter(max_retries=2))
-    return session
+_thread_local = threading.local()
+
+
+def _get_session() -> requests.Session:
+    if not hasattr(_thread_local, "session"):
+        _thread_local.session = requests.Session()
+        _thread_local.session.trust_env = False
+        _thread_local.session.mount("https://", HTTPAdapter(max_retries=2))
+    return _thread_local.session
 
 
 def _rate_limited_request(
@@ -113,9 +119,9 @@ def _rate_limited_request(
     wait = max(0.0, min_interval - (time.time() - last_time))
     if wait > 0:
         time.sleep(wait + random.uniform(0.0, 0.3))
-    with _create_session() as session:
-        req_headers = kwargs.pop("headers", HEADERS)
-        resp = session.get(url, timeout=timeout, headers=req_headers, **kwargs)
+    session = _get_session()
+    req_headers = kwargs.pop("headers", HEADERS)
+    resp = session.get(url, timeout=timeout, headers=req_headers, **kwargs)
     return resp, time.time()
 
 
@@ -263,7 +269,7 @@ def fetch_semantic_scholar_abstract(
 
 
 def fetch_arxiv_abstract(
-    title: str, last_time: float, min_interval: float = 3.0, max_retries: int = 3
+    title: str, last_time: float, min_interval: float = 1.5, max_retries: int = 3
 ) -> Tuple[Optional[str], Optional[str], float]:
     import xml.etree.ElementTree as ET
 
@@ -357,6 +363,61 @@ def fetch_openalex_abstract(
     return None, None, last_time
 
 
+def _fetch_doi_sources_concurrent(
+    doi: str, title: str, last_time: dict, sleep_sec: float = 1.5, max_retries: int = 3
+) -> Tuple[Optional[str], Optional[str], str, dict]:
+    """并发查询 Crossref、Semantic Scholar、OpenAlex，返回按优先级第一个成功且标题匹配的结果。"""
+    results: Dict[str, Tuple[Optional[str], Optional[str], float]] = {}
+
+    def query_crossref():
+        return fetch_crossref_abstract(doi, last_time["crossref"], min_interval=sleep_sec, max_retries=max_retries)
+
+    def query_semanticscholar():
+        return fetch_semantic_scholar_abstract(doi, last_time["semanticscholar"], min_interval=sleep_sec, max_retries=max_retries)
+
+    def query_openalex():
+        return fetch_openalex_abstract(doi, last_time["openalex"], min_interval=sleep_sec, max_retries=max_retries)
+
+    executor = ThreadPoolExecutor(max_workers=3)
+    futures = {
+        executor.submit(query_crossref): "crossref",
+        executor.submit(query_semanticscholar): "semanticscholar",
+        executor.submit(query_openalex): "openalex",
+    }
+    try:
+        for future in as_completed(futures):
+            source = futures[future]
+            try:
+                abstract, api_title, new_time = future.result()
+                results[source] = (abstract, api_title, new_time)
+                # 一旦某个源返回成功且标题匹配，立即取消其余任务并提前返回
+                if abstract and api_title and is_title_match(api_title, title):
+                    last_time[source] = new_time
+                    now = time.time()
+                    for pending_source in ("crossref", "semanticscholar", "openalex"):
+                        if pending_source != source and pending_source not in results:
+                            last_time[pending_source] = max(last_time.get(pending_source, 0.0), now)
+                    return abstract, api_title, source, last_time
+            except Exception:
+                pass
+    finally:
+        executor.shutdown(wait=False, cancel_futures=True)
+
+    # 按优先级检查，并同步更新 last_time
+    for source in ["crossref", "semanticscholar", "openalex"]:
+        if source not in results:
+            continue
+        abstract, api_title, new_time = results[source]
+        last_time[source] = new_time
+        if abstract and api_title and not is_title_match(api_title, title):
+            print(f"    [!] Title mismatch ({source}): api='{api_title[:80]}' vs local='{title[:80]}'")
+            continue
+        if abstract:
+            return abstract, api_title, source, last_time
+
+    return None, None, "", last_time
+
+
 def fetch_abstract_for_paper(
     paper: dict, last_time: dict, sleep_sec: float = 1.5, max_retries: int = 3,
     query_doi_by_title_enabled: bool = False,
@@ -377,43 +438,19 @@ def fetch_abstract_for_paper(
             doi = queried_doi
 
     if doi:
-        abstract, api_title, last_time["crossref"] = fetch_crossref_abstract(
-            doi, last_time["crossref"], min_interval=sleep_sec, max_retries=max_retries
+        abstract, api_title, source, last_time = _fetch_doi_sources_concurrent(
+            doi, title, last_time, sleep_sec=sleep_sec, max_retries=max_retries
         )
-        if abstract and api_title and not is_title_match(api_title, title):
-            print(f"    [!] Title mismatch (crossref): api='{api_title[:80]}' vs local='{title[:80]}'")
-            abstract = None
-        if abstract:
-            source = "crossref"
-        if not abstract:
-            abstract, api_title, last_time["semanticscholar"] = fetch_semantic_scholar_abstract(
-                doi, last_time["semanticscholar"], min_interval=sleep_sec, max_retries=max_retries
-            )
-            if abstract and api_title and not is_title_match(api_title, title):
-                print(f"    [!] Title mismatch (semanticscholar): api='{api_title[:80]}' vs local='{title[:80]}'")
-                abstract = None
-            if abstract:
-                source = "semanticscholar"
 
     if not abstract and title:
         abstract, api_title, last_time["arxiv"] = fetch_arxiv_abstract(
-            title, last_time["arxiv"], min_interval=max(sleep_sec, 3.0), max_retries=max_retries
+            title, last_time["arxiv"], min_interval=sleep_sec, max_retries=max_retries
         )
         if abstract and api_title and not is_title_match(api_title, title):
             print(f"    [!] Title mismatch (arxiv): api='{api_title[:80]}' vs local='{title[:80]}'")
             abstract = None
         if abstract:
             source = "arxiv"
-
-    if not abstract and doi:
-        abstract, api_title, last_time["openalex"] = fetch_openalex_abstract(
-            doi, last_time["openalex"], min_interval=sleep_sec, max_retries=max_retries
-        )
-        if abstract and api_title and not is_title_match(api_title, title):
-            print(f"    [!] Title mismatch (openalex): api='{api_title[:80]}' vs local='{title[:80]}'")
-            abstract = None
-        if abstract:
-            source = "openalex"
 
     return abstract, last_time, source
 
@@ -616,9 +653,11 @@ def _process_targets(
     start_time: float = None,
     soft_timeout: float = None,
     max_failed_attempts: int = 3,
+    progress: Dict[str, dict] = None,
 ) -> Tuple[int, int, bool]:
     """处理一组目标论文，返回 (success_count, failed_count, timed_out)。"""
-    progress = load_progress()
+    if progress is None:
+        progress = load_progress()
     if not retry_failed and not retry_partial:
         targets = [p for p in targets if p.get("paper_url") not in progress]
     elif retry_partial:
@@ -645,17 +684,19 @@ def _process_targets(
     success = 0
     failed = 0
     chunk_success = 0
+    cache_dirty = False
 
     for i, paper in enumerate(targets, 1):
         # 软超时检查：达到时限后保存当前进度并优雅退出
         if soft_timeout and start_time is not None and (time.time() - start_time) >= soft_timeout:
             print(f"[!] Soft timeout ({soft_timeout}s) reached at paper {i}/{len(targets)}. Saving progress and exiting.")
             save_progress(progress)
-            tmp_file = CACHE_FILE.with_suffix(".jsonl.tmp")
-            with open(tmp_file, "w", encoding="utf-8") as f:
-                for p in all_papers:
-                    f.write(json.dumps(p, ensure_ascii=False) + "\n")
-            os.replace(str(tmp_file), str(CACHE_FILE))
+            if cache_dirty:
+                tmp_file = CACHE_FILE.with_suffix(".jsonl.tmp")
+                with open(tmp_file, "w", encoding="utf-8") as f:
+                    for p in all_papers:
+                        f.write(json.dumps(p, ensure_ascii=False) + "\n")
+                os.replace(str(tmp_file), str(CACHE_FILE))
             print(f"[*] Graceful exit. Total success: {success}, failed: {failed}")
             return success, failed, True
 
@@ -671,6 +712,7 @@ def _process_targets(
             paper["paper_abstract"] = abstract
             success += 1
             chunk_success += 1
+            cache_dirty = True
             print(f"  -> OK [{source}] ({len(abstract)} chars)")
             progress[url] = {
                 "status": "success",
@@ -692,11 +734,13 @@ def _process_targets(
         if i % chunk_size == 0 or i == len(targets):
             print(f"[*] Saving progress... (chunk success: {chunk_success}, total success: {success}, failed: {failed})")
             save_progress(progress)
-            tmp_file = CACHE_FILE.with_suffix(".jsonl.tmp")
-            with open(tmp_file, "w", encoding="utf-8") as f:
-                for p in all_papers:
-                    f.write(json.dumps(p, ensure_ascii=False) + "\n")
-            os.replace(str(tmp_file), str(CACHE_FILE))
+            if cache_dirty:
+                tmp_file = CACHE_FILE.with_suffix(".jsonl.tmp")
+                with open(tmp_file, "w", encoding="utf-8") as f:
+                    for p in all_papers:
+                        f.write(json.dumps(p, ensure_ascii=False) + "\n")
+                os.replace(str(tmp_file), str(CACHE_FILE))
+                cache_dirty = False
             chunk_success = 0
 
     print(f"[*] Done. Success: {success}, Failed: {failed}")
@@ -795,7 +839,19 @@ def run(
         target_confs = [c for c, _ in pending]
         if top_n:
             target_confs = target_confs[:top_n]
-        print(f"[*] Batch mode: will process {len(target_confs)} conferences")
+        # 预过滤：提前剔除所有论文都已在 progress 中的会议，避免空转
+        if not retry_failed and not retry_partial:
+            progress = load_progress()
+            target_confs = [
+                conf for conf in target_confs
+                if any(
+                    p.get("paper_url") not in progress
+                    for p in empty_papers if p.get("conf") == conf
+                )
+            ]
+            print(f"[*] Batch mode: {len(target_confs)} conferences have real pending papers after pre-filter")
+        else:
+            print(f"[*] Batch mode: will process {len(target_confs)} conferences")
     else:
         # phase 模式（原有逻辑）
         targets = filter_papers_by_phase(empty_papers, phase)
@@ -807,6 +863,7 @@ def run(
         if not targets:
             print("[!] No papers to process. Exiting.")
             return
+        progress = load_progress()
         _process_targets(
             targets,
             all_papers,
@@ -817,11 +874,13 @@ def run(
             start_time=global_start,
             soft_timeout=soft_timeout,
             max_failed_attempts=max_failed_attempts,
+            progress=progress,
         )
         return
 
     # --- 逐个 conf 处理 ---
     processed_total = 0
+    progress = load_progress()
     for conf in target_confs:
         # 软超时检查
         if soft_timeout and global_start is not None and (time.time() - global_start) >= soft_timeout:
@@ -847,7 +906,8 @@ def run(
         start_ts = time.time()
         success, failed, timed_out = _process_targets(
             conf_papers, all_papers, chunk_size, retry_failed, retry_partial, query_doi_by_title,
-            start_time=global_start, soft_timeout=soft_timeout, max_failed_attempts=max_failed_attempts
+            start_time=global_start, soft_timeout=soft_timeout, max_failed_attempts=max_failed_attempts,
+            progress=progress,
         )
         attempted = success + failed
         processed_total += attempted
