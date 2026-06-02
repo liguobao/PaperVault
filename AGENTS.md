@@ -133,6 +133,7 @@ This builds the frontend into the `static/` directory at the project root, which
 | `python app.py` | Start Flask backend server |
 | `python collector.py` | Run collector to update `cache/cache.jsonl` |
 | `python maintain.py` | Update README conference list from config files |
+| `python maintain.py collect` | Incrementally collect papers for new conferences and update README |
 | `python maintain.py force` | Force full cache rebuild and README update |
 | `cd web-vue && npm run dev` | Start frontend dev server |
 | `cd web-vue && npm run build` | Build frontend for production |
@@ -160,7 +161,9 @@ Code links are enriched from [MLNLP-World/Top-AI-Conferences-Paper-with-Code](ht
 | Workflow | Trigger | Action |
 |----------|---------|--------|
 | `discover_and_update.yml` | Daily schedule / Manual | Auto-discovers new conference configs and creates PR |
-| `update_readme.yml` | Manual (`workflow_dispatch`) | Rebuilds cache and updates README conference list |
+| `collect_papers.yml` | Weekly schedule / Manual / Push on `conf/**` | Incrementally collects papers for new conferences and creates PR |
+| `backfill_abstracts.yml` | Every 6 hours / Manual | Backfills missing abstracts and creates PR |
+| `update_readme.yml` | Manual (`workflow_dispatch`) | Force rebuilds cache and updates README via PR |
 
 ## License
 
