@@ -2,7 +2,7 @@ import os
 import sys
 import json
 import re
-from collector import collect, save_cache
+from collector import collect, save_cache, load_cache
 
 COMMENT_CONFS_LIST_START = "<!-- confs-list-start -->"
 COMMENT_CONFS_LIST_END = "<!-- confs-list-end -->"
@@ -72,6 +72,32 @@ def update_readme():
 def force_update():
     res = collect(cache_file=None, force=True)
     save_cache(cache_path, res)
+    update_readme()
+
+
+def incremental_update():
+    """增量收集：只收集 conf 中有但 cache 中没有的会议，并更新 README。"""
+    if not os.path.exists(cache_path):
+        print("[!] Cache file not found, falling back to force update...")
+        force_update()
+        return
+
+    print("[+] Running incremental collection...")
+    before = load_cache(cache_path)
+    before_count = sum(len(papers) for papers in before.values())
+    before_confs = set(before.keys())
+
+    res = collect(cache_file=cache_path, force=False)
+    save_cache(cache_path, res)
+
+    after_count = sum(len(papers) for papers in res.values())
+    new_confs = set(res.keys()) - before_confs
+    print(f"[+] Collected {after_count - before_count} new papers across {len(new_confs)} new conference(s).")
+    if new_confs:
+        print(f"    New conferences: {', '.join(sorted(new_confs))}")
+
+    update_readme()
+    print("[+] README updated.")
 
 
 if __name__ == "__main__":
@@ -80,5 +106,11 @@ if __name__ == "__main__":
     elif len(sys.argv) == 2:
         if sys.argv[1] == "force":
             force_update()
+        elif sys.argv[1] == "collect":
+            incremental_update()
         else:
             print("unknown argument")
+            sys.exit(1)
+    else:
+        print("Usage: python maintain.py [force|collect]")
+        sys.exit(1)
