@@ -1508,6 +1508,10 @@
         "url": "https://dblp.org/db/journals/tcad/tcad44.html"
     },
     {
+        "name": "TCAD2026",
+        "url": "https://dblp.org/db/journals/tcad/tcad45.html"
+    },
+    {
         "name": "TC2019",
         "url": "https://dblp.org/db/journals/tc/tc68.html"
     },
@@ -1530,6 +1534,10 @@
     {
         "name": "TC2025",
         "url": "https://dblp.org/db/journals/tc/tc74.html"
+    },
+    {
+        "name": "TC2026",
+        "url": "https://dblp.org/db/journals/tc/tc75.html"
     },
     {
         "name": "WWW2026",
