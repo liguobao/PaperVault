@@ -1,41 +1,171 @@
 import json
 import os
 import re
+import warnings
 from collections import Counter
 import yaml
 import requests
 import time
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 from tqdm import tqdm
+
+# 忽略 ACL Anthology 某些 XML 页面被 HTML 解析器解析时的警告
+warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36"
 }
 
-def search_from_iclr(url, name, res):
-    r = requests.get(url, headers=HEADERS)
-    data = r.json()
+def _is_openreview_accepted(venue: str) -> bool:
+    """判断 OpenReview 论文的 venue 字段是否表示已接收。
+
+    排除：Submitted / Reject / Withdrawn / Desk Rejected
+    保留：Oral / Spotlight / Poster / Accept / Top
+    """
+    if not venue:
+        return False
+    venue_lower = venue.lower()
+    # 严格排除未接收/撤回状态
+    if any(k in venue_lower for k in ("submitted", "reject", "withdrawn", "desk rejected")):
+        return False
+    # 包含已接收状态（ oral, spotlight, poster, accept, top ）
+    if any(k in venue_lower for k in ("oral", "spotlight", "poster", "accept", "top")):
+        return True
+    return False
+
+
+def search_from_iclr_openreview(url, name, res):
+    """通过 OpenReview API 获取 ICLR 论文，自动分页并过滤已接收论文。
+
+    旧的按 venue 分类型查询（Oral/Poster/Spotlight 各自一条 URL）已废弃。
+    改为统一查询 Blind_Submission，在代码内根据 venue 过滤，避免重复和遗漏。
+    """
     if name not in res:
         res[name] = []
-    for item in data["notes"]:
+
+    # 清理 URL 中已有的 offset/limit，由本函数自行分页
+    base_url = re.sub(r"&offset=\d+", "", url)
+    base_url = re.sub(r"&limit=\d+", "", base_url)
+
+    offset = 0
+    limit = 1000
+
+    while True:
+        paginated_url = f"{base_url}&offset={offset}&limit={limit}"
+        r = requests.get(paginated_url, headers=HEADERS)
+        data = r.json()
+        notes = data.get("notes", [])
+        if not notes:
+            break
+
+        for item in notes:
+            venue = item.get("content", {}).get("venue", "") or ""
+            if not _is_openreview_accepted(venue):
+                continue
+
+            paper_authors = item["content"].get("authors", [])
+            # authors 字段在部分旧数据中可能为 None，兜底处理
+            if paper_authors is None:
+                paper_authors = []
+
+            res[name].append(
+                {
+                    "paper_name": item["content"]["title"],
+                    "paper_url": "https://openreview.net/pdf?id=" + item["id"],
+                    "paper_authors": paper_authors,
+                    "paper_abstract": item["content"].get("abstract", ""),
+                    "paper_code": "#",
+                }
+            )
+
+        if len(notes) < limit:
+            break
+        offset += limit
+
+    return res
+
+
+def search_from_iclr_official(url, name, res):
+    """通过 ICLR 官方 Schedule 页面获取论文（适用于 OpenReview API 不可用的年份，如 2024+）。
+
+    页面结构：
+        div.maincard (class 包含 poster / oral)
+            div.maincardBody   -> 标题
+            div.maincardFooter -> 作者（用 · 分隔）
+            a[href*=openreview.net/forum?id=] -> OpenReview 链接
+    """
+    if name not in res:
+        res[name] = []
+
+    r = requests.get(url, headers=HEADERS)
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    for card in soup.find_all("div", class_="maincard"):
+        classes = card.get("class", [])
+        # 只收集主会论文（poster / oral），排除 workshop / event / break 等
+        if "poster" not in classes and "oral" not in classes:
+            continue
+
+        title_elem = card.find("div", class_="maincardBody")
+        author_elem = card.find("div", class_="maincardFooter")
+        or_link = card.find("a", href=lambda x: x and "openreview.net/forum?id=" in x)
+
+        if not title_elem or not or_link:
+            continue
+
+        paper_name = title_elem.get_text(strip=True)
+        paper_url = or_link.get("href", "")
+        # 统一为 pdf 链接，与 OpenReview API 方式保持一致
+        if "openreview.net/forum?id=" in paper_url:
+            paper_url = paper_url.replace("openreview.net/forum?id=", "openreview.net/pdf?id=")
+
+        # 解析作者：ICLR 官网用中间点 "·" 分隔
+        authors = []
+        if author_elem:
+            author_text = author_elem.get_text(strip=True)
+            authors = [a.strip() for a in author_text.split("·") if a.strip()]
+
+        # 摘要留空：OpenReview API 对这些旧 forum 已不可用，
+        # 后续由 scripts/fetch_abstracts.py 通过 Crossref / Semantic Scholar / arXiv 补充
+        paper_abstract = ""
+
         res[name].append(
             {
-                "paper_name": item["content"]["title"], 
-                "paper_url": "https://openreview.net/pdf?id=" + item["id"],
-                "paper_authors": item["content"]["authors"],
-                "paper_abstract": item['content']['abstract'],
+                "paper_name": paper_name,
+                "paper_url": paper_url,
+                "paper_authors": authors,
+                "paper_abstract": paper_abstract,
                 "paper_code": "#",
             }
         )
+
     return res
+
+
+def search_from_iclr(url, name, res):
+    """ICLR 论文获取入口，自动根据 URL 类型选择解析策略。"""
+    if "api.openreview.net" in url:
+        return search_from_iclr_openreview(url, name, res)
+    elif "iclr.cc" in url:
+        return search_from_iclr_official(url, name, res)
+    else:
+        # fallback：默认当作 OpenReview API 处理
+        return search_from_iclr_openreview(url, name, res)
 
 def search_abs_from_nips(url):
     r = requests.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
-    abstract = soup.find(
-        lambda tag: tag.name == "h4" and 'Abstract' in tag.text
-    ).next_sibling.next_sibling.text.strip()
-    return abstract
+    # 新结构：h2.section-label + p.paper-abstract
+    h2 = soup.find('h2', class_='section-label')
+    if h2 and 'Abstract' in h2.text:
+        abstract_elem = h2.find_next_sibling()
+        if abstract_elem:
+            return abstract_elem.get_text(strip=True)
+    # 旧结构 fallback
+    h4 = soup.find(lambda tag: tag.name == "h4" and 'Abstract' in tag.text)
+    if h4 and h4.next_sibling and h4.next_sibling.next_sibling:
+        return h4.next_sibling.next_sibling.text.strip()
+    return ""
 
 def search_from_nips(url, name, res):
     r = requests.get(url, headers=HEADERS)
@@ -43,21 +173,36 @@ def search_from_nips(url, name, res):
     if name not in res:
         res[name] = []
     url_prefix = "https://" + url[8:].split("/")[0]
-    for paper_item in soup.find(class_="col").ul.find_all("li"):
-        paper_url = url_prefix + paper_item.a["href"]
-        if paper_item.i.string is not None:
+    col = soup.find(class_="col")
+    if not col or not col.ul:
+        return res
+    for paper_item in col.ul.find_all("li"):
+        a_tag = paper_item.a
+        if a_tag is None:
+            continue
+        href = a_tag.get("href")
+        if not href:
+            continue
+        paper_url = url_prefix + href
+        # 新结构：span class="paper-authors"
+        authors_span = paper_item.find("span", class_="paper-authors")
+        if authors_span:
+            paper_author = [author.strip() for author in authors_span.get_text(strip=True).split(',')]
+        # 旧结构 fallback：i 标签
+        elif paper_item.i is not None and paper_item.i.string is not None:
             paper_author = [author.strip() for author in paper_item.i.string.split(',')]
         else:
             paper_author = []
         try:
             paper_abstract = search_abs_from_nips(paper_url)
-        except:
+        except Exception as e:
             print(f"Skip url:{paper_url}")
             paper_abstract = ""
 
+        paper_name = a_tag.string if a_tag.string else a_tag.get_text(strip=True)
         res[name].append(
             {
-                "paper_name": paper_item.a.string, 
+                "paper_name": paper_name,
                 "paper_url": paper_url,
                 "paper_authors": paper_author,
                 "paper_abstract": paper_abstract,
@@ -158,36 +303,54 @@ def search_abs_from_dblp(url):
 
     soup = BeautifulSoup(r.text, "html.parser")
 
+    abstract = ""
     if 'ieee' in r.url:
-        abstract = yaml.safe_load(soup.find(
-            lambda tag: tag.name == 'script' and 'xplGlobal.document.metadata' in tag.text
-        ).text.split('\n\t')[-1].strip()[28:-1])['abstract']
+        script_tag = soup.find(lambda tag: tag.name == 'script' and 'xplGlobal.document.metadata' in tag.text)
+        if script_tag:
+            try:
+                abstract = yaml.safe_load(script_tag.text.split('\n\t')[-1].strip()[28:-1])['abstract']
+            except Exception:
+                pass
 
     elif 'acm' in r.url:
-        abstract = soup.find(class_="abstractSection").p.text.strip()
+        abstract_section = soup.find(class_="abstractSection")
+        if abstract_section and abstract_section.p:
+            abstract = abstract_section.p.get_text(strip=True)
 
     elif 'openreview' in r.url:
-        url = 'https://api.openreview.net/notes?forum=' + r.url.split("=")[-1]
-        r = requests.get(url, headers=HEADERS)
-        abstract = r.json()["notes"][-1]["content"]["abstract"]
+        try:
+            api_url = 'https://api.openreview.net/notes?forum=' + r.url.split("=")[-1]
+            r2 = requests.get(api_url, headers=HEADERS)
+            abstract = r2.json()["notes"][-1]["content"]["abstract"]
+        except Exception:
+            pass
 
     elif 'mlr.press' in r.url:
-        abstract = soup.find(id="abstract").text.strip()
+        elem = soup.find(id="abstract")
+        if elem:
+            abstract = elem.get_text(strip=True)
 
     elif 'aaai' in r.url:
-        abstract = soup.find(class_="abstract").p.text.strip()
+        abstract_elem = soup.find(class_="abstract")
+        if abstract_elem and abstract_elem.p:
+            abstract = abstract_elem.p.get_text(strip=True)
 
     elif 'ijcai' in r.url:
-        abstract = soup.find(class_="proceedings-detail").find(class_="col-md-12").text.strip()
+        proceedings = soup.find(class_="proceedings-detail")
+        if proceedings:
+            col = proceedings.find(class_="col-md-12")
+            if col:
+                abstract = col.get_text(strip=True)
 
     elif 'springer' in r.url:
-        abstract = soup.find(id="Abs1-content").next_element.text.strip()
+        elem = soup.find(id="Abs1-content")
+        if elem and elem.next_element:
+            abstract = elem.next_element.get_text(strip=True)
 
     elif 'jmlr' in r.url:
-        abstract = soup.find(class_="abstract").text.strip()
-
-    else:
-        abstract = ""
+        elem = soup.find(class_="abstract")
+        if elem:
+            abstract = elem.get_text(strip=True)
 
     return abstract
 
@@ -199,8 +362,16 @@ def search_from_dblp(url, name, res):
         res[name] = []
 
     for paper_item in soup.find_all("li", class_="entry"):
-        paper_url = paper_item.find("li", class_="drop-down").div.a["href"]
+        drop_down = paper_item.find("li", class_="drop-down")
+        if not drop_down or not drop_down.div or not drop_down.div.a:
+            continue
+        paper_url = drop_down.div.a.get("href", "")
+        if not paper_url:
+            continue
+
         paper_name = paper_item.find(class_="title", itemprop="name")
+        if not paper_name:
+            continue
 
         paper_authors = [
             re.sub(r"\d", "", author["title"]).strip()
@@ -214,7 +385,7 @@ def search_from_dblp(url, name, res):
         except:
             print(f"Skip url:{paper_url}")
             paper_abstract = ""
-        if paper[-1] == ".":
+        if paper and paper[-1] == ".":
             paper = paper[:-1]
         res[name].append(
             {
@@ -231,8 +402,10 @@ def search_from_dblp(url, name, res):
 def search_abs_from_thecvf(url):
     r = requests.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
-    abstract = soup.find(id="abstract").text.strip()
-    return abstract
+    abstract_elem = soup.find(id="abstract")
+    if abstract_elem:
+        return abstract_elem.get_text(strip=True)
+    return ""
 
 def search_from_thecvf(url, name, res):
     r = requests.get(url, headers=HEADERS)
@@ -241,12 +414,25 @@ def search_from_thecvf(url, name, res):
         res[name] = []
         
     for paper_item in soup.find_all("dt", class_="ptitle"):
-        url_postfix = paper_item.a["href"]
-        if url_postfix[0] == '/':
+        a_tag = paper_item.a
+        if a_tag is None:
+            continue
+        href = a_tag.get("href", "")
+        if not href:
+            continue
+        url_postfix = href
+        if url_postfix.startswith('/'):
             url_postfix = url_postfix[1:]
-        paper_url = "https://openaccess.thecvf.com/" + paper_item.a["href"]
-        paper = paper_item.a.string
-        paper_authors = [author.string for author in paper_item.next_sibling.next_sibling.find_all('a', href='#')]
+        paper_url = "https://openaccess.thecvf.com/" + href
+        paper = a_tag.string if a_tag.string else a_tag.get_text(strip=True)
+        
+        authors = []
+        ns = paper_item.next_sibling
+        if ns:
+            ns2 = ns.next_sibling
+            if ns2:
+                authors = [author.string for author in ns2.find_all('a', href='#') if author.string]
+        
         try:
             paper_abstract = search_abs_from_thecvf(paper_url)
         except:
@@ -256,7 +442,7 @@ def search_from_thecvf(url, name, res):
             {
                 "paper_name": paper, 
                 "paper_url": paper_url,
-                "paper_authors": paper_authors,
+                "paper_authors": authors,
                 "paper_abstract": paper_abstract,
                 "paper_code": "#",
             }
