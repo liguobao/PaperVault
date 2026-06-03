@@ -1,0 +1,8 @@
+[
+  {
+    "source": "DBLP",
+    "name": "ECCV2022",
+    "url": "https://dblp.org/db/conf/eccv/eccv2022-14.html",
+    "error": "HTTPSConnectionPool(host='dblp.org', port=443): Max retries exceeded with url: /db/conf/eccv/eccv2022-14.html (Caused by ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+  }
+]
