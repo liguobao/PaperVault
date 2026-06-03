@@ -29,37 +29,24 @@ PaperVault 正在将其从一个静态论文清单工具逐步建设为一个功
 
 <!-- confs-list-start -->
 
-> 当前数据库覆盖 **2019-2026** 年，共收录 **60+** 个顶级会议与期刊。
+```text
+- [EMNLP 2019-2025] [ACL 2019-2025] [NAACL 2019-2025] [COLING 2020-2025] 
+- [EACL 2021-2026] [ICASSP 2019-2025] [WWW 2019-2026] [ICLR 2019-2025] 
+- [ICML 2019-2025] [AAAI 2019-2026] [IJCAI 2019-2025] [CVPR 2019-2026] 
+- [ICCV 2019-2025] [MM 2019-2025] [KDD 2019-2024] [CIKM 2019-2025] 
+- [SIGIR 2019-2025] [WSDM 2019-2026] [ECIR 2019-2025] [ECCV 2020-2024] 
+- [COLT 2019-2025] [AISTATS 2019-2025] [INTERSPEECH 2019-2025] [ISWC 2019-2022] 
+- [JMLR 2019-2025] [VLDB 2019-2025] [ICME 2019-2025] [TIP 2020-2025] 
+- [TPAMI 2020-2025] [RECSYS 2019-2025] [TKDE 2020-2025] [TOIS 2020-2025] 
+- [ICDM 2019-2025] [TASLP 2020-2024] [BMVC 2019-2024] [MICCAI 2019-2025] 
+- [IJCV 2020-2025] [TNNLS 2020-2025] [FAST 2019-2025] [SIGMOD 2019-2022] 
+- [SIGCOMM 2020-2025] [INFOCOM 2019-2021] [MOBICOM 2022-2025] [NSDI 2019-2025] 
+- [DAC 2020-2025] [NDSS 2019-2026] [SP 2019-2020] [STOC 2025-2025] 
+- [AI 2020-2025] [MLJ 2019-2026] [TCAD 2020-2026] [TC 2019-2026] 
+- [TOS 2024-2026] [TPDS 2020-2026] [NIPS 2019-2025] [MLSYS 2019-2025] 
+- [WACV 2020-2026] 
+```
 
-### 自然语言处理 (NLP)
-- **会议**：ACL · EMNLP · NAACL · COLING · EACL
-- **期刊**：TASLP
-
-### 计算机视觉 (CV)
-- **会议**：CVPR · ICCV · ECCV · WACV · BMVC
-- **期刊**：TIP · TPAMI · IJCV
-
-### 机器学习 (ML)
-- **会议**：ICML · ICLR · NIPS · COLT · AISTATS
-- **期刊**：JMLR · MLJ · TNNLS
-
-### 数据挖掘与信息检索 (DM & IR)
-- **会议**：KDD · CIKM · SIGIR · WSDM · ECIR · RECSYS · ICDM
-- **期刊**：TKDE · TOIS
-
-### 数据库与系统 (DB & Systems)
-- **会议**：SIGMOD · VLDB · FAST · NSDI
-- **期刊**：TPDS · TC · TOS
-
-### 语音与多媒体 (Speech & Multimedia)
-- **会议**：ICASSP · INTERSPEECH · MM · ICME
-
-### 网络与安全 (Networking & Security)
-- **会议**：SIGCOMM · INFOCOM · MOBICOM · NDSS · SP
-
-### 跨领域与其他 (Interdisciplinary & Others)
-- **会议**：AAAI · IJCAI · WWW · ISWC · DAC · MICCAI · STOC
-- **期刊**：AI
 
 <!-- confs-list-end -->
 
