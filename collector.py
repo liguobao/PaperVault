@@ -5,6 +5,8 @@ import warnings
 from collections import Counter
 import yaml
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 import time
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 from tqdm import tqdm
@@ -15,6 +17,22 @@ warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36"
 }
+
+
+def _create_session():
+    session = requests.Session()
+    retries = Retry(
+        total=5,
+        backoff_factor=1,
+        status_forcelist=[500, 502, 503, 504],
+        allowed_methods=["GET"],
+    )
+    session.mount("https://", HTTPAdapter(max_retries=retries))
+    session.mount("http://", HTTPAdapter(max_retries=retries))
+    return session
+
+
+SESSION = _create_session()
 
 def _is_openreview_accepted(venue: str) -> bool:
     """判断 OpenReview 论文的 venue 字段是否表示已接收。
@@ -52,7 +70,7 @@ def search_from_iclr_openreview(url, name, res):
 
     while True:
         paginated_url = f"{base_url}&offset={offset}&limit={limit}"
-        r = requests.get(paginated_url, headers=HEADERS)
+        r = SESSION.get(paginated_url, headers=HEADERS)
         data = r.json()
         notes = data.get("notes", [])
         if not notes:
@@ -97,7 +115,7 @@ def search_from_iclr_official(url, name, res):
     if name not in res:
         res[name] = []
 
-    r = requests.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
 
     for card in soup.find_all("div", class_="maincard"):
@@ -153,7 +171,7 @@ def search_from_iclr(url, name, res):
         return search_from_iclr_openreview(url, name, res)
 
 def search_abs_from_nips(url):
-    r = requests.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
     # 新结构：h2.section-label + p.paper-abstract
     h2 = soup.find('h2', class_='section-label')
@@ -168,7 +186,7 @@ def search_abs_from_nips(url):
     return ""
 
 def search_from_nips(url, name, res):
-    r = requests.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
     if name not in res:
         res[name] = []
@@ -216,7 +234,7 @@ def _parse_acl_volume(volume_url: str, tag: str, name: str, res: dict):
     """解析 ACL Anthology 单个 volume 页面"""
     if name not in res:
         res[name] = []
-    r = requests.get(volume_url, headers=HEADERS)
+    r = SESSION.get(volume_url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
 
     # 新版页面：论文链接在 <strong> 下的 <a>，href 格式如 /2023.acl-long.1/
@@ -267,7 +285,7 @@ def _parse_acl_volume(volume_url: str, tag: str, name: str, res: dict):
 
 def search_from_acl(url, tag, name, res):
     """解析 ACL Anthology events 页面，自动跳转各 volume"""
-    r = requests.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
     if name not in res:
         res[name] = []
@@ -293,13 +311,13 @@ def search_from_acl(url, tag, name, res):
 
 def search_abs_from_dblp(url):
     try:
-        r = requests.get(url, headers=HEADERS)
+        r = SESSION.get(url, headers=HEADERS)
     except Exception as e:
         msg = str(e)
         if "doesn't match either of 'aaai.org'" in msg:
             hostname = e.request.url.replace('//','/').split('/')[1]
             url = e.request.url.replace(hostname,'aaai.org')
-        r = requests.get(url, headers=HEADERS)
+        r = SESSION.get(url, headers=HEADERS)
 
     soup = BeautifulSoup(r.text, "html.parser")
 
@@ -320,7 +338,7 @@ def search_abs_from_dblp(url):
     elif 'openreview' in r.url:
         try:
             api_url = 'https://api.openreview.net/notes?forum=' + r.url.split("=")[-1]
-            r2 = requests.get(api_url, headers=HEADERS)
+            r2 = SESSION.get(api_url, headers=HEADERS)
             abstract = r2.json()["notes"][-1]["content"]["abstract"]
         except Exception:
             pass
@@ -356,7 +374,7 @@ def search_abs_from_dblp(url):
 
 
 def search_from_dblp(url, name, res):
-    r = requests.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
     if name not in res:
         res[name] = []
@@ -400,7 +418,7 @@ def search_from_dblp(url, name, res):
 
 
 def search_abs_from_thecvf(url):
-    r = requests.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
     abstract_elem = soup.find(id="abstract")
     if abstract_elem:
@@ -408,7 +426,7 @@ def search_abs_from_thecvf(url):
     return ""
 
 def search_from_thecvf(url, name, res):
-    r = requests.get(url, headers=HEADERS)
+    r = SESSION.get(url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
     if name not in res:
         res[name] = []
@@ -491,6 +509,7 @@ def add_code_links(res):
 
 def collect(cache_file=None, force=False):
     res = {}
+    failures = []
 
     acl_conf = json.load(open("conf/acl_conf.json", "r"))
     dblp_conf = json.load(open("conf/dblp_conf.json", "r"))
@@ -511,40 +530,70 @@ def collect(cache_file=None, force=False):
     }
 
     for conf in tqdm(acl_conf, desc="[+] Collecting ACL", dynamic_ncols=True):
-        assert conf.get("name") and conf.get("url") and conf.get("tag")
-        url, tag, name = conf["url"], conf["tag"], conf["name"]
-        if name in cache_conf:
-            continue
-        res = search_from_acl(url, tag, name, res)
+        try:
+            if not (conf.get("name") and conf.get("url") and conf.get("tag")):
+                print(f"[!] Skip invalid ACL conf: {conf}")
+                continue
+            url, tag, name = conf["url"], conf["tag"], conf["name"]
+            if name in cache_conf:
+                continue
+            res = search_from_acl(url, tag, name, res)
+        except Exception as e:
+            print(f"[!] Failed to collect ACL '{conf.get('name', 'unknown')}': {e}")
+            failures.append({"source": "ACL", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
         
     for conf in tqdm(iclr_conf, desc="[+] Collecting ICLR", dynamic_ncols=True):
-        assert conf.get("name") and conf.get("url")
-        url, name = conf["url"], conf["name"]
-        if name in cache_conf:
-            continue
-        res = search_from_iclr(url, name, res)
+        try:
+            if not (conf.get("name") and conf.get("url")):
+                print(f"[!] Skip invalid ICLR conf: {conf}")
+                continue
+            url, name = conf["url"], conf["name"]
+            if name in cache_conf:
+                continue
+            res = search_from_iclr(url, name, res)
+        except Exception as e:
+            print(f"[!] Failed to collect ICLR '{conf.get('name', 'unknown')}': {e}")
+            failures.append({"source": "ICLR", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
         
     for conf in tqdm(thecvf_conf, desc="[+] Collecting openaccess.thecvf", dynamic_ncols=True):
-        assert conf.get("name") and conf.get("url")
-        url, name = conf["url"], conf["name"]
-        if name in cache_conf:
-            continue
-        res = search_from_thecvf(url, name, res)
+        try:
+            if not (conf.get("name") and conf.get("url")):
+                print(f"[!] Skip invalid thecvf conf: {conf}")
+                continue
+            url, name = conf["url"], conf["name"]
+            if name in cache_conf:
+                continue
+            res = search_from_thecvf(url, name, res)
+        except Exception as e:
+            print(f"[!] Failed to collect openaccess.thecvf '{conf.get('name', 'unknown')}': {e}")
+            failures.append({"source": "openaccess.thecvf", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
         
 
     for conf in tqdm(nips_conf, desc="[+] Collecting NeurIPS", dynamic_ncols=True):
-        assert conf.get("name") and conf.get("url")
-        url, name = conf["url"], conf["name"]
-        if name in cache_conf:
-            continue
-        res = search_from_nips(url, name, res)
+        try:
+            if not (conf.get("name") and conf.get("url")):
+                print(f"[!] Skip invalid NeurIPS conf: {conf}")
+                continue
+            url, name = conf["url"], conf["name"]
+            if name in cache_conf:
+                continue
+            res = search_from_nips(url, name, res)
+        except Exception as e:
+            print(f"[!] Failed to collect NeurIPS '{conf.get('name', 'unknown')}': {e}")
+            failures.append({"source": "NeurIPS", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
 
     for conf in tqdm(dblp_conf, desc="[+] Collecting DBLP", dynamic_ncols=True):
-        assert conf.get("name") and conf.get("url")
-        url, name = conf["url"], conf["name"]
-        if name in cache_conf and name not in multi_volume_dblp_names:
-            continue
-        res = search_from_dblp(url, name, res)
+        try:
+            if not (conf.get("name") and conf.get("url")):
+                print(f"[!] Skip invalid DBLP conf: {conf}")
+                continue
+            url, name = conf["url"], conf["name"]
+            if name in cache_conf and name not in multi_volume_dblp_names:
+                continue
+            res = search_from_dblp(url, name, res)
+        except Exception as e:
+            print(f"[!] Failed to collect DBLP '{conf.get('name', 'unknown')}': {e}")
+            failures.append({"source": "DBLP", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
 
     # Keep freshly collected conferences and only backfill untouched cached ones.
     for conf_name, papers in cache_res.items():
@@ -552,6 +601,15 @@ def collect(cache_file=None, force=False):
             res[conf_name] = papers
 
     res = add_code_links(res)
+
+    if failures:
+        failures_path = os.path.join(os.path.dirname(cache_file) if cache_file else ".", "collect_failures.json")
+        try:
+            with open(failures_path, "w", encoding="utf-8") as f:
+                json.dump(failures, f, ensure_ascii=False, indent=2)
+            print(f"[!] {len(failures)} conference(s) failed. Details saved to {failures_path}")
+        except Exception as e:
+            print(f"[!] Could not save failure log: {e}")
 
     return res
 
