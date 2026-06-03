@@ -507,9 +507,40 @@ def add_code_links(res):
                 papers[ii]["paper_code"] = link
     return res
 
-def collect(cache_file=None, force=False):
+COLLECT_PROGRESS_FILE = "cache/collect_progress.json"
+
+
+def load_collect_progress():
+    if not os.path.exists(COLLECT_PROGRESS_FILE):
+        return {}
+    with open(COLLECT_PROGRESS_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data.get("completed", {})
+
+
+def save_collect_progress(progress):
+    os.makedirs(os.path.dirname(COLLECT_PROGRESS_FILE), exist_ok=True)
+    with open(COLLECT_PROGRESS_FILE, "w", encoding="utf-8") as f:
+        json.dump({"version": 1, "completed": progress}, f, ensure_ascii=False, indent=2)
+
+
+def _merge_with_cache(new_res, cache_res, multi_volume_names, collected_dblp_names):
+    result = dict(new_res)
+    for conf_name, papers in cache_res.items():
+        if conf_name not in result:
+            result[conf_name] = papers
+        elif conf_name in multi_volume_names and conf_name in collected_dblp_names:
+            existing_urls = {p["paper_url"] for p in result[conf_name]}
+            for p in papers:
+                if p["paper_url"] not in existing_urls:
+                    result[conf_name].append(p)
+    return result
+
+
+def collect(cache_file=None, force=False, soft_timeout=None):
     res = {}
     failures = []
+    progress = {} if force else load_collect_progress()
 
     acl_conf = json.load(open("conf/acl_conf.json", "r"))
     dblp_conf = json.load(open("conf/dblp_conf.json", "r"))
@@ -517,17 +548,54 @@ def collect(cache_file=None, force=False):
     iclr_conf = json.load(open("conf/iclr_conf.json", "r"))
     thecvf_conf = json.load(open("conf/thecvf_conf.json", "r"))
 
-    cache_conf = []
+    cache_conf = set()
     cache_res = {}
     if not force and cache_file is not None and os.path.exists(cache_file):
-        # incremental update
         cache_res = load_cache(cache_file)
-        cache_conf = [name for name in cache_res.keys()]
+        cache_conf = set(cache_res.keys())
 
     dblp_name_counter = Counter(conf["name"] for conf in dblp_conf if conf.get("name"))
     multi_volume_dblp_names = {
         name for name, count in dblp_name_counter.items() if count > 1
     }
+
+    start_time = time.time()
+    collected_dblp_names = set()
+    save_tracker = {"last": 0}
+
+    def _is_timeout():
+        if soft_timeout and start_time is not None:
+            elapsed = time.time() - start_time
+            if elapsed >= soft_timeout:
+                print(f"[!] Soft timeout ({soft_timeout}s, elapsed {elapsed:.0f}s) reached.")
+                return True
+        return False
+
+    def _save_state():
+        now = time.time()
+        if now - save_tracker["last"] < 5:
+            return
+        save_tracker["last"] = now
+        save_collect_progress(progress)
+        if cache_file:
+            merged = _merge_with_cache(res, cache_res, multi_volume_dblp_names, collected_dblp_names)
+            tmp_file = cache_file + ".tmp"
+            save_cache(tmp_file, merged)
+            os.replace(tmp_file, cache_file)
+            print(f"[*] Incremental cache saved: {cache_file}")
+
+    def _should_skip(source, url, name):
+        if force:
+            return False
+        key = f"{source}::{url}"
+        if key in progress:
+            return True
+        if name in cache_conf:
+            if source == "DBLP" and name in multi_volume_dblp_names:
+                return False
+            progress[key] = {"name": name, "ts": time.strftime("%Y-%m-%dT%H:%M:%S"), "legacy": True}
+            return True
+        return False
 
     for conf in tqdm(acl_conf, desc="[+] Collecting ACL", dynamic_ncols=True):
         try:
@@ -535,12 +603,17 @@ def collect(cache_file=None, force=False):
                 print(f"[!] Skip invalid ACL conf: {conf}")
                 continue
             url, tag, name = conf["url"], conf["tag"], conf["name"]
-            if name in cache_conf:
+            if _should_skip("ACL", url, name):
                 continue
+            if _is_timeout():
+                break
             res = search_from_acl(url, tag, name, res)
+            progress[f"ACL::{url}"] = {"name": name, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
+            _save_state()
         except Exception as e:
             print(f"[!] Failed to collect ACL '{conf.get('name', 'unknown')}': {e}")
             failures.append({"source": "ACL", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
+    _save_state()
         
     for conf in tqdm(iclr_conf, desc="[+] Collecting ICLR", dynamic_ncols=True):
         try:
@@ -548,12 +621,17 @@ def collect(cache_file=None, force=False):
                 print(f"[!] Skip invalid ICLR conf: {conf}")
                 continue
             url, name = conf["url"], conf["name"]
-            if name in cache_conf:
+            if _should_skip("ICLR", url, name):
                 continue
+            if _is_timeout():
+                break
             res = search_from_iclr(url, name, res)
+            progress[f"ICLR::{url}"] = {"name": name, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
+            _save_state()
         except Exception as e:
             print(f"[!] Failed to collect ICLR '{conf.get('name', 'unknown')}': {e}")
             failures.append({"source": "ICLR", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
+    _save_state()
         
     for conf in tqdm(thecvf_conf, desc="[+] Collecting openaccess.thecvf", dynamic_ncols=True):
         try:
@@ -561,13 +639,17 @@ def collect(cache_file=None, force=False):
                 print(f"[!] Skip invalid thecvf conf: {conf}")
                 continue
             url, name = conf["url"], conf["name"]
-            if name in cache_conf:
+            if _should_skip("thecvf", url, name):
                 continue
+            if _is_timeout():
+                break
             res = search_from_thecvf(url, name, res)
+            progress[f"thecvf::{url}"] = {"name": name, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
+            _save_state()
         except Exception as e:
             print(f"[!] Failed to collect openaccess.thecvf '{conf.get('name', 'unknown')}': {e}")
             failures.append({"source": "openaccess.thecvf", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
-        
+    _save_state()
 
     for conf in tqdm(nips_conf, desc="[+] Collecting NeurIPS", dynamic_ncols=True):
         try:
@@ -575,12 +657,17 @@ def collect(cache_file=None, force=False):
                 print(f"[!] Skip invalid NeurIPS conf: {conf}")
                 continue
             url, name = conf["url"], conf["name"]
-            if name in cache_conf:
+            if _should_skip("NeurIPS", url, name):
                 continue
+            if _is_timeout():
+                break
             res = search_from_nips(url, name, res)
+            progress[f"NeurIPS::{url}"] = {"name": name, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
+            _save_state()
         except Exception as e:
             print(f"[!] Failed to collect NeurIPS '{conf.get('name', 'unknown')}': {e}")
             failures.append({"source": "NeurIPS", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
+    _save_state()
 
     for conf in tqdm(dblp_conf, desc="[+] Collecting DBLP", dynamic_ncols=True):
         try:
@@ -588,19 +675,22 @@ def collect(cache_file=None, force=False):
                 print(f"[!] Skip invalid DBLP conf: {conf}")
                 continue
             url, name = conf["url"], conf["name"]
-            if name in cache_conf and name not in multi_volume_dblp_names:
+            if _should_skip("DBLP", url, name):
                 continue
+            if _is_timeout():
+                break
             res = search_from_dblp(url, name, res)
+            progress[f"DBLP::{url}"] = {"name": name, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
+            collected_dblp_names.add(name)
+            _save_state()
         except Exception as e:
             print(f"[!] Failed to collect DBLP '{conf.get('name', 'unknown')}': {e}")
             failures.append({"source": "DBLP", "name": conf.get("name"), "url": conf.get("url"), "error": str(e)})
+    _save_state()
 
-    # Keep freshly collected conferences and only backfill untouched cached ones.
-    for conf_name, papers in cache_res.items():
-        if conf_name not in res:
-            res[conf_name] = papers
+    final_res = _merge_with_cache(res, cache_res, multi_volume_dblp_names, collected_dblp_names)
 
-    res = add_code_links(res)
+    res = add_code_links(final_res)
 
     if failures:
         failures_path = os.path.join(os.path.dirname(cache_file) if cache_file else ".", "collect_failures.json")
@@ -647,10 +737,10 @@ def save_cache(path, data):
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
-def do_collect(cache_file=None, force=False):
+def do_collect(cache_file=None, force=False, soft_timeout=None):
     if force or cache_file is None or not os.path.exists(cache_file):
         print(f"[+] Collecting papers...")
-        res = collect(cache_file, force=force)
+        res = collect(cache_file, force=force, soft_timeout=soft_timeout)
         save_cache(cache_file, res)
     else:
         print(f"[+] Loading from cache...")
