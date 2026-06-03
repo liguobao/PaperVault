@@ -20,6 +20,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      workflows: write
     steps:
       - name: Checkout with LFS
         uses: actions/checkout@v4
@@ -58,6 +59,9 @@ jobs:
         run: |
           git config --local user.name "youngfish42"
           git config --local user.email "youngfish42@users.noreply.github.com"
+
+      - name: Fetch latest main
+        run: git fetch origin main
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
