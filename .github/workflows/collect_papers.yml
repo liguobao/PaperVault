@@ -3,7 +3,7 @@ name: Collect Papers
 env:
   PYTHON_VERSION: "3.10"
   AUTO_COLLECT_BRANCH: "auto-collect-papers"
-  AUTO_COLLECT_FILES: "cache/cache.jsonl README.md"
+  AUTO_COLLECT_FILES: "cache/cache.jsonl cache/collect_progress.json cache/collect_failures.json README.md"
 
 on:
   schedule:
@@ -94,7 +94,7 @@ jobs:
             python maintain.py force
           else
             echo "[*] Incremental mode: collecting only missing conferences"
-            python maintain.py collect
+            python maintain.py collect --soft-timeout 18000
           fi
 
       - name: Check for changes

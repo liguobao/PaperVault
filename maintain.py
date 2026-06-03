@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import json
@@ -75,7 +76,7 @@ def force_update():
     update_readme()
 
 
-def incremental_update():
+def incremental_update(soft_timeout=None):
     """增量收集：只收集 conf 中有但 cache 中没有的会议，并更新 README。"""
     if not os.path.exists(cache_path):
         print("[!] Cache file not found, falling back to force update...")
@@ -83,11 +84,13 @@ def incremental_update():
         return
 
     print("[+] Running incremental collection...")
+    if soft_timeout:
+        print(f"[*] Soft timeout: {soft_timeout}s ({soft_timeout/3600:.1f}h)")
     before = load_cache(cache_path)
     before_count = sum(len(papers) for papers in before.values())
     before_confs = set(before.keys())
 
-    res = collect(cache_file=cache_path, force=False)
+    res = collect(cache_file=cache_path, force=False, soft_timeout=soft_timeout)
     save_cache(cache_path, res)
 
     after_count = sum(len(papers) for papers in res.values())
@@ -111,16 +114,14 @@ def incremental_update():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        update_readme()
-    elif len(sys.argv) == 2:
-        if sys.argv[1] == "force":
-            force_update()
-        elif sys.argv[1] == "collect":
-            incremental_update()
-        else:
-            print("unknown argument")
-            sys.exit(1)
+    parser = argparse.ArgumentParser(description="PaperVault maintenance utilities")
+    parser.add_argument("command", nargs="?", choices=["force", "collect"], help="Command to run")
+    parser.add_argument("--soft-timeout", type=float, default=None, help="Soft timeout in seconds (e.g. 18000 for 5h)")
+    args = parser.parse_args()
+
+    if args.command == "force":
+        force_update()
+    elif args.command == "collect":
+        incremental_update(soft_timeout=args.soft_timeout)
     else:
-        print("Usage: python maintain.py [force|collect]")
-        sys.exit(1)
+        update_readme()
