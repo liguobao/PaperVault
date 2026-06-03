@@ -96,6 +96,16 @@ def incremental_update():
     if new_confs:
         print(f"    New conferences: {', '.join(sorted(new_confs))}")
 
+    failures_path = os.path.join(os.path.dirname(cache_path), "collect_failures.json")
+    if os.path.exists(failures_path):
+        try:
+            with open(failures_path, "r", encoding="utf-8") as f:
+                failures = json.load(f)
+            if failures:
+                print(f"[!] Previous/current run had {len(failures)} failure(s). They will be retried in the next run.")
+        except Exception:
+            pass
+
     update_readme()
     print("[+] README updated.")
 
