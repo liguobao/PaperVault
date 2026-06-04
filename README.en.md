@@ -18,9 +18,9 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- recent-update-start -->
 
 - 📅 **Last Updated**: 2026-06-04
-- 🆕 **New Papers This Update**: 6,538
-- 📢 **New Conferences This Update**: 26
-- 📊 **Database Scale**: 251,119 papers / 57 publication series / 126,266 with abstracts
+- 🆕 **New Papers This Update**: 5,305
+- 📢 **New Conferences This Update**: 72
+- 📊 **Database Scale**: 256,424 papers / 57 publication series / 131,571 with abstracts
 
 <!-- recent-update-end -->
 
@@ -71,18 +71,18 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 - **ICML** 2019-2025 (7 editions)
 - **JMLR** 2019-2025 (7 editions)
 - **MLSYS** 2019-2025 (7 editions)
-- **NIPS** 2015-2025 (11 editions)
+- **NIPS** 2000-2025 (26 editions)
 - **TNNLS** 2020-2025 (6 editions)
 
 </details>
 <details>
 <summary><b>Natural Language Processing</b> (6 series)</summary>
 
-- **ACL** 2015-2025 (11 editions)
-- **COLING** 2016-2025 (6 editions)
-- **EACL** 2017-2026 (5 editions)
-- **EMNLP** 2015-2025 (11 editions)
-- **NAACL** 2015-2025 (8 editions)
+- **ACL** 2000-2025 (26 editions)
+- **COLING** 2000-2025 (14 editions)
+- **EACL** 2003-2026 (10 editions)
+- **EMNLP** 2000-2025 (26 editions)
+- **NAACL** 2000-2025 (18 editions)
 - **TASLP** 2020-2024 (5 editions)
 
 </details>
@@ -90,9 +90,9 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <summary><b>Computer Vision</b> (9 series)</summary>
 
 - **BMVC** 2019-2024 (4 editions)
-- **CVPR** 2015-2026 (12 editions)
+- **CVPR** 2013-2026 (14 editions)
 - **ECCV** 2018-2024 (4 editions)
-- **ICCV** 2015-2025 (6 editions)
+- **ICCV** 2013-2025 (7 editions)
 - **IJCV** 2020-2025 (6 editions)
 - **MICCAI** 2019-2025 (7 editions)
 - **TIP** 2020-2025 (6 editions)
