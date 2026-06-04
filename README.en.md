@@ -39,11 +39,11 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- stats-start -->
 
 <p align="center">
-  <img src="./pics/stats/stats_overview.png" alt="Statistics Overview" width="850" />
+  <img src="./pics/stats/stats_overview.png" alt="Statistics Overview" width="800" />
 </p>
 
 <p align="center">
-  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="900" />
+  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="800" />
 </p>
 
 <p align="center">
