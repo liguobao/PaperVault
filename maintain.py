@@ -3,7 +3,6 @@ import os
 import sys
 import json
 import re
-import random
 from datetime import datetime
 from collections import defaultdict
 
@@ -70,10 +69,17 @@ CATEGORY_MAP_EN = {
     "Others": ["ISWC", "STOC"],
 }
 
+# Map each publication series to its category color for consistent theming across charts
+SERIES_COLOR_MAP = {}
+for idx, names in enumerate(CATEGORY_MAP.values()):
+    color = NATURE_COLORS[idx % len(NATURE_COLORS)]
+    for name in names:
+        SERIES_COLOR_MAP[name] = color
+
 
 def _ensure_chinese_font():
     """Configure matplotlib to support Chinese characters on Windows."""
-    plt.rcParams["font.sans-serif"] = ["Noto Sans SC", "Microsoft YaHei", "SimHei", "sans-serif"]
+    plt.rcParams["font.sans-serif"] = ["SimHei", "Noto Sans SC", "Microsoft YaHei", "sans-serif"]
     plt.rcParams["axes.unicode_minus"] = False
     plt.rcParams["axes.labelweight"] = "bold"
     plt.rcParams["axes.titleweight"] = "bold"
@@ -199,32 +205,7 @@ def generate_charts(stats: dict):
     fig.savefig(os.path.join(stats_dir, "papers_by_year.png"), dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
-    # ---------- Chart 3: Abstract Coverage (donut) ----------
-    fig, ax = plt.subplots(figsize=(6, 6))
-    total = stats["total_papers"]
-    have_abs = stats["total_abstracts"]
-    no_abs = total - have_abs
-    sizes = [have_abs, no_abs]
-    labels = [
-        f"含摘要 (With Abstract)\n{have_abs/total*100:.1f}%",
-        f"暂无摘要 (No Abstract)\n{no_abs/total*100:.1f}%",
-    ]
-    colors_donut = ["#7BA05B", "#E8E8E8"]
-    explode = (0.02, 0)
-
-    wedges, texts = ax.pie(sizes, colors=colors_donut, startangle=90,
-                           wedgeprops=dict(width=0.45, edgecolor="white"),
-                           explode=explode)
-    ax.text(0, 0, f"{total:,}\nTotal 总计", ha="center", va="center", fontsize=15, fontweight="bold",
-            color="#1a1a1a", linespacing=1.3)
-    ax.legend(wedges, labels, loc="lower center", bbox_to_anchor=(0.5, -0.08),
-              ncol=2, frameon=False, fontsize=10, title_fontsize=11)
-    ax.set_title("摘要覆盖情况 (Abstract Coverage)", fontsize=15, fontweight="bold", pad=18)
-    fig.tight_layout()
-    fig.savefig(os.path.join(stats_dir, "abstract_coverage.png"), dpi=200, bbox_inches="tight", facecolor="white")
-    plt.close(fig)
-
-    # ---------- Chart 4: Overview Infographic (big numbers) ----------
+    # ---------- Chart 3: Overview Infographic (big numbers) ----------
     fig, ax = plt.subplots(figsize=(10, 2.4))
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 2.4)
@@ -239,8 +220,8 @@ def generate_charts(stats: dict):
     n = len(metrics)
     x_positions = [1.25 + i * 2.5 for i in range(n)]
     for (label, value, color), x in zip(metrics, x_positions):
-        ax.text(x, 1.55, value, fontsize=28, fontweight="bold", ha="center", va="center", color=color)
-        ax.text(x, 0.55, label, fontsize=11, ha="center", va="center", color="#444444", linespacing=1.4)
+        ax.text(x, 1.55, value, fontsize=32, fontweight="black", ha="center", va="center", color=color)
+        ax.text(x, 0.55, label, fontsize=12, ha="center", va="center", color="#444444", linespacing=1.4)
         if x < x_positions[-1]:
             ax.plot([x + 1.25, x + 1.25], [0.25, 1.85], color="#DDDDDD", linewidth=0.8)
 
@@ -271,7 +252,7 @@ def generate_wordcloud(stats: dict):
         prefer_horizontal=0.92,
         min_font_size=12,
         max_font_size=260,
-        color_func=lambda *args, **kwargs: random.choice(NATURE_COLORS),
+        color_func=lambda word, *args, **kwargs: SERIES_COLOR_MAP.get(word, "#8C8C8C"),
         random_state=42,
     ).generate_from_frequencies(frequencies)
 
@@ -408,12 +389,9 @@ def build_stats_section():
         '  <img src="./pics/stats/wordcloud.png" alt="刊物系列词云" width="900" />',
         "</p>",
         "",
-        "<table>",
-        "  <tr>",
-        '    <td align="center"><img src="./pics/stats/papers_by_category.png" alt="各领域论文数量" width="500" /></td>',
-        '    <td align="center"><img src="./pics/stats/abstract_coverage.png" alt="摘要覆盖情况" width="330" /></td>',
-        "  </tr>",
-        "</table>",
+        '<p align="center">',
+        '  <img src="./pics/stats/papers_by_category.png" alt="各领域论文数量" width="800" />',
+        "</p>",
         "",
         '<p align="center">',
         '  <img src="./pics/stats/papers_by_year.png" alt="历年论文收录趋势" width="800" />',
@@ -433,12 +411,9 @@ def build_stats_section_en():
         '  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="900" />',
         "</p>",
         "",
-        "<table>",
-        "  <tr>",
-        '    <td align="center"><img src="./pics/stats/papers_by_category.png" alt="Papers by Research Field" width="500" /></td>',
-        '    <td align="center"><img src="./pics/stats/abstract_coverage.png" alt="Abstract Coverage" width="330" /></td>',
-        "  </tr>",
-        "</table>",
+        '<p align="center">',
+        '  <img src="./pics/stats/papers_by_category.png" alt="Papers by Research Field" width="800" />',
+        "</p>",
         "",
         '<p align="center">',
         '  <img src="./pics/stats/papers_by_year.png" alt="Annual Paper Collection Trend" width="800" />',
