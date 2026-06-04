@@ -1648,8 +1648,24 @@
         "url": "https://dblp.org/db/journals/tpds/tpds35.html"
     },
     {
+        "name": "ALT2019",
+        "url": "https://dblp.org/db/conf/alt/alt2019.html"
+    },
+    {
+        "name": "ALT2020",
+        "url": "https://dblp.org/db/conf/alt/alt2020.html"
+    },
+    {
         "name": "ALT2025",
         "url": "https://dblp.org/db/conf/alt/alt2025.html"
+    },
+    {
+        "name": "UAI2019",
+        "url": "https://dblp.org/db/conf/uai/uai2019.html"
+    },
+    {
+        "name": "UAI2020",
+        "url": "https://dblp.org/db/conf/uai/uai2020.html"
     },
     {
         "name": "UAI2025",
@@ -1660,8 +1676,16 @@
         "url": "https://dblp.org/db/conf/osdi/osdi2025.html"
     },
     {
+        "name": "SOSP2019",
+        "url": "https://dblp.org/db/conf/sosp/sosp2019.html"
+    },
+    {
         "name": "SOSP2025",
         "url": "https://dblp.org/db/conf/sosp/sosp2025.html"
+    },
+    {
+        "name": "ISCA2019",
+        "url": "https://dblp.org/db/conf/isca/isca2019.html"
     },
     {
         "name": "ISCA2025",
