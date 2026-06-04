@@ -1,7 +1,30 @@
 """DBLP 自动发现（会议 + 期刊）"""
 
+import json
+import time
+from pathlib import Path
 from typing import List, Dict, Any
 from .base import BaseDiscovery
+
+CACHE_FILE = Path("cache/dblp_discovery_cache.json")
+CACHE_TTL_EXIST = 30 * 86400      # 已确认存在的 URL 缓存 30 天
+CACHE_TTL_NOT_EXIST = 7 * 86400   # 已确认不存在的 URL 缓存 7 天
+
+
+def _load_cache() -> dict:
+    if CACHE_FILE.exists():
+        try:
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return {}
+
+
+def _save_cache(cache: dict):
+    CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=2)
 
 
 # 会议缩写 → 起始年份
@@ -49,6 +72,7 @@ CONFERENCES = {
     "uss": 2019,     # USENIX Security
     "icse": 2019,
     "stoc": 2019,
+    "focs": 2019,    # IEEE FOCS (会议，非期刊)
 }
 
 # 特殊 DBLP path（与缩写不同）
@@ -163,54 +187,89 @@ JOURNALS: Dict[str, Dict[str, Any]] = {
         "name": "TC",
         "start_year": 2019,
     },
-    "focs":  {
-        "path": "journals/focs/focs",
-        "volume_for": lambda y: y - 1960,
-        "name": "FOCS",
-        "start_year": 2019,
-    },
 }
 
 
 class DBLPDiscovery(BaseDiscovery):
+    def __init__(self, name: str = "", existing_conf: List[Dict[str, Any]] = None):
+        super().__init__(name, existing_conf)
+        self._cache = _load_cache()
+        self._cache_dirty = False
+
+    def _head_ok_cached(self, url: str, timeout: int = 10) -> bool:
+        """带缓存的 HEAD 检查，避免对相同 URL 重复请求。"""
+        now = time.time()
+        entry = self._cache.get(url)
+        if entry:
+            ts = entry.get("ts", 0)
+            ttl = CACHE_TTL_EXIST if entry.get("exists") else CACHE_TTL_NOT_EXIST
+            if now - ts < ttl:
+                return entry["exists"]
+
+        result = self._head_ok(url, timeout)
+        self._cache[url] = {"exists": result, "ts": now}
+        self._cache_dirty = True
+        return result
+
     def discover(self, start_year: int, end_year: int) -> List[Dict[str, Any]]:
         results = []
+        existing_urls = {item.get("url") for item in self.existing}
 
-        # ---------- 会议 ----------
-        for abbrev, conf_start in CONFERENCES.items():
-            for year in range(max(start_year, conf_start), end_year + 1):
-                name = f"{abbrev.upper()}{year}"
-                path = DBLP_PATH_OVERRIDE.get(abbrev, f"conf/{abbrev}/{abbrev}")
-                base_url = f"https://dblp.org/db/{path}{year}.html"
+        try:
+            # ---------- 会议 ----------
+            for abbrev, conf_start in CONFERENCES.items():
+                for year in range(max(start_year, conf_start), end_year + 1):
+                    name = f"{abbrev.upper()}{year}"
+                    path = DBLP_PATH_OVERRIDE.get(abbrev, f"conf/{abbrev}/{abbrev}")
+                    base_url = f"https://dblp.org/db/{path}{year}.html"
 
-                # 跳过双年会议的非举办年份
-                if abbrev in BIENNIAL_ODD and year % 2 == 0:
-                    continue
+                    # 跳过双年会议的非举办年份
+                    if abbrev in BIENNIAL_ODD and year % 2 == 0:
+                        continue
 
-                if abbrev in MULTI_VOLUME:
-                    vol = 1
-                    found_any = False
-                    while vol <= 40:
-                        url = f"https://dblp.org/db/{path}{year}-{vol}.html"
-                        if self._head_ok(url):
-                            results.append({"name": name, "url": url})
-                            found_any = True
-                            vol += 1
-                        else:
-                            break
-                    if not found_any and self._head_ok(base_url):
-                        results.append({"name": name, "url": base_url})
-                else:
-                    if self._head_ok(base_url):
-                        results.append({"name": name, "url": base_url})
+                    if abbrev in MULTI_VOLUME:
+                        # 多卷会议：尝试所有卷号，连续 3 次失败才停止，避免网络抖动导致漏卷
+                        consecutive_fail = 0
+                        for vol in range(1, 41):
+                            url = f"https://dblp.org/db/{path}{year}-{vol}.html"
+                            if url in existing_urls:
+                                consecutive_fail = 0
+                                continue
+                            if self._head_ok_cached(url):
+                                results.append({"name": name, "url": url})
+                                consecutive_fail = 0
+                            else:
+                                consecutive_fail += 1
+                                if consecutive_fail >= 3:
+                                    break
+                            time.sleep(0.5)
+                        # 没有任何卷时回退到 base_url
+                        if not any(r["name"] == name for r in results):
+                            if base_url not in existing_urls and self._head_ok_cached(base_url):
+                                results.append({"name": name, "url": base_url})
+                                time.sleep(0.5)
+                    else:
+                        # 非多卷会议：若 name 已存在则直接跳过，减少无效请求
+                        if name in self.existing_names:
+                            continue
+                        if self._head_ok_cached(base_url):
+                            results.append({"name": name, "url": base_url})
+                        time.sleep(0.5)
 
-        # ---------- 期刊 ----------
-        for abbrev, meta in JOURNALS.items():
-            for year in range(max(start_year, meta["start_year"]), end_year + 1):
-                name = f"{meta['name']}{year}"
-                vol = meta["volume_for"](year)
-                url = f"https://dblp.org/db/{meta['path']}{vol}.html"
-                if self._head_ok(url):
-                    results.append({"name": name, "url": url})
+            # ---------- 期刊 ----------
+            for abbrev, meta in JOURNALS.items():
+                for year in range(max(start_year, meta["start_year"]), end_year + 1):
+                    name = f"{meta['name']}{year}"
+                    if name in self.existing_names:
+                        continue
+                    vol = meta["volume_for"](year)
+                    url = f"https://dblp.org/db/{meta['path']}{vol}.html"
+                    if url not in existing_urls and self._head_ok_cached(url):
+                        results.append({"name": name, "url": url})
+                    time.sleep(0.5)
+
+        finally:
+            if self._cache_dirty:
+                _save_cache(self._cache)
 
         return results
