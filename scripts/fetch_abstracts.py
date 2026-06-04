@@ -14,6 +14,7 @@
 """
 
 import argparse
+import gzip
 import json
 import os
 import random
@@ -54,9 +55,9 @@ HEADERS = {
 }
 
 CACHE_DIR = Path("cache")
-CACHE_FILE = CACHE_DIR / "cache.jsonl"
+CACHE_FILE = CACHE_DIR / "cache.jsonl.gz"
 PROGRESS_FILE = CACHE_DIR / "abstract_backfill_progress.json"
-BACKUP_FILE = CACHE_DIR / "cache.jsonl.bak"
+BACKUP_FILE = CACHE_DIR / "cache.jsonl.gz.bak"
 
 # 核心会议（用于 Phase 2/3 划分）
 CORE_CONFS = {
@@ -692,8 +693,8 @@ def _process_targets(
             print(f"[!] Soft timeout ({soft_timeout}s) reached at paper {i}/{len(targets)}. Saving progress and exiting.")
             save_progress(progress)
             if cache_dirty:
-                tmp_file = CACHE_FILE.with_suffix(".jsonl.tmp")
-                with open(tmp_file, "w", encoding="utf-8") as f:
+                tmp_file = CACHE_FILE.with_suffix(".jsonl.gz.tmp")
+                with gzip.open(tmp_file, "wt", encoding="utf-8") as f:
                     for p in all_papers:
                         f.write(json.dumps(p, ensure_ascii=False) + "\n")
                 os.replace(str(tmp_file), str(CACHE_FILE))
@@ -735,8 +736,8 @@ def _process_targets(
             print(f"[*] Saving progress... (chunk success: {chunk_success}, total success: {success}, failed: {failed})")
             save_progress(progress)
             if cache_dirty:
-                tmp_file = CACHE_FILE.with_suffix(".jsonl.tmp")
-                with open(tmp_file, "w", encoding="utf-8") as f:
+                tmp_file = CACHE_FILE.with_suffix(".jsonl.gz.tmp")
+                with gzip.open(tmp_file, "wt", encoding="utf-8") as f:
                     for p in all_papers:
                         f.write(json.dumps(p, ensure_ascii=False) + "\n")
                 os.replace(str(tmp_file), str(CACHE_FILE))

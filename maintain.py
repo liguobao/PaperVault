@@ -27,7 +27,7 @@ COMMENT_RECENT_UPDATE_END = "<!-- recent-update-end -->"
 COMMENT_AUTO_SUMMARY_START = "<!-- auto-summary-start -->"
 COMMENT_AUTO_SUMMARY_END = "<!-- auto-summary-end -->"
 
-cache_path = os.path.join(os.path.dirname(__file__), "cache", "cache.jsonl")
+cache_path = os.path.join(os.path.dirname(__file__), "cache", "cache.jsonl.gz")
 readme_path = "README.md"
 readme_en_path = "README.en.md"
 acl_conf_path = os.path.join(os.path.dirname(__file__), "conf", "acl_conf.json")

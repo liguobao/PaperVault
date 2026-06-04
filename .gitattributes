@@ -1,2 +1,2 @@
-cache/cache.jsonl filter=lfs diff=lfs merge=lfs -text
+cache/cache.jsonl.gz filter=lfs diff=lfs merge=lfs -text
 cache/abstract_backfill_progress.json filter=lfs diff=lfs merge=lfs -text
