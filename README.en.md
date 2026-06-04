@@ -24,8 +24,6 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- recent-update-end -->
 
 ### Current Phase
-- Expanding paper coverage from 2020 onward, especially high-quality **journals** (e.g., TIP, TPAMI, TKDE, TNNLS, TASLP, IJCV, etc.) and major **publishers** (e.g., IEEE, ACM, Springer, Elsevier).
-- Backfilling **abstracts** for existing papers via automated scripts and GitHub Actions to enhance searchability.
 <!-- auto-summary-start -->
 
 - The database contains **240,000+** papers spanning 57+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
@@ -36,9 +34,6 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 - Upgrade the frontend and backend stack for a better search experience and UI.
 - Redeploy and relaunch the web search service.
 
-### Project History
-PaperVault is evolving from a static paper list into a fully-featured, data-rich online academic search engine.
-
 ## :bar_chart: Data Statistics
 
 <!-- stats-start -->
@@ -47,15 +42,20 @@ PaperVault is evolving from a static paper list into a fully-featured, data-rich
   <img src="./pics/stats/stats_overview.png" alt="Statistics Overview" width="850" />
 </p>
 
+<p align="center">
+  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="900" />
+</p>
+
 <table>
   <tr>
     <td align="center"><img src="./pics/stats/papers_by_category.png" alt="Papers by Research Field" width="500" /></td>
     <td align="center"><img src="./pics/stats/abstract_coverage.png" alt="Abstract Coverage" width="330" /></td>
   </tr>
-  <tr>
-    <td colspan="2" align="center"><img src="./pics/stats/papers_by_year.png" alt="Annual Paper Collection Trend" width="800" /></td>
-  </tr>
 </table>
+
+<p align="center">
+  <img src="./pics/stats/papers_by_year.png" alt="Annual Paper Collection Trend" width="800" />
+</p>
 
 <!-- stats-end -->
 

@@ -24,8 +24,6 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 <!-- recent-update-end -->
 
 ### 当前阶段
-- 正在大幅扩展论文收录范围，重点补充 **2020 年至今** 的更多优质期刊（如 TIP、TPAMI、TKDE、TNNLS、TASLP、IJCV 等）以及主流出版社（如 IEEE、ACM、Springer、Elsevier 等）的论文清单。
-- 已通过自动化脚本和 GitHub Actions 批量为论文填充 **摘要（abstract）** 信息，提升检索价值。
 <!-- auto-summary-start -->
 
 - 数据库已收录 **240,000+** 篇论文，覆盖 NLP、CV、ML、DM、DB、Speech 等 57+ 个顶级会议与期刊。
@@ -36,9 +34,6 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 - 升级前后端技术栈，优化搜索体验与界面设计。
 - 重新部署并上线 Web 搜索服务，支持更高效的论文检索与浏览。
 
-### 项目历程
-PaperVault 正在将其从一个静态论文清单工具逐步建设为一个功能完善、数据丰富的在线学术搜索引擎。
-
 ## :bar_chart: 数据统计
 
 <!-- stats-start -->
@@ -47,15 +42,20 @@ PaperVault 正在将其从一个静态论文清单工具逐步建设为一个功
   <img src="./pics/stats/stats_overview.png" alt="统计概览" width="850" />
 </p>
 
+<p align="center">
+  <img src="./pics/stats/wordcloud.png" alt="刊物系列词云" width="900" />
+</p>
+
 <table>
   <tr>
     <td align="center"><img src="./pics/stats/papers_by_category.png" alt="各领域论文数量" width="500" /></td>
     <td align="center"><img src="./pics/stats/abstract_coverage.png" alt="摘要覆盖情况" width="330" /></td>
   </tr>
-  <tr>
-    <td colspan="2" align="center"><img src="./pics/stats/papers_by_year.png" alt="历年论文收录趋势" width="800" /></td>
-  </tr>
 </table>
+
+<p align="center">
+  <img src="./pics/stats/papers_by_year.png" alt="历年论文收录趋势" width="800" />
+</p>
 
 <!-- stats-end -->
 
