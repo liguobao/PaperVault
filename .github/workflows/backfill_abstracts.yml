@@ -3,7 +3,7 @@ name: Backfill Abstracts
 env:
   PYTHON_VERSION: "3.10"
   AUTO_BACKFILL_BRANCH: "auto-backfill-abstracts"
-  AUTO_BACKFILL_FILES: "cache/cache.jsonl cache/abstract_backfill_progress.json docs/abstract_backfill_progress.md"
+  AUTO_BACKFILL_FILES: "cache/cache.jsonl.gz cache/abstract_backfill_progress.json docs/abstract_backfill_progress.md"
 
 on:
   schedule:

@@ -11,14 +11,16 @@
 """
 
 import argparse
+import gzip
 import json
+import os
 import re
 import shutil
 from datetime import datetime
 from pathlib import Path
 
-CACHE_FILE = Path("cache/cache.jsonl")
-BACKUP_FILE = Path("cache/cache.jsonl.bak")
+CACHE_FILE = Path("cache/cache.jsonl.gz")
+BACKUP_FILE = Path("cache/cache.jsonl.gz.bak")
 
 # 匹配 GitHub 仓库链接（标准 user/repo 格式）
 GITHUB_RE = re.compile(
@@ -45,12 +47,13 @@ def run(year: str = None, retry_failed: bool = False) -> None:
 
     # 读取缓存
     papers = []
-    with open(CACHE_FILE, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            papers.append(json.loads(line))
+    if CACHE_FILE.exists():
+        with gzip.open(CACHE_FILE, "rt", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                papers.append(json.loads(line))
 
     targets = []
     for p in papers:
@@ -64,8 +67,6 @@ def run(year: str = None, retry_failed: bool = False) -> None:
             continue
         if not retry_failed:
             # 默认只处理尚未被新逻辑扫描过的条目
-            # 由于旧逻辑把没有匹配的也设为 "#"，我们无法区分
-            # 因此 retry_failed 模式才处理已有 "#" 的条目
             if code != "#":
                 continue
         else:
@@ -100,9 +101,11 @@ def run(year: str = None, retry_failed: bool = False) -> None:
     # 备份并写回
     if CACHE_FILE.exists():
         shutil.copy2(CACHE_FILE, BACKUP_FILE)
-    with open(CACHE_FILE, "w", encoding="utf-8") as f:
+    tmp_file = CACHE_FILE.with_suffix(".jsonl.gz.tmp")
+    with gzip.open(tmp_file, "wt", encoding="utf-8") as f:
         for p in papers:
             f.write(json.dumps(p, ensure_ascii=False) + "\n")
+    os.replace(str(tmp_file), str(CACHE_FILE))
     print("[*] Cache saved.")
 
 

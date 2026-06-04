@@ -20,7 +20,7 @@ app.config["CACHE_TYPE"] = "null"
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-cache_path = os.path.join(base_dir, "cache", "cache.jsonl")
+cache_path = os.path.join(base_dir, "cache", "cache.jsonl.gz")
 
 cache_data = {}
 support_confs = []

@@ -1,6 +1,6 @@
 # PaperVault 论文数据来源分析报告
 
-> 分析对象：`cache/cache.jsonl`（94,641 条记录，152 个会议/期刊）
+> 分析对象：`cache/cache.jsonl.gz`（94,641 条记录，152 个会议/期刊）
 > 分析时间：2026-05-23
 > 分析分支：`analyze-sources`
 

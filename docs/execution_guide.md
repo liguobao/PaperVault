@@ -46,7 +46,7 @@
 3. **手动触发**：支持 `workflow_dispatch`，可选择 `incremental`（默认）或 `force` 模式。
 
 **行为**：
-- 自动检测 `conf/*.json` 中有但 `cache/cache.jsonl` 中没有的会议。
+- 自动检测 `conf/*.json` 中有但 `cache/cache.jsonl.gz` 中没有的会议。
 - 只收集缺失的会议，保留已有缓存数据不变。
 - 收集完成后自动更新 README 会议列表。
 - 通过 PR 提交到 `auto-collect-papers` 分支，人工 review 后合并。
@@ -61,7 +61,7 @@ python maintain.py collect
 
 ### 任务 2：Abstract 批量回填（按 conf 粒度执行）
 
-当前 `cache/cache.jsonl` 中共有约 **63,000+** 条论文缺少 abstract。
+当前 `cache/cache.jsonl.gz` 中共有约 **63,000+** 条论文缺少 abstract。
 脚本位置：`scripts/fetch_abstracts.py`
 
 **执行原则**：以单个 `conf`（会议+年份，如 `AAAI2020`）为最小单元，**逐个处理**，优先选择 DOI 比例高的 conf。
@@ -72,7 +72,7 @@ python maintain.py collect
 source F:/Miniforge3/etc/profile.d/conda.sh && conda activate llm
 
 # 1. 自动备份当前 cache（脚本运行时也会自动做原子写入，但手动备份更保险）
-cp cache/cache.jsonl "cache/cache.jsonl.bak.$(date +%Y%m%d_%H%M%S)"
+cp cache/cache.jsonl.gz "cache/cache.jsonl.gz.bak.$(date +%Y%m%d_%H%M%S)"
 
 # 2. 查看待处理 conf 列表（按优先级排序，DOI 比例高的在前）
 python scripts/fetch_abstracts.py --list
@@ -155,7 +155,7 @@ python scripts/fetch_abstracts.py --conf ICASSP2022 --retry-partial --chunk-size
 - 可随时中断（Ctrl+C），下次运行自动恢复；若担心中断导致 cache 不一致，可用 `--retry-partial`
 
 **Cache 安全写入**：
-- 每 chunk 先写入 `cache/cache.jsonl.tmp`，再通过原子重命名替换原文件
+- 每 chunk 先写入 `cache/cache.jsonl.gz.tmp`，再通过原子重命名替换原文件
 - 即使进程崩溃，最多丢失当前 chunk，不会损坏整个 cache
 
 **环境建议**：
@@ -190,15 +190,15 @@ python scripts/fetch_code_links.py --year all
 
 ### 任务 4：提交 cache 更新
 
-`cache/cache.jsonl` 由 Git LFS 管理。每完成一个 major phase 后建议提交：
+`cache/cache.jsonl.gz` 由 Git LFS 管理。每完成一个 major phase 后建议提交：
 
 ```bash
-git add cache/cache.jsonl cache/abstract_backfill_progress.json
+git add cache/cache.jsonl.gz cache/abstract_backfill_progress.json
 git commit -m "chore: abstract backfill phase X completed"
 ```
 
 **注意**：
-- `cache/cache.jsonl` 文件很大，提交前确认 Git LFS 已安装且工作正常
+- `cache/cache.jsonl.gz` 文件很大，提交前确认 Git LFS 已安装且工作正常
 - `cache/abstract_backfill_progress.json` 也应一并提交，便于其他环境恢复进度
 
 ---
@@ -239,7 +239,7 @@ python -c "import json; [json.load(open(f)) for f in ['conf/acl_conf.json','conf
 
 1. **Abstract 回填耗时长**：63,906 条空 abstract 全部处理完预计需要 **20–40 小时**的墙钟时间。请利用断点续传机制分多次执行。
 2. **API 限流**：Crossref / Semantic Scholar / OpenAlex 均有可能返回 429。脚本已内置指数退避（遇到 429 自动等待），请勿频繁重启脚本。
-3. **Cache 文件大**：`cache.jsonl` 约数百 MB，Git LFS 推送可能需要较长时间。
-4. **Cache 写入安全**：脚本已改为原子重命名写入，但执行前仍建议手动备份 `cache/cache.jsonl`。
+3. **Cache 文件大**：`cache.jsonl.gz` 约数百 MB，Git LFS 推送可能需要较长时间。
+4. **Cache 写入安全**：脚本已改为原子重命名写入，但执行前仍建议手动备份 `cache/cache.jsonl.gz`。
 5. **标题匹配误差**：API 返回的标题与本地标题可能存在细微差异，脚本已记录匹配日志，如遇大批量不匹配请检查日志并调整阈值。
 6. **进度文件格式**：进度文件已升级为 v2 格式（记录 success/failed），兼容旧版 `processed_urls` 列表格式。

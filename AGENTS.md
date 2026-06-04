@@ -27,7 +27,7 @@ PaperVault/
 ├── maintain.py               # README updater and force cache refresh utility
 ├── requirements.txt          # Python dependencies
 ├── cache/
-│   └── cache.jsonl           # Local JSON database of all papers (JSON Lines)
+│   └── cache.jsonl.gz        # Gzip-compressed JSON Lines database of all papers
 ├── conf/                     # Conference source configurations
 │   ├── acl_conf.json         # ACL Anthology sources (NLP)
 │   ├── dblp_conf.json        # DBLP sources (mixed venues)
@@ -84,7 +84,7 @@ The Flask server runs on `http://127.0.0.1:5000` by default.
 
 ### Git LFS
 
-The paper cache file (`cache/cache.jsonl`) is managed by [Git LFS](https://git-lfs.github.com) due to its large size. Make sure you have Git LFS installed before cloning:
+The paper cache file (`cache/cache.jsonl.gz`) is managed by [Git LFS](https://git-lfs.github.com) due to its large size. Make sure you have Git LFS installed before cloning:
 
 ```bash
 # Install Git LFS (one-time setup)
@@ -131,7 +131,7 @@ This builds the frontend into the `static/` directory at the project root, which
 | Command | Description |
 |---------|-------------|
 | `python app.py` | Start Flask backend server |
-| `python collector.py` | Run collector to update `cache/cache.jsonl` |
+| `python collector.py` | Run collector to update `cache/cache.jsonl.gz` |
 | `python maintain.py` | Update README conference list from config files |
 | `python maintain.py collect` | Incrementally collect papers for new conferences and update README. Supports `--soft-timeout N` for graceful timeout handling |
 | `python maintain.py force` | Force full cache rebuild and README update |

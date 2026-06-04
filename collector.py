@@ -11,6 +11,8 @@ import time
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 from tqdm import tqdm
 
+import gzip
+
 # 忽略 ACL Anthology 某些 XML 页面被 HTML 解析器解析时的警告
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
@@ -550,7 +552,8 @@ def collect(cache_file=None, force=False, soft_timeout=None):
 
     cache_conf = set()
     cache_res = {}
-    if not force and cache_file is not None and os.path.exists(cache_file):
+    gz_path = cache_file + ".gz" if cache_file and not cache_file.endswith(".gz") else cache_file
+    if not force and gz_path is not None and os.path.exists(gz_path):
         cache_res = load_cache(cache_file)
         cache_conf = set(cache_res.keys())
 
@@ -704,32 +707,65 @@ def collect(cache_file=None, force=False, soft_timeout=None):
     return res
 
 
+def _to_gz_path(path):
+    """统一将 .jsonl 路径转为 .jsonl.gz 路径。"""
+    if path.endswith(".jsonl") and not path.endswith(".jsonl.gz"):
+        return path + ".gz"
+    return path
+
+
 def load_cache(path):
-    """读取 JSONL，重组为 dict[conf_name] -> list[paper_dict]"""
-    data = {}
-    with open(path, "r", encoding="utf-8") as f:
-        for line_num, line in enumerate(f, start=1):
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                paper = json.loads(line)
-            except json.JSONDecodeError as e:
-                raise ValueError(f"Malformed JSON on line {line_num} of {path}: {e}")
-            if "conf" not in paper or not isinstance(paper["conf"], str):
-                raise ValueError(
-                    f"Missing or invalid 'conf' field on line {line_num} of {path}"
-                )
-            conf = paper.pop("conf")
-            if conf not in data:
-                data[conf] = []
-            data[conf].append(paper)
-    return data
+    """读取缓存。优先从 gzip 加载，回退到旧版纯文本 JSONL。"""
+    gz_path = _to_gz_path(path)
+    if os.path.exists(gz_path):
+        data = {}
+        with gzip.open(gz_path, "rt", encoding="utf-8") as f:
+            for line_num, line in enumerate(f, start=1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    paper = json.loads(line)
+                except json.JSONDecodeError as e:
+                    raise ValueError(f"Malformed JSON on line {line_num} of {gz_path}: {e}")
+                if "conf" not in paper or not isinstance(paper["conf"], str):
+                    raise ValueError(
+                        f"Missing or invalid 'conf' field on line {line_num} of {gz_path}"
+                    )
+                conf = paper.pop("conf")
+                if conf not in data:
+                    data[conf] = []
+                data[conf].append(paper)
+        return data
+    # 兼容旧版纯文本 JSONL
+    if os.path.exists(path):
+        print(f"[!] Loading from legacy {path}. Consider migrating to gzip manually.")
+        data = {}
+        with open(path, "r", encoding="utf-8") as f:
+            for line_num, line in enumerate(f, start=1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    paper = json.loads(line)
+                except json.JSONDecodeError as e:
+                    raise ValueError(f"Malformed JSON on line {line_num} of {path}: {e}")
+                if "conf" not in paper or not isinstance(paper["conf"], str):
+                    raise ValueError(
+                        f"Missing or invalid 'conf' field on line {line_num} of {path}"
+                    )
+                conf = paper.pop("conf")
+                if conf not in data:
+                    data[conf] = []
+                data[conf].append(paper)
+        return data
+    return {}
 
 
 def save_cache(path, data):
-    """将 dict[conf_name] -> list[paper_dict] 写入 JSONL"""
-    with open(path, "w", encoding="utf-8") as f:
+    """将 dict[conf_name] -> list[paper_dict] 写入 gzip JSONL。"""
+    gz_path = _to_gz_path(path)
+    with gzip.open(gz_path, "wt", encoding="utf-8") as f:
         for conf, papers in data.items():
             for paper in papers:
                 record = dict(paper)
@@ -738,7 +774,8 @@ def save_cache(path, data):
 
 
 def do_collect(cache_file=None, force=False, soft_timeout=None):
-    if force or cache_file is None or not os.path.exists(cache_file):
+    gz_path = _to_gz_path(cache_file) if cache_file else None
+    if force or gz_path is None or not os.path.exists(gz_path):
         print(f"[+] Collecting papers...")
         res = collect(cache_file, force=force, soft_timeout=soft_timeout)
         save_cache(cache_file, res)
@@ -749,4 +786,4 @@ def do_collect(cache_file=None, force=False, soft_timeout=None):
 
 
 if __name__ == "__main__":
-    do_collect(cache_file="cache/cache.jsonl", force=True)
+    do_collect(cache_file="cache/cache.jsonl.gz", force=True)
