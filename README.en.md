@@ -57,6 +57,10 @@ PaperVault is evolving from a static paper list into a fully-featured, data-rich
   </tr>
 </table>
 
+<p align="center">
+  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="900" />
+</p>
+
 <!-- stats-end -->
 
 ## :open_book: Coverage

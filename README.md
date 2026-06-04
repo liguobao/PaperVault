@@ -57,6 +57,10 @@ PaperVault 正在将其从一个静态论文清单工具逐步建设为一个功
   </tr>
 </table>
 
+<p align="center">
+  <img src="./pics/stats/wordcloud.png" alt="刊物系列词云" width="900" />
+</p>
+
 <!-- stats-end -->
 
 ## :open_book: 收录会议范围
