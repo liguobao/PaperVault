@@ -18,9 +18,9 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- recent-update-start -->
 
 - 📅 **Last Updated**: 2026-06-04
-- 🆕 **New Papers This Update**: 4,006
-- 📢 **New Conferences This Update**: 20
-- 📊 **Database Scale**: 260,430 papers / 66 publication series / 131,571 with abstracts
+- 🆕 **New Papers This Update**: 440
+- 📢 **New Conferences This Update**: 6
+- 📊 **Database Scale**: 260,870 papers / 66 publication series / 131,571 with abstracts
 
 <!-- recent-update-end -->
 
@@ -168,14 +168,14 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <details>
 <summary><b>Others</b> (9 series)</summary>
 
-- **ALT** 2025-2025
+- **ALT** 2019-2025 (3 editions)
 - **EUROSYS** 2025-2026 (2 editions)
 - **FOCS** 2025-2025
 - **ICSE** 2025-2025
-- **ISCA** 2025-2025
+- **ISCA** 2019-2025 (2 editions)
 - **OSDI** 2025-2025
-- **SOSP** 2025-2025
-- **UAI** 2025-2025
+- **SOSP** 2019-2025 (2 editions)
+- **UAI** 2019-2025 (3 editions)
 - **USS** 2025-2025
 
 </details>

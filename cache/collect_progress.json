@@ -2744,6 +2744,30 @@
     "DBLP::https://dblp.org/db/conf/focs/focs2025.html": {
       "name": "FOCS2025",
       "ts": "2026-06-04T19:29:41"
+    },
+    "DBLP::https://dblp.org/db/conf/alt/alt2019.html": {
+      "name": "ALT2019",
+      "ts": "2026-06-04T21:51:46"
+    },
+    "DBLP::https://dblp.org/db/conf/alt/alt2020.html": {
+      "name": "ALT2020",
+      "ts": "2026-06-04T21:52:07"
+    },
+    "DBLP::https://dblp.org/db/conf/uai/uai2019.html": {
+      "name": "UAI2019",
+      "ts": "2026-06-04T21:52:28"
+    },
+    "DBLP::https://dblp.org/db/conf/uai/uai2020.html": {
+      "name": "UAI2020",
+      "ts": "2026-06-04T21:52:49"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2019.html": {
+      "name": "SOSP2019",
+      "ts": "2026-06-04T21:53:08"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2019.html": {
+      "name": "ISCA2019",
+      "ts": "2026-06-04T21:53:28"
     }
   }
 }
