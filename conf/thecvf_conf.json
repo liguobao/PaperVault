@@ -1,7 +1,31 @@
 [
     {
+        "name": "CVPR2015",
+        "url": "https://openaccess.thecvf.com/CVPR2015?day=all"
+    },
+    {
+        "name": "CVPR2016",
+        "url": "https://openaccess.thecvf.com/CVPR2016?day=all"
+    },
+    {
+        "name": "CVPR2017",
+        "url": "https://openaccess.thecvf.com/CVPR2017?day=all"
+    },
+    {
+        "name": "CVPR2018",
+        "url": "https://openaccess.thecvf.com/CVPR2018?day=all"
+    },
+    {
         "name": "CVPR2022",
         "url": "https://openaccess.thecvf.com/CVPR2022?day=all"
+    },
+    {
+        "name": "ICCV2015",
+        "url": "https://openaccess.thecvf.com/ICCV2015?day=all"
+    },
+    {
+        "name": "ICCV2017",
+        "url": "https://openaccess.thecvf.com/ICCV2017?day=all"
     },
     {
         "name": "ICCV2021",
@@ -74,5 +98,9 @@
     {
         "name": "WACV2026",
         "url": "https://openaccess.thecvf.com/WACV2026?day=all"
+    },
+    {
+        "name": "ECCV2018",
+        "url": "https://openaccess.thecvf.com/ECCV2018?day=all"
     }
 ]
