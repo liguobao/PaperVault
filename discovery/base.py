@@ -48,13 +48,27 @@ class BaseDiscovery(abc.ABC):
         """返回新发现的配置列表，每条为 dict(name=..., url=..., [tag=...])"""
         ...
 
-    def _head_ok(self, url: str, timeout: int = 15) -> bool:
-        try:
-            with _create_session() as session:
-                resp = session.head(url, headers=HEADERS, timeout=timeout, allow_redirects=True)
-                return resp.status_code == 200
-        except Exception:
-            return False
+    def _head_ok(self, url: str, timeout: int = 10) -> bool:
+        """发送 HEAD 请求检查 URL 是否可访问，带重试。"""
+        for attempt in range(2):
+            try:
+                with _create_session() as session:
+                    resp = session.head(url, headers=HEADERS, timeout=timeout, allow_redirects=True)
+                    if resp.status_code == 429:
+                        # 被限流，等待后重试
+                        if attempt == 0:
+                            time.sleep(3)
+                            continue
+                        return False
+                    return resp.status_code == 200
+            except requests.exceptions.ConnectionError:
+                if attempt == 0:
+                    time.sleep(2)
+                    continue
+                return False
+            except Exception:
+                return False
+        return False
 
     def _get_json(self, url: str, timeout: int = 30, retries: int = 3) -> Any:
         for attempt in range(retries):
