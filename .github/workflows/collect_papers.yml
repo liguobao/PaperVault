@@ -3,7 +3,7 @@ name: Collect Papers
 env:
   PYTHON_VERSION: "3.10"
   AUTO_COLLECT_BRANCH: "auto-collect-papers"
-  AUTO_COLLECT_FILES: "cache/cache.jsonl cache/collect_progress.json cache/collect_failures.json README.md"
+  AUTO_COLLECT_FILES: "cache/cache.jsonl.gz cache/collect_progress.json cache/collect_failures.json README.md"
 
 on:
   schedule:
