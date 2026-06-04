@@ -21,6 +21,7 @@ on:
 jobs:
   discover:
     runs-on: ubuntu-latest
+    timeout-minutes: 330
     env:
       TZ: Asia/Shanghai
     permissions:
@@ -46,6 +47,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Cache DBLP discovery results
+        uses: actions/cache@v4
+        with:
+          path: cache/dblp_discovery_cache.json
+          key: dblp-discovery-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            dblp-discovery-cache-${{ runner.os }}-
+
       - name: Run auto-discovery
         id: discover
         run: |
@@ -57,7 +66,7 @@ jobs:
           if [ -n "${{ github.event.inputs.end_year }}" ]; then
             END_ARG="--end-year ${{ github.event.inputs.end_year }}"
           fi
-          python -m discovery.generate_conf $START_ARG $END_ARG
+          python -m discovery.generate_conf $START_ARG $END_ARG --soft-timeout 18000
           echo "changed=$(git diff --name-only -- conf/ | wc -l)" >> "$GITHUB_OUTPUT"
 
       - name: Setup GIT user
