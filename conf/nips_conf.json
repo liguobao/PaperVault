@@ -1,5 +1,21 @@
 [
     {
+        "name": "NIPS2015",
+        "url": "https://papers.nips.cc/paper/2015"
+    },
+    {
+        "name": "NIPS2016",
+        "url": "https://papers.nips.cc/paper/2016"
+    },
+    {
+        "name": "NIPS2017",
+        "url": "https://papers.nips.cc/paper/2017"
+    },
+    {
+        "name": "NIPS2018",
+        "url": "https://papers.nips.cc/paper/2018"
+    },
+    {
         "name": "NIPS2021",
         "url": "https://papers.nips.cc/paper/2021"
     },
