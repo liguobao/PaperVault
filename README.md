@@ -26,7 +26,11 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 ### 当前阶段
 - 正在大幅扩展论文收录范围，重点补充 **2020 年至今** 的更多优质期刊（如 TIP、TPAMI、TKDE、TNNLS、TASLP、IJCV 等）以及主流出版社（如 IEEE、ACM、Springer、Elsevier 等）的论文清单。
 - 已通过自动化脚本和 GitHub Actions 批量为论文填充 **摘要（abstract）** 信息，提升检索价值。
-- 数据库已收录 **240,000+** 篇论文，覆盖 NLP、CV、ML、DM、DB、Speech 等 60+ 个顶级会议与期刊。
+<!-- auto-summary-start -->
+
+- 数据库已收录 **240,000+** 篇论文，覆盖 NLP、CV、ML、DM、DB、Speech 等 57+ 个顶级会议与期刊。
+
+<!-- auto-summary-end -->
 
 ### 下阶段目标
 - 升级前后端技术栈，优化搜索体验与界面设计。
