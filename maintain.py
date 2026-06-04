@@ -1,4 +1,5 @@
 import argparse
+import glob
 import os
 import sys
 import json
@@ -8,6 +9,7 @@ from collections import defaultdict
 
 import matplotlib
 matplotlib.use("Agg")
+import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 from collector import collect, save_cache, load_cache
@@ -287,19 +289,133 @@ def generate_stats_html(stats: dict):
         f.write(html)
 
 
+def _find_cjk_font():
+    """Find an available CJK font file on the system.
+
+    Returns:
+        tuple[str, str] | tuple[None, None]: (font_family, font_path) if found,
+        else (None, None).
+    """
+    candidates = [
+        ("Noto Sans CJK SC", ["NotoSansCJK-Regular.ttc", "NotoSansCJKsc-Regular.otf", "NotoSansSC-Regular.otf"]),
+        ("Noto Sans SC", ["NotoSansSC-Regular.otf", "NotoSansCJK-Regular.ttc"]),
+        ("WenQuanYi Micro Hei", ["wqy-microhei.ttc", "wqy-zenhei.ttc"]),
+        ("SimHei", ["simhei.ttf"]),
+        ("Microsoft YaHei", ["msyh.ttf", "msyh.ttc"]),
+    ]
+
+    # Try font manager first (after cache refresh)
+    for family, _ in candidates:
+        try:
+            path = fm.findfont(fm.FontProperties(family=family), fallback_to_default=False)
+            if path and os.path.exists(path):
+                return family, path
+        except Exception:
+            continue
+
+    # Search common system paths
+    common_paths = [
+        "/usr/share/fonts/opentype/noto",
+        "/usr/share/fonts/truetype/noto",
+        "/usr/share/fonts/noto-cjk",
+        "/usr/share/fonts/truetype/wqy",
+        "/usr/local/share/fonts",
+        os.path.expanduser("~/.fonts"),
+        os.path.expanduser("~/Library/Fonts"),  # macOS
+        "/System/Library/Fonts",  # macOS
+        "C:/Windows/Fonts",  # Windows
+    ]
+
+    for family, filenames in candidates:
+        for directory in common_paths:
+            if not os.path.isdir(directory):
+                continue
+            for filename in filenames:
+                filepath = os.path.join(directory, filename)
+                if os.path.exists(filepath):
+                    return family, filepath
+                # Also try recursive search (shallow, max 2 levels)
+                for root, _, files in os.walk(directory):
+                    if filename in files:
+                        return family, os.path.join(root, filename)
+                    # Limit depth
+                    depth = root[len(directory):].count(os.sep)
+                    if depth >= 2:
+                        break
+    return None, None
+
+
 def _ensure_chinese_font():
-    """Configure matplotlib to support Chinese characters."""
-    plt.rcParams["font.sans-serif"] = ["SimHei", "Noto Sans SC", "Microsoft YaHei", "sans-serif"]
+    """Configure matplotlib to support Chinese characters.
+
+    Clears the matplotlib font cache so that fonts installed after the cache
+    was first built (e.g. in CI) are discovered.
+
+    Returns:
+        str | None: Path to the CJK font file if found, else None.
+    """
+    # Clear matplotlib font cache so newly installed fonts are discovered
+    cache_dir = os.path.expanduser("~/.cache/matplotlib")
+    if os.path.isdir(cache_dir):
+        for cache_file in glob.glob(os.path.join(cache_dir, "fontlist-*.json")):
+            try:
+                os.remove(cache_file)
+            except OSError:
+                pass
+
+    # Force matplotlib to rebuild its font manager
+    try:
+        fm.fontManager = fm.FontManager()
+    except Exception:
+        pass
+
+    family, font_path = _find_cjk_font()
+
+    if family:
+        plt.rcParams["font.sans-serif"] = [family, "DejaVu Sans", "sans-serif"]
+        plt.rcParams["axes.unicode_minus"] = False
+        plt.rcParams["svg.fonttype"] = "path"
+        return font_path
+
+    # Fallback: ensure we at least have a working sans-serif stack
+    plt.rcParams["font.sans-serif"] = ["DejaVu Sans", "sans-serif"]
     plt.rcParams["axes.unicode_minus"] = False
     plt.rcParams["svg.fonttype"] = "path"
+    return None
 
 
 def generate_charts_svg(stats: dict):
     """Generate Nature-style statistical charts as SVG files."""
-    _ensure_chinese_font()
+    cjk_font_path = _ensure_chinese_font()
+    has_cjk = cjk_font_path is not None
     os.makedirs(stats_dir, exist_ok=True)
 
-    cat_labels_bilingual = [f"{zh}\n({en})" for zh, en in zip(CATEGORY_MAP.keys(), CATEGORY_MAP_EN.keys())]
+    if has_cjk:
+        cat_labels = [f"{zh}\n({en})" for zh, en in zip(CATEGORY_MAP.keys(), CATEGORY_MAP_EN.keys())]
+        title_cat = "各研究领域论文分布 (Papers by Research Field)"
+        xlabel_cat = "论文数量 (Paper Count)"
+        title_year = "历年论文收录趋势 (Annual Paper Collection Trend)"
+        xlabel_year = "年份 (Year)"
+        ylabel_year = "论文数量 (Paper Count)"
+        metrics = [
+            ("收录刊物系列\nPublication Series", f"{stats['total_series']}", NATURE_COLORS[0]),
+            ("会议/年份实例\nConf / Year Instances", f"{stats['total_instances']}", NATURE_COLORS[1]),
+            ("总论文数量\nTotal Papers", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
+            ("含摘要论文\nPapers w/ Abstract", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
+        ]
+    else:
+        cat_labels = list(CATEGORY_MAP_EN.keys())
+        title_cat = "Papers by Research Field"
+        xlabel_cat = "Paper Count"
+        title_year = "Annual Paper Collection Trend"
+        xlabel_year = "Year"
+        ylabel_year = "Paper Count"
+        metrics = [
+            ("Publication Series", f"{stats['total_series']}", NATURE_COLORS[0]),
+            ("Conf / Year Instances", f"{stats['total_instances']}", NATURE_COLORS[1]),
+            ("Total Papers", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
+            ("Papers w/ Abstract", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
+        ]
 
     # ---------- Chart 1: Papers by Category (horizontal bar) ----------
     fig, ax = plt.subplots(figsize=(11, 6))
@@ -307,9 +423,9 @@ def generate_charts_svg(stats: dict):
     vals = list(stats["cat_stats"].values())
     colors = [NATURE_COLORS[i % len(NATURE_COLORS)] for i in range(len(cats))]
 
-    bars = ax.barh(cat_labels_bilingual, vals, color=colors, height=0.55, edgecolor="white", linewidth=0.5)
-    ax.set_xlabel("论文数量 (Paper Count)", fontsize=13, fontweight="bold")
-    ax.set_title("各研究领域论文分布 (Papers by Research Field)", fontsize=15, fontweight="bold", pad=18)
+    bars = ax.barh(cat_labels, vals, color=colors, height=0.55, edgecolor="white", linewidth=0.5)
+    ax.set_xlabel(xlabel_cat, fontsize=13, fontweight="bold")
+    ax.set_title(title_cat, fontsize=15, fontweight="bold", pad=18)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_linewidth(0.8)
@@ -333,9 +449,9 @@ def generate_charts_svg(stats: dict):
     years = [y for y in stats["papers_by_year"].keys()]
     year_vals = [stats["papers_by_year"][y] for y in years]
     ax.bar(years, year_vals, color="#2E5C8A", width=0.65, edgecolor="white", linewidth=0.5)
-    ax.set_xlabel("年份 (Year)", fontsize=13, fontweight="bold")
-    ax.set_ylabel("论文数量 (Paper Count)", fontsize=13, fontweight="bold")
-    ax.set_title("历年论文收录趋势 (Annual Paper Collection Trend)", fontsize=15, fontweight="bold", pad=18)
+    ax.set_xlabel(xlabel_year, fontsize=13, fontweight="bold")
+    ax.set_ylabel(ylabel_year, fontsize=13, fontweight="bold")
+    ax.set_title(title_year, fontsize=15, fontweight="bold", pad=18)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_linewidth(0.8)
@@ -352,12 +468,6 @@ def generate_charts_svg(stats: dict):
     ax.set_ylim(0, 2.4)
     ax.axis("off")
 
-    metrics = [
-        ("收录刊物系列\nPublication Series", f"{stats['total_series']}", NATURE_COLORS[0]),
-        ("会议/年份实例\nConf / Year Instances", f"{stats['total_instances']}", NATURE_COLORS[1]),
-        ("总论文数量\nTotal Papers", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
-        ("含摘要论文\nPapers w/ Abstract", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
-    ]
     n = len(metrics)
     x_positions = [1.25 + i * 2.5 for i in range(n)]
     for (label, value, color), x in zip(metrics, x_positions):
@@ -377,12 +487,16 @@ def generate_wordcloud_svg(stats: dict):
         print("[!] wordcloud package not installed, skipping wordcloud generation.")
         return
 
-    _ensure_chinese_font()
+    cjk_font_path = _ensure_chinese_font()
     os.makedirs(stats_dir, exist_ok=True)
 
     frequencies = stats.get("papers_by_conf", {})
     if not frequencies:
         return
+
+    wc_kwargs = {}
+    if cjk_font_path:
+        wc_kwargs["font_path"] = cjk_font_path
 
     wc = WordCloud(
         width=2400,
@@ -395,6 +509,7 @@ def generate_wordcloud_svg(stats: dict):
         max_font_size=260,
         color_func=lambda word, *args, **kwargs: SERIES_COLOR_MAP.get(word, "#8C8C8C"),
         random_state=42,
+        **wc_kwargs,
     ).generate_from_frequencies(frequencies)
 
     fig, ax = plt.subplots(figsize=(12, 4.5))

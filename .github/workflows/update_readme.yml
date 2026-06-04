@@ -46,7 +46,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Install Chinese fonts
-        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
+        run: |
+          sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
+          rm -rf ~/.cache/matplotlib
 
       - name: Run rebuild
         run: |
