@@ -39,19 +39,16 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- stats-start -->
 
 <p align="center">
-  <img src="./pics/stats/stats_overview.png" alt="Statistics Overview" width="850" />
+  <img src="./pics/stats/stats_overview.png" alt="Statistics Overview" width="800" />
 </p>
 
 <p align="center">
-  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="900" />
+  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="800" />
 </p>
 
-<table>
-  <tr>
-    <td align="center"><img src="./pics/stats/papers_by_category.png" alt="Papers by Research Field" width="500" /></td>
-    <td align="center"><img src="./pics/stats/abstract_coverage.png" alt="Abstract Coverage" width="330" /></td>
-  </tr>
-</table>
+<p align="center">
+  <img src="./pics/stats/papers_by_category.png" alt="Papers by Research Field" width="800" />
+</p>
 
 <p align="center">
   <img src="./pics/stats/papers_by_year.png" alt="Annual Paper Collection Trend" width="800" />
