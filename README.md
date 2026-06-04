@@ -18,15 +18,16 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 <!-- recent-update-start -->
 
 - 📅 **最近更新日期**: 2026-06-04
-- 🆕 **本次新增论文**: 0 篇
-- 📊 **数据库规模**: 244,581 篇论文 / 57 个刊物系列 / 119,656 篇含摘要
+- 🆕 **本次新增论文**: 6,538 篇
+- 📢 **本次新增会议**: 26 个
+- 📊 **数据库规模**: 251,119 篇论文 / 57 个刊物系列 / 126,266 篇含摘要
 
 <!-- recent-update-end -->
 
 ### 当前阶段
 <!-- auto-summary-start -->
 
-- 数据库已收录 **240,000+** 篇论文，覆盖 NLP、CV、ML、DM、DB、Speech 等 57+ 个顶级会议与期刊。
+- 数据库已收录 **250,000+** 篇论文，覆盖 NLP、CV、ML、DM、DB、Speech 等 57+ 个顶级会议与期刊。
 
 <!-- auto-summary-end -->
 
@@ -39,11 +40,11 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 <!-- stats-start -->
 
 <p align="center">
-  <img src="./pics/stats/stats_overview.png" alt="统计概览" width="800" />
+  <img src="./pics/stats/stats_overview.png" alt="统计概览" width="850" />
 </p>
 
 <p align="center">
-  <img src="./pics/stats/wordcloud.png" alt="刊物系列词云" width="800" />
+  <img src="./pics/stats/wordcloud.png" alt="刊物系列词云" width="900" />
 </p>
 
 <p align="center">
@@ -70,18 +71,18 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 - **ICML** 2019-2025 (7 届)
 - **JMLR** 2019-2025 (7 届)
 - **MLSYS** 2019-2025 (7 届)
-- **NIPS** 2019-2025 (7 届)
+- **NIPS** 2015-2025 (11 届)
 - **TNNLS** 2020-2025 (6 届)
 
 </details>
 <details>
 <summary><b>自然语言处理</b> (6 个系列)</summary>
 
-- **ACL** 2019-2025 (7 届)
-- **COLING** 2020-2025 (4 届)
-- **EACL** 2021-2026 (4 届)
-- **EMNLP** 2019-2025 (7 届)
-- **NAACL** 2019-2025 (5 届)
+- **ACL** 2015-2025 (11 届)
+- **COLING** 2016-2025 (6 届)
+- **EACL** 2017-2026 (5 届)
+- **EMNLP** 2015-2025 (11 届)
+- **NAACL** 2015-2025 (8 届)
 - **TASLP** 2020-2024 (5 届)
 
 </details>
@@ -89,9 +90,9 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 <summary><b>计算机视觉</b> (9 个系列)</summary>
 
 - **BMVC** 2019-2024 (4 届)
-- **CVPR** 2019-2026 (8 届)
-- **ECCV** 2020-2024 (3 届)
-- **ICCV** 2019-2025 (4 届)
+- **CVPR** 2015-2026 (12 届)
+- **ECCV** 2018-2024 (4 届)
+- **ICCV** 2015-2025 (6 届)
 - **IJCV** 2020-2025 (6 届)
 - **MICCAI** 2019-2025 (7 届)
 - **TIP** 2020-2025 (6 届)
