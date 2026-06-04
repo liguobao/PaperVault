@@ -1721,6 +1721,106 @@
     "DBLP::https://dblp.org/db/conf/miccai/miccai2024-2.html": {
       "name": "MICCAI2024",
       "ts": "2026-06-04T00:35:33"
+    },
+    "ACL::https://aclanthology.org/events/emnlp-2015/": {
+      "name": "EMNLP2015",
+      "ts": "2026-06-04T11:14:35"
+    },
+    "ACL::https://aclanthology.org/events/emnlp-2016/": {
+      "name": "EMNLP2016",
+      "ts": "2026-06-04T11:14:39"
+    },
+    "ACL::https://aclanthology.org/events/emnlp-2017/": {
+      "name": "EMNLP2017",
+      "ts": "2026-06-04T11:14:40"
+    },
+    "ACL::https://aclanthology.org/events/emnlp-2018/": {
+      "name": "EMNLP2018",
+      "ts": "2026-06-04T11:14:48"
+    },
+    "ACL::https://aclanthology.org/events/acl-2015/": {
+      "name": "ACL2015",
+      "ts": "2026-06-04T11:14:54"
+    },
+    "ACL::https://aclanthology.org/events/acl-2016/": {
+      "name": "ACL2016",
+      "ts": "2026-06-04T11:14:58"
+    },
+    "ACL::https://aclanthology.org/events/acl-2017/": {
+      "name": "ACL2017",
+      "ts": "2026-06-04T11:14:59"
+    },
+    "ACL::https://aclanthology.org/events/acl-2018/": {
+      "name": "ACL2018",
+      "ts": "2026-06-04T11:15:08"
+    },
+    "ACL::https://aclanthology.org/events/naacl-2015/": {
+      "name": "NAACL2015",
+      "ts": "2026-06-04T11:15:12"
+    },
+    "ACL::https://aclanthology.org/events/naacl-2016/": {
+      "name": "NAACL2016",
+      "ts": "2026-06-04T11:15:13"
+    },
+    "ACL::https://aclanthology.org/events/naacl-2018/": {
+      "name": "NAACL2018",
+      "ts": "2026-06-04T11:15:16"
+    },
+    "ACL::https://aclanthology.org/events/coling-2016/": {
+      "name": "COLING2016",
+      "ts": "2026-06-04T11:15:21"
+    },
+    "ACL::https://aclanthology.org/events/coling-2018/": {
+      "name": "COLING2018",
+      "ts": "2026-06-04T11:15:27"
+    },
+    "ACL::https://aclanthology.org/events/eacl-2017/": {
+      "name": "EACL2017",
+      "ts": "2026-06-04T11:15:32"
+    },
+    "thecvf::https://openaccess.thecvf.com/CVPR2015?day=all": {
+      "name": "CVPR2015",
+      "ts": "2026-06-04T11:16:11"
+    },
+    "thecvf::https://openaccess.thecvf.com/CVPR2016?day=all": {
+      "name": "CVPR2016",
+      "ts": "2026-06-04T11:16:56"
+    },
+    "thecvf::https://openaccess.thecvf.com/CVPR2017?day=all": {
+      "name": "CVPR2017",
+      "ts": "2026-06-04T11:17:50"
+    },
+    "thecvf::https://openaccess.thecvf.com/CVPR2018?day=all": {
+      "name": "CVPR2018",
+      "ts": "2026-06-04T11:17:53"
+    },
+    "thecvf::https://openaccess.thecvf.com/ICCV2015?day=all": {
+      "name": "ICCV2015",
+      "ts": "2026-06-04T11:18:27"
+    },
+    "thecvf::https://openaccess.thecvf.com/ICCV2017?day=all": {
+      "name": "ICCV2017",
+      "ts": "2026-06-04T11:19:11"
+    },
+    "thecvf::https://openaccess.thecvf.com/ECCV2018?day=all": {
+      "name": "ECCV2018",
+      "ts": "2026-06-04T11:20:04"
+    },
+    "NeurIPS::https://papers.nips.cc/paper/2015": {
+      "name": "NIPS2015",
+      "ts": "2026-06-04T11:20:52"
+    },
+    "NeurIPS::https://papers.nips.cc/paper/2016": {
+      "name": "NIPS2016",
+      "ts": "2026-06-04T11:22:00"
+    },
+    "NeurIPS::https://papers.nips.cc/paper/2017": {
+      "name": "NIPS2017",
+      "ts": "2026-06-04T11:23:19"
+    },
+    "NeurIPS::https://papers.nips.cc/paper/2018": {
+      "name": "NIPS2018",
+      "ts": "2026-06-04T11:25:20"
     }
   }
 }
