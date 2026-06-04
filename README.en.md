@@ -39,11 +39,9 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 
 <!-- stats-start -->
 
-### Core Metrics
-
-| Publication Series | Conf / Year Instances | Total Papers | Papers w/ Abstract |
-|:---:|:---:|:---:|:---:|
-| **57** | **434** | **256,424** | **131,571** |
+<p align="center">
+  <img src="./pics/stats/stats_overview.svg" alt="Statistics Overview" width="850" />
+</p>
 
 <p align="center">
   <img src="./pics/stats/papers_by_category.svg" alt="Papers by Research Field" width="850" />

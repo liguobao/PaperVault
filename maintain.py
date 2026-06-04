@@ -520,13 +520,11 @@ def build_recent_update_brief_en(meta: dict, stats: dict):
 
 
 def build_stats_section(stats: dict):
-    """Build the statistics markdown section with table + SVG charts + HTML link."""
+    """Build the statistics markdown section with SVG charts + HTML link."""
     lines = [
-        "### 核心指标 Core Metrics",
-        "",
-        "| 收录刊物系列 Publication Series | 会议/年份实例 Conf / Year Instances | 总论文数量 Total Papers | 含摘要论文 Papers w/ Abstract |",
-        "|:---:|:---:|:---:|:---:|",
-        f"| **{stats['total_series']}** | **{stats['total_instances']}** | **{stats['total_papers']:,}** | **{stats['total_abstracts']:,}** |",
+        '<p align="center">',
+        '  <img src="./pics/stats/stats_overview.svg" alt="统计概览" width="850" />',
+        "</p>",
         "",
         '<p align="center">',
         '  <img src="./pics/stats/papers_by_category.svg" alt="各领域论文数量" width="850" />',
@@ -546,13 +544,11 @@ def build_stats_section(stats: dict):
 
 
 def build_stats_section_en(stats: dict):
-    """Build the English statistics markdown section with table + SVG charts + HTML link."""
+    """Build the English statistics markdown section with SVG charts + HTML link."""
     lines = [
-        "### Core Metrics",
-        "",
-        "| Publication Series | Conf / Year Instances | Total Papers | Papers w/ Abstract |",
-        "|:---:|:---:|:---:|:---:|",
-        f"| **{stats['total_series']}** | **{stats['total_instances']}** | **{stats['total_papers']:,}** | **{stats['total_abstracts']:,}** |",
+        '<p align="center">',
+        '  <img src="./pics/stats/stats_overview.svg" alt="Statistics Overview" width="850" />',
+        "</p>",
         "",
         '<p align="center">',
         '  <img src="./pics/stats/papers_by_category.svg" alt="Papers by Research Field" width="850" />',

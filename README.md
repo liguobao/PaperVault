@@ -39,11 +39,9 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 
 <!-- stats-start -->
 
-### 核心指标 Core Metrics
-
-| 收录刊物系列 Publication Series | 会议/年份实例 Conf / Year Instances | 总论文数量 Total Papers | 含摘要论文 Papers w/ Abstract |
-|:---:|:---:|:---:|:---:|
-| **57** | **434** | **256,424** | **131,571** |
+<p align="center">
+  <img src="./pics/stats/stats_overview.svg" alt="统计概览" width="850" />
+</p>
 
 <p align="center">
   <img src="./pics/stats/papers_by_category.svg" alt="各领域论文数量" width="850" />
