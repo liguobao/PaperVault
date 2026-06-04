@@ -19,9 +19,12 @@ COMMENT_STATS_START = "<!-- stats-start -->"
 COMMENT_STATS_END = "<!-- stats-end -->"
 COMMENT_RECENT_UPDATE_START = "<!-- recent-update-start -->"
 COMMENT_RECENT_UPDATE_END = "<!-- recent-update-end -->"
+COMMENT_AUTO_SUMMARY_START = "<!-- auto-summary-start -->"
+COMMENT_AUTO_SUMMARY_END = "<!-- auto-summary-end -->"
 
 cache_path = os.path.join(os.path.dirname(__file__), "cache", "cache.jsonl")
 readme_path = "README.md"
+readme_en_path = "README.en.md"
 acl_conf_path = os.path.join(os.path.dirname(__file__), "conf", "acl_conf.json")
 dblp_conf_path = os.path.join(os.path.dirname(__file__), "conf", "dblp_conf.json")
 nips_conf_path = os.path.join(os.path.dirname(__file__), "conf", "nips_conf.json")
@@ -47,6 +50,18 @@ CATEGORY_MAP = {
     "人工智能综合": ["AAAI", "IJCAI", "MLJ"],
     "网络与安全": ["SIGCOMM", "NSDI", "MOBICOM", "INFOCOM", "NDSS", "SP", "DAC"],
     "其他": ["ISWC", "STOC"],
+}
+
+CATEGORY_MAP_EN = {
+    "Machine Learning": ["ICML", "NIPS", "ICLR", "COLT", "AISTATS", "MLSYS", "JMLR", "TNNLS", "AI"],
+    "Natural Language Processing": ["ACL", "EMNLP", "NAACL", "EACL", "COLING", "TASLP"],
+    "Computer Vision": ["CVPR", "ICCV", "ECCV", "WACV", "TIP", "TPAMI", "IJCV", "BMVC", "MICCAI"],
+    "Data Mining & Information Retrieval": ["KDD", "SIGIR", "CIKM", "WSDM", "ECIR", "WWW", "ICDM", "RECSYS"],
+    "Database & Systems": ["VLDB", "SIGMOD", "TKDE", "TOIS", "FAST", "TCAD", "TC", "TOS", "TPDS"],
+    "Speech & Multimedia": ["ICASSP", "INTERSPEECH", "MM", "ICME"],
+    "General AI": ["AAAI", "IJCAI", "MLJ"],
+    "Networking & Security": ["SIGCOMM", "NSDI", "MOBICOM", "INFOCOM", "NDSS", "SP", "DAC"],
+    "Others": ["ISWC", "STOC"],
 }
 
 
@@ -216,13 +231,17 @@ def generate_charts(stats: dict):
     plt.close(fig)
 
 
-def build_hierarchical_confs_list():
+def _build_hierarchical_confs_list(category_map, lang: str = "zh"):
     """Build a hierarchical markdown list of conferences grouped by category."""
     confs = _load_all_confs()
     assigned = set()
     lines = []
 
-    for cat, names in CATEGORY_MAP.items():
+    series_label = "个系列" if lang == "zh" else "series"
+    edition_label = "届" if lang == "zh" else "editions"
+    others_label = "其他" if lang == "zh" else "Others"
+
+    for cat, names in category_map.items():
         cat_confs = []
         for n in names:
             if n in confs:
@@ -232,27 +251,35 @@ def build_hierarchical_confs_list():
         if not cat_confs:
             continue
         cat_confs.sort(key=lambda x: x[0])
-        lines.append(f"<details>\n<summary><b>{cat}</b> ({len(cat_confs)} 个系列)</summary>\n\n")
+        lines.append(f"<details>\n<summary><b>{cat}</b> ({len(cat_confs)} {series_label})</summary>\n\n")
         for name, years in cat_confs:
             line = f"- **{name}** {min(years)}-{max(years)}"
             if len(years) > 1:
-                line += f" ({len(years)} 届)"
+                line += f" ({len(years)} {edition_label})"
             lines.append(line + "\n")
         lines.append("\n</details>\n")
 
     # Any unassigned conferences
     unassigned = sorted(set(confs.keys()) - assigned)
     if unassigned:
-        lines.append(f"<details>\n<summary><b>其他</b> ({len(unassigned)} 个系列)</summary>\n\n")
+        lines.append(f"<details>\n<summary><b>{others_label}</b> ({len(unassigned)} {series_label})</summary>\n\n")
         for name in unassigned:
             years = sorted(confs[name])
             line = f"- **{name}** {min(years)}-{max(years)}"
             if len(years) > 1:
-                line += f" ({len(years)} 届)"
+                line += f" ({len(years)} {edition_label})"
             lines.append(line + "\n")
         lines.append("\n</details>\n")
 
     return "".join(lines)
+
+
+def build_hierarchical_confs_list():
+    return _build_hierarchical_confs_list(CATEGORY_MAP, lang="zh")
+
+
+def build_hierarchical_confs_list_en():
+    return _build_hierarchical_confs_list(CATEGORY_MAP_EN, lang="en")
 
 
 def _read_meta():
@@ -266,6 +293,22 @@ def _write_meta(meta):
     os.makedirs(os.path.dirname(meta_path), exist_ok=True)
     with open(meta_path, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
+
+
+def _round_down_to_ten_thousand(n: int) -> int:
+    return (n // 10000) * 10000
+
+
+def build_auto_summary(stats: dict):
+    total_rounded = _round_down_to_ten_thousand(stats["total_papers"])
+    line = f"- 数据库已收录 **{total_rounded:,}+** 篇论文，覆盖 NLP、CV、ML、DM、DB、Speech 等 {stats['total_series']}+ 个顶级会议与期刊。"
+    return line
+
+
+def build_auto_summary_en(stats: dict):
+    total_rounded = _round_down_to_ten_thousand(stats["total_papers"])
+    line = f"- The database contains **{total_rounded:,}+** papers spanning {stats['total_series']}+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech."
+    return line
 
 
 def build_recent_update_brief(meta: dict, stats: dict):
@@ -285,10 +328,27 @@ def build_recent_update_brief(meta: dict, stats: dict):
     return "\n".join(lines)
 
 
+def build_recent_update_brief_en(meta: dict, stats: dict):
+    """Build the English recent update brief markdown."""
+    last_date = meta.get("last_update", datetime.now().strftime("%Y-%m-%d"))
+    new_papers = meta.get("new_papers", 0)
+    new_confs = meta.get("new_conferences", 0)
+
+    lines = [
+        f"- 📅 **Last Updated**: {last_date}",
+        f"- 🆕 **New Papers This Update**: {new_papers:,}",
+    ]
+    if new_confs:
+        lines.append(f"- 📢 **New Conferences This Update**: {new_confs}")
+    lines.append(f"- 📊 **Database Scale**: {stats['total_papers']:,} papers / {stats['total_series']} publication series / {stats['total_abstracts']:,} with abstracts")
+
+    return "\n".join(lines)
+
+
 def build_stats_section():
     """Build the statistics markdown section referencing generated images."""
     lines = [
-        "<p align=\"center\">",
+        '<p align="center">',
         '  <img src="./pics/stats/stats_overview.png" alt="统计概览" width="850" />',
         "</p>",
         "",
@@ -305,32 +365,77 @@ def build_stats_section():
     return "\n".join(lines)
 
 
-def update_readme():
-    with open(readme_path, "r", encoding="utf-8") as f:
+def build_stats_section_en():
+    """Build the English statistics markdown section referencing generated images."""
+    lines = [
+        '<p align="center">',
+        '  <img src="./pics/stats/stats_overview.png" alt="Statistics Overview" width="850" />',
+        "</p>",
+        "",
+        "<table>",
+        "  <tr>",
+        '    <td align="center"><img src="./pics/stats/papers_by_category.png" alt="Papers by Research Field" width="500" /></td>',
+        '    <td align="center"><img src="./pics/stats/abstract_coverage.png" alt="Abstract Coverage" width="330" /></td>',
+        "  </tr>",
+        "  <tr>",
+        '    <td colspan="2" align="center"><img src="./pics/stats/papers_by_year.png" alt="Annual Paper Collection Trend" width="800" /></td>',
+        "  </tr>",
+        "</table>",
+    ]
+    return "\n".join(lines)
+
+
+def _update_single_readme(path: str, lang: str, stats: dict, meta: dict):
+    """Update a single README file (zh or en)."""
+    with open(path, "r", encoding="utf-8") as f:
         src = f.read()
 
-    # Load cache for stats
+    # Update auto-summary
+    if lang == "zh":
+        summary_md = build_auto_summary(stats)
+    else:
+        summary_md = build_auto_summary_en(stats)
+    src = generate_new_readme(src, summary_md, COMMENT_AUTO_SUMMARY_START, COMMENT_AUTO_SUMMARY_END)
+
+    # Update recent update section
+    if lang == "zh":
+        brief_md = build_recent_update_brief(meta, stats)
+    else:
+        brief_md = build_recent_update_brief_en(meta, stats)
+    src = generate_new_readme(src, brief_md, COMMENT_RECENT_UPDATE_START, COMMENT_RECENT_UPDATE_END)
+
+    # Update stats section
+    if lang == "zh":
+        stats_md = build_stats_section()
+    else:
+        stats_md = build_stats_section_en()
+    src = generate_new_readme(src, stats_md, COMMENT_STATS_START, COMMENT_STATS_END)
+
+    # Update confs list
+    if lang == "zh":
+        confs_md = build_hierarchical_confs_list()
+    else:
+        confs_md = build_hierarchical_confs_list_en()
+    src = generate_new_readme(src, confs_md, COMMENT_CONFS_LIST_START, COMMENT_CONFS_LIST_END)
+
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(src)
+
+
+def update_readme():
     cache_data = load_cache(cache_path) if os.path.exists(cache_path) else {}
     stats = compute_stats(cache_data)
     meta = _read_meta()
 
-    # Generate charts
+    # Generate charts (shared between zh and en)
     generate_charts(stats)
 
-    # Update recent update section
-    recent_update_md = build_recent_update_brief(meta, stats)
-    src = generate_new_readme(src, recent_update_md, COMMENT_RECENT_UPDATE_START, COMMENT_RECENT_UPDATE_END)
+    # Update Chinese README
+    _update_single_readme(readme_path, "zh", stats, meta)
 
-    # Update stats section
-    stats_md = build_stats_section()
-    src = generate_new_readme(src, stats_md, COMMENT_STATS_START, COMMENT_STATS_END)
-
-    # Update confs list section
-    confs_md = build_hierarchical_confs_list()
-    src = generate_new_readme(src, confs_md, COMMENT_CONFS_LIST_START, COMMENT_CONFS_LIST_END)
-
-    with open(readme_path, "w", encoding="utf-8") as f:
-        f.write(src)
+    # Update English README
+    if os.path.exists(readme_en_path):
+        _update_single_readme(readme_en_path, "en", stats, meta)
 
 
 def force_update():
