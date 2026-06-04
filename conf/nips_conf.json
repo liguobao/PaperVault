@@ -1,5 +1,65 @@
 [
     {
+        "name": "NIPS2000",
+        "url": "https://papers.nips.cc/paper/2000"
+    },
+    {
+        "name": "NIPS2001",
+        "url": "https://papers.nips.cc/paper/2001"
+    },
+    {
+        "name": "NIPS2002",
+        "url": "https://papers.nips.cc/paper/2002"
+    },
+    {
+        "name": "NIPS2003",
+        "url": "https://papers.nips.cc/paper/2003"
+    },
+    {
+        "name": "NIPS2004",
+        "url": "https://papers.nips.cc/paper/2004"
+    },
+    {
+        "name": "NIPS2005",
+        "url": "https://papers.nips.cc/paper/2005"
+    },
+    {
+        "name": "NIPS2006",
+        "url": "https://papers.nips.cc/paper/2006"
+    },
+    {
+        "name": "NIPS2007",
+        "url": "https://papers.nips.cc/paper/2007"
+    },
+    {
+        "name": "NIPS2008",
+        "url": "https://papers.nips.cc/paper/2008"
+    },
+    {
+        "name": "NIPS2009",
+        "url": "https://papers.nips.cc/paper/2009"
+    },
+    {
+        "name": "NIPS2010",
+        "url": "https://papers.nips.cc/paper/2010"
+    },
+    {
+        "name": "NIPS2011",
+        "url": "https://papers.nips.cc/paper/2011"
+    },
+    {
+        "name": "NIPS2012",
+        "url": "https://papers.nips.cc/paper/2012"
+    },
+    {
+        "name": "NIPS2013",
+        "url": "https://papers.nips.cc/paper/2013"
+    },
+    {
+        "name": "NIPS2014",
+        "url": "https://papers.nips.cc/paper/2014"
+    },
+    {
         "name": "NIPS2015",
         "url": "https://papers.nips.cc/paper/2015"
     },
