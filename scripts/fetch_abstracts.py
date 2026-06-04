@@ -772,7 +772,7 @@ def run(
 
     # 1. 读取所有论文
     all_papers = []
-    with open(CACHE_FILE, "r", encoding="utf-8") as f:
+    with gzip.open(CACHE_FILE, "rt", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:
