@@ -3,15 +3,21 @@ import os
 import sys
 import json
 import re
+import random
 from datetime import datetime
 from collections import defaultdict
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
+import matplotlib.font_manager as fm
 
 from collector import collect, save_cache, load_cache
+
+try:
+    from wordcloud import WordCloud
+except ImportError:
+    WordCloud = None
 
 COMMENT_CONFS_LIST_START = "<!-- confs-list-start -->"
 COMMENT_CONFS_LIST_END = "<!-- confs-list-end -->"
@@ -69,6 +75,13 @@ def _ensure_chinese_font():
     """Configure matplotlib to support Chinese characters on Windows."""
     plt.rcParams["font.sans-serif"] = ["Noto Sans SC", "Microsoft YaHei", "SimHei", "sans-serif"]
     plt.rcParams["axes.unicode_minus"] = False
+    plt.rcParams["axes.labelweight"] = "bold"
+    plt.rcParams["axes.titleweight"] = "bold"
+    plt.rcParams["figure.titleweight"] = "bold"
+    plt.rcParams["axes.labelcolor"] = "#1a1a1a"
+    plt.rcParams["axes.edgecolor"] = "#1a1a1a"
+    plt.rcParams["xtick.color"] = "#1a1a1a"
+    plt.rcParams["ytick.color"] = "#1a1a1a"
 
 
 def generate_new_readme(src: str, content: str, start_comment: str, end_comment: str) -> str:
@@ -134,31 +147,33 @@ def compute_stats(cache_data: dict):
 
 
 def generate_charts(stats: dict):
-    """Generate Nature-style statistical charts."""
+    """Generate Nature-style statistical charts with bilingual labels and bold fonts."""
     _ensure_chinese_font()
     os.makedirs(stats_dir, exist_ok=True)
 
+    # Bilingual category labels aligned with CATEGORY_MAP + CATEGORY_MAP_EN order
+    cat_labels_bilingual = [f"{zh}\n({en})" for zh, en in zip(CATEGORY_MAP.keys(), CATEGORY_MAP_EN.keys())]
+
     # ---------- Chart 1: Papers by Category (horizontal bar) ----------
-    fig, ax = plt.subplots(figsize=(10, 5.5))
+    fig, ax = plt.subplots(figsize=(11, 6))
     cats = list(stats["cat_stats"].keys())
     vals = list(stats["cat_stats"].values())
     colors = [NATURE_COLORS[i % len(NATURE_COLORS)] for i in range(len(cats))]
 
-    bars = ax.barh(cats, vals, color=colors, height=0.6, edgecolor="white", linewidth=0.5)
-    ax.set_xlabel("论文数量 (Paper Count)", fontsize=12)
-    ax.set_title("各研究领域论文分布 (Papers by Research Field)", fontsize=14, fontweight="bold", pad=15)
+    bars = ax.barh(cat_labels_bilingual, vals, color=colors, height=0.55, edgecolor="white", linewidth=0.5)
+    ax.set_xlabel("论文数量 (Paper Count)", fontsize=13, fontweight="bold")
+    ax.set_title("各研究领域论文分布 (Papers by Research Field)", fontsize=15, fontweight="bold", pad=18)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.spines["left"].set_linewidth(0.6)
-    ax.spines["bottom"].set_linewidth(0.6)
-    ax.tick_params(axis="both", labelsize=10)
+    ax.spines["left"].set_linewidth(0.8)
+    ax.spines["bottom"].set_linewidth(0.8)
+    ax.tick_params(axis="both", labelsize=10, labelcolor="#1a1a1a")
     ax.invert_yaxis()
 
-    # Add value labels
     for bar in bars:
         width = bar.get_width()
         ax.text(width + max(vals) * 0.01, bar.get_y() + bar.get_height() / 2,
-                f"{int(width):,}", ha="left", va="center", fontsize=9, color="#333333")
+                f"{int(width):,}", ha="left", va="center", fontsize=10, fontweight="bold", color="#1a1a1a")
 
     ax.set_xlim(0, max(vals) * 1.15)
     ax.grid(axis="x", linestyle="--", linewidth=0.4, alpha=0.5)
@@ -167,67 +182,106 @@ def generate_charts(stats: dict):
     plt.close(fig)
 
     # ---------- Chart 2: Papers by Year (vertical bar) ----------
-    fig, ax = plt.subplots(figsize=(10, 4.5))
+    fig, ax = plt.subplots(figsize=(10, 4.8))
     years = [y for y in stats["papers_by_year"].keys()]
     year_vals = [stats["papers_by_year"][y] for y in years]
     ax.bar(years, year_vals, color="#2E5C8A", width=0.65, edgecolor="white", linewidth=0.5)
-    ax.set_xlabel("年份 (Year)", fontsize=12)
-    ax.set_ylabel("论文数量 (Paper Count)", fontsize=12)
-    ax.set_title("历年论文收录趋势 (Annual Paper Collection Trend)", fontsize=14, fontweight="bold", pad=15)
+    ax.set_xlabel("年份 (Year)", fontsize=13, fontweight="bold")
+    ax.set_ylabel("论文数量 (Paper Count)", fontsize=13, fontweight="bold")
+    ax.set_title("历年论文收录趋势 (Annual Paper Collection Trend)", fontsize=15, fontweight="bold", pad=18)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.spines["left"].set_linewidth(0.6)
-    ax.spines["bottom"].set_linewidth(0.6)
-    ax.tick_params(axis="both", labelsize=10)
+    ax.spines["left"].set_linewidth(0.8)
+    ax.spines["bottom"].set_linewidth(0.8)
+    ax.tick_params(axis="both", labelsize=10, labelcolor="#1a1a1a")
     ax.grid(axis="y", linestyle="--", linewidth=0.4, alpha=0.5)
     fig.tight_layout()
     fig.savefig(os.path.join(stats_dir, "papers_by_year.png"), dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
     # ---------- Chart 3: Abstract Coverage (donut) ----------
-    fig, ax = plt.subplots(figsize=(5.5, 5.5))
+    fig, ax = plt.subplots(figsize=(6, 6))
     total = stats["total_papers"]
     have_abs = stats["total_abstracts"]
     no_abs = total - have_abs
     sizes = [have_abs, no_abs]
-    labels = [f"含摘要\n({have_abs/total*100:.1f}%)", f"暂无摘要\n({no_abs/total*100:.1f}%)"]
+    labels = [
+        f"含摘要 (With Abstract)\n{have_abs/total*100:.1f}%",
+        f"暂无摘要 (No Abstract)\n{no_abs/total*100:.1f}%",
+    ]
     colors_donut = ["#7BA05B", "#E8E8E8"]
     explode = (0.02, 0)
 
     wedges, texts = ax.pie(sizes, colors=colors_donut, startangle=90,
                            wedgeprops=dict(width=0.45, edgecolor="white"),
                            explode=explode)
-    ax.text(0, 0, f"{total:,}\nTotal", ha="center", va="center", fontsize=14, fontweight="bold", color="#333333")
-    ax.legend(wedges, labels, loc="lower center", bbox_to_anchor=(0.5, -0.05),
-              ncol=2, frameon=False, fontsize=10)
-    ax.set_title("摘要覆盖情况 (Abstract Coverage)", fontsize=14, fontweight="bold", pad=15)
+    ax.text(0, 0, f"{total:,}\nTotal 总计", ha="center", va="center", fontsize=15, fontweight="bold",
+            color="#1a1a1a", linespacing=1.3)
+    ax.legend(wedges, labels, loc="lower center", bbox_to_anchor=(0.5, -0.08),
+              ncol=2, frameon=False, fontsize=10, title_fontsize=11)
+    ax.set_title("摘要覆盖情况 (Abstract Coverage)", fontsize=15, fontweight="bold", pad=18)
     fig.tight_layout()
     fig.savefig(os.path.join(stats_dir, "abstract_coverage.png"), dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
     # ---------- Chart 4: Overview Infographic (big numbers) ----------
-    fig, ax = plt.subplots(figsize=(10, 2.2))
+    fig, ax = plt.subplots(figsize=(10, 2.4))
     ax.set_xlim(0, 10)
-    ax.set_ylim(0, 2.2)
+    ax.set_ylim(0, 2.4)
     ax.axis("off")
 
     metrics = [
-        ("收录刊物系列", f"{stats['total_series']}", NATURE_COLORS[0]),
-        ("会议/年份实例", f"{stats['total_instances']}", NATURE_COLORS[1]),
-        ("总论文数量", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
-        ("含摘要论文", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
+        ("收录刊物系列\nPublication Series", f"{stats['total_series']}", NATURE_COLORS[0]),
+        ("会议/年份实例\nConf / Year Instances", f"{stats['total_instances']}", NATURE_COLORS[1]),
+        ("总论文数量\nTotal Papers", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
+        ("含摘要论文\nPapers w/ Abstract", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
     ]
     n = len(metrics)
     x_positions = [1.25 + i * 2.5 for i in range(n)]
     for (label, value, color), x in zip(metrics, x_positions):
-        ax.text(x, 1.4, value, fontsize=22, fontweight="bold", ha="center", va="center", color=color)
-        ax.text(x, 0.6, label, fontsize=11, ha="center", va="center", color="#555555")
-        # subtle divider line
+        ax.text(x, 1.55, value, fontsize=22, fontweight="bold", ha="center", va="center", color=color)
+        ax.text(x, 0.55, label, fontsize=10, ha="center", va="center", color="#444444", linespacing=1.4)
         if x < x_positions[-1]:
-            ax.plot([x + 1.25, x + 1.25], [0.3, 1.7], color="#DDDDDD", linewidth=0.8)
+            ax.plot([x + 1.25, x + 1.25], [0.25, 1.85], color="#DDDDDD", linewidth=0.8)
 
     fig.tight_layout()
     fig.savefig(os.path.join(stats_dir, "stats_overview.png"), dpi=200, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
+def generate_wordcloud(stats: dict):
+    """Generate a horizontal wordcloud of publication series weighted by paper count."""
+    if WordCloud is None:
+        print("[!] wordcloud package not installed, skipping wordcloud generation.")
+        return
+
+    _ensure_chinese_font()
+    os.makedirs(stats_dir, exist_ok=True)
+
+    frequencies = stats.get("papers_by_conf", {})
+    if not frequencies:
+        return
+
+    wc = WordCloud(
+        width=2400,
+        height=900,
+        background_color="white",
+        max_words=100,
+        relative_scaling=0.6,
+        prefer_horizontal=0.92,
+        min_font_size=12,
+        max_font_size=260,
+        color_func=lambda *args, **kwargs: random.choice(NATURE_COLORS),
+        random_state=42,
+    ).generate_from_frequencies(frequencies)
+
+    fig, ax = plt.subplots(figsize=(12, 4.5))
+    ax.imshow(wc, interpolation="bilinear")
+    ax.axis("off")
+    ax.set_title("Publication Series 词云 (Word Cloud)", fontsize=15, fontweight="bold",
+                 pad=18, color="#1a1a1a")
+    fig.tight_layout(pad=0)
+    fig.savefig(os.path.join(stats_dir, "wordcloud.png"), dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
 
@@ -361,6 +415,10 @@ def build_stats_section():
         '    <td colspan="2" align="center"><img src="./pics/stats/papers_by_year.png" alt="历年论文收录趋势" width="800" /></td>',
         "  </tr>",
         "</table>",
+        "",
+        '<p align="center">',
+        '  <img src="./pics/stats/wordcloud.png" alt="刊物系列词云" width="900" />',
+        "</p>",
     ]
     return "\n".join(lines)
 
@@ -381,6 +439,10 @@ def build_stats_section_en():
         '    <td colspan="2" align="center"><img src="./pics/stats/papers_by_year.png" alt="Annual Paper Collection Trend" width="800" /></td>',
         "  </tr>",
         "</table>",
+        "",
+        '<p align="center">',
+        '  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="900" />',
+        "</p>",
     ]
     return "\n".join(lines)
 
@@ -429,6 +491,7 @@ def update_readme():
 
     # Generate charts (shared between zh and en)
     generate_charts(stats)
+    generate_wordcloud(stats)
 
     # Update Chinese README
     _update_single_readme(readme_path, "zh", stats, meta)
