@@ -239,8 +239,8 @@ def generate_charts(stats: dict):
     n = len(metrics)
     x_positions = [1.25 + i * 2.5 for i in range(n)]
     for (label, value, color), x in zip(metrics, x_positions):
-        ax.text(x, 1.55, value, fontsize=22, fontweight="bold", ha="center", va="center", color=color)
-        ax.text(x, 0.55, label, fontsize=10, ha="center", va="center", color="#444444", linespacing=1.4)
+        ax.text(x, 1.55, value, fontsize=28, fontweight="bold", ha="center", va="center", color=color)
+        ax.text(x, 0.55, label, fontsize=11, ha="center", va="center", color="#444444", linespacing=1.4)
         if x < x_positions[-1]:
             ax.plot([x + 1.25, x + 1.25], [0.25, 1.85], color="#DDDDDD", linewidth=0.8)
 
@@ -278,8 +278,6 @@ def generate_wordcloud(stats: dict):
     fig, ax = plt.subplots(figsize=(12, 4.5))
     ax.imshow(wc, interpolation="bilinear")
     ax.axis("off")
-    ax.set_title("Publication Series 词云 (Word Cloud)", fontsize=15, fontweight="bold",
-                 pad=18, color="#1a1a1a")
     fig.tight_layout(pad=0)
     fig.savefig(os.path.join(stats_dir, "wordcloud.png"), dpi=200, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -406,18 +404,19 @@ def build_stats_section():
         '  <img src="./pics/stats/stats_overview.png" alt="统计概览" width="850" />',
         "</p>",
         "",
+        '<p align="center">',
+        '  <img src="./pics/stats/wordcloud.png" alt="刊物系列词云" width="900" />',
+        "</p>",
+        "",
         "<table>",
         "  <tr>",
         '    <td align="center"><img src="./pics/stats/papers_by_category.png" alt="各领域论文数量" width="500" /></td>',
         '    <td align="center"><img src="./pics/stats/abstract_coverage.png" alt="摘要覆盖情况" width="330" /></td>',
         "  </tr>",
-        "  <tr>",
-        '    <td colspan="2" align="center"><img src="./pics/stats/papers_by_year.png" alt="历年论文收录趋势" width="800" /></td>',
-        "  </tr>",
         "</table>",
         "",
         '<p align="center">',
-        '  <img src="./pics/stats/wordcloud.png" alt="刊物系列词云" width="900" />',
+        '  <img src="./pics/stats/papers_by_year.png" alt="历年论文收录趋势" width="800" />',
         "</p>",
     ]
     return "\n".join(lines)
@@ -430,18 +429,19 @@ def build_stats_section_en():
         '  <img src="./pics/stats/stats_overview.png" alt="Statistics Overview" width="850" />',
         "</p>",
         "",
+        '<p align="center">',
+        '  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="900" />',
+        "</p>",
+        "",
         "<table>",
         "  <tr>",
         '    <td align="center"><img src="./pics/stats/papers_by_category.png" alt="Papers by Research Field" width="500" /></td>',
         '    <td align="center"><img src="./pics/stats/abstract_coverage.png" alt="Abstract Coverage" width="330" /></td>',
         "  </tr>",
-        "  <tr>",
-        '    <td colspan="2" align="center"><img src="./pics/stats/papers_by_year.png" alt="Annual Paper Collection Trend" width="800" /></td>',
-        "  </tr>",
         "</table>",
         "",
         '<p align="center">',
-        '  <img src="./pics/stats/wordcloud.png" alt="Publication Series Word Cloud" width="900" />',
+        '  <img src="./pics/stats/papers_by_year.png" alt="Annual Paper Collection Trend" width="800" />',
         "</p>",
     ]
     return "\n".join(lines)
