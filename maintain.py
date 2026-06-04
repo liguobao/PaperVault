@@ -3,10 +3,22 @@ import os
 import sys
 import json
 import re
+from datetime import datetime
+from collections import defaultdict
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
 from collector import collect, save_cache, load_cache
 
 COMMENT_CONFS_LIST_START = "<!-- confs-list-start -->"
 COMMENT_CONFS_LIST_END = "<!-- confs-list-end -->"
+COMMENT_STATS_START = "<!-- stats-start -->"
+COMMENT_STATS_END = "<!-- stats-end -->"
+COMMENT_RECENT_UPDATE_START = "<!-- recent-update-start -->"
+COMMENT_RECENT_UPDATE_END = "<!-- recent-update-end -->"
 
 cache_path = os.path.join(os.path.dirname(__file__), "cache", "cache.jsonl")
 readme_path = "README.md"
@@ -15,64 +27,322 @@ dblp_conf_path = os.path.join(os.path.dirname(__file__), "conf", "dblp_conf.json
 nips_conf_path = os.path.join(os.path.dirname(__file__), "conf", "nips_conf.json")
 iclr_conf_path = os.path.join(os.path.dirname(__file__), "conf", "iclr_conf.json")
 thecvf_conf_path = os.path.join(os.path.dirname(__file__), "conf", "thecvf_conf.json")
+stats_dir = os.path.join(os.path.dirname(__file__), "pics", "stats")
+meta_path = os.path.join(os.path.dirname(__file__), "cache", "readme_meta.json")
+
+# Nature-inspired color palette (muted, professional)
+NATURE_COLORS = [
+    "#2E5C8A", "#7BA05B", "#C44E52", "#DD8452",
+    "#9370DB", "#55A3B9", "#8C8C8C", "#E3A018",
+    "#4C4C4C", "#A0C4E8",
+]
+
+CATEGORY_MAP = {
+    "机器学习": ["ICML", "NIPS", "ICLR", "COLT", "AISTATS", "MLSYS", "JMLR", "TNNLS", "AI"],
+    "自然语言处理": ["ACL", "EMNLP", "NAACL", "EACL", "COLING", "TASLP"],
+    "计算机视觉": ["CVPR", "ICCV", "ECCV", "WACV", "TIP", "TPAMI", "IJCV", "BMVC", "MICCAI"],
+    "数据挖掘与信息检索": ["KDD", "SIGIR", "CIKM", "WSDM", "ECIR", "WWW", "ICDM", "RECSYS"],
+    "数据库与系统": ["VLDB", "SIGMOD", "TKDE", "TOIS", "FAST", "TCAD", "TC", "TOS", "TPDS"],
+    "语音与多媒体": ["ICASSP", "INTERSPEECH", "MM", "ICME"],
+    "人工智能综合": ["AAAI", "IJCAI", "MLJ"],
+    "网络与安全": ["SIGCOMM", "NSDI", "MOBICOM", "INFOCOM", "NDSS", "SP", "DAC"],
+    "其他": ["ISWC", "STOC"],
+}
+
+
+def _ensure_chinese_font():
+    """Configure matplotlib to support Chinese characters on Windows."""
+    plt.rcParams["font.sans-serif"] = ["Noto Sans SC", "Microsoft YaHei", "SimHei", "sans-serif"]
+    plt.rcParams["axes.unicode_minus"] = False
 
 
 def generate_new_readme(src: str, content: str, start_comment: str, end_comment: str) -> str:
-    """Generate a new Readme.md"""
+    """Generate a new Readme.md by replacing content between markers."""
     pattern = f"{start_comment}[\\s\\S]+{end_comment}"
     repl = f"{start_comment}\n\n{content}\n\n{end_comment}"
     if re.search(pattern, src) is None:
         print(f"can not find section in src, please check it, it should be {start_comment} and {end_comment}")
+        return src
     return re.sub(pattern, repl, src)
 
 
-def get_one_line(confs):
-    res = "- "
-    for conf in confs:
-        _conf = list(conf.keys())[0]
-        _year = conf[_conf]
-        res += f"[{_conf} {min(_year)}-{max(_year)}] "
-    return res
+def _load_all_confs():
+    """Load all conference configs and return a dict of {upper_name: set(years)}."""
+    confs_list = {}
+    for files in [acl_conf_path, dblp_conf_path, nips_conf_path, iclr_conf_path, thecvf_conf_path]:
+        with open(files, "r", encoding="utf-8") as f:
+            for conf in json.load(f):
+                m = re.search(r"\d{4}", conf["name"])
+                if not m:
+                    continue
+                year = m.group()
+                conf_name = conf["name"][: m.start()].strip().upper()
+                confs_list.setdefault(conf_name, set()).add(year)
+    return confs_list
+
+
+def compute_stats(cache_data: dict):
+    """Compute statistics from cache data."""
+    total_papers = sum(len(papers) for papers in cache_data.values())
+    total_abstracts = 0
+    papers_by_year = defaultdict(int)
+    papers_by_conf = defaultdict(int)
+    for conf_key, papers in cache_data.items():
+        m = re.match(r"([A-Za-z]+)(\d{4})", conf_key)
+        conf_base = m.group(1).upper() if m else conf_key
+        year = m.group(2) if m else "Unknown"
+        papers_by_conf[conf_base] += len(papers)
+        papers_by_year[year] += len(papers)
+        for p in papers:
+            if p.get("paper_abstract") and str(p.get("paper_abstract")).strip():
+                total_abstracts += 1
+
+    confs_list = _load_all_confs()
+    total_series = len(confs_list)
+    total_instances = sum(len(years) for years in confs_list.values())
+
+    # Category stats
+    cat_stats = {}
+    for cat, names in CATEGORY_MAP.items():
+        cnt = sum(papers_by_conf.get(n, 0) for n in names)
+        cat_stats[cat] = cnt
+
+    return {
+        "total_papers": total_papers,
+        "total_abstracts": total_abstracts,
+        "total_series": total_series,
+        "total_instances": total_instances,
+        "papers_by_year": dict(sorted(papers_by_year.items())),
+        "papers_by_conf": dict(papers_by_conf),
+        "cat_stats": cat_stats,
+    }
+
+
+def generate_charts(stats: dict):
+    """Generate Nature-style statistical charts."""
+    _ensure_chinese_font()
+    os.makedirs(stats_dir, exist_ok=True)
+
+    # ---------- Chart 1: Papers by Category (horizontal bar) ----------
+    fig, ax = plt.subplots(figsize=(10, 5.5))
+    cats = list(stats["cat_stats"].keys())
+    vals = list(stats["cat_stats"].values())
+    colors = [NATURE_COLORS[i % len(NATURE_COLORS)] for i in range(len(cats))]
+
+    bars = ax.barh(cats, vals, color=colors, height=0.6, edgecolor="white", linewidth=0.5)
+    ax.set_xlabel("论文数量 (Paper Count)", fontsize=12)
+    ax.set_title("各研究领域论文分布 (Papers by Research Field)", fontsize=14, fontweight="bold", pad=15)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_linewidth(0.6)
+    ax.spines["bottom"].set_linewidth(0.6)
+    ax.tick_params(axis="both", labelsize=10)
+    ax.invert_yaxis()
+
+    # Add value labels
+    for bar in bars:
+        width = bar.get_width()
+        ax.text(width + max(vals) * 0.01, bar.get_y() + bar.get_height() / 2,
+                f"{int(width):,}", ha="left", va="center", fontsize=9, color="#333333")
+
+    ax.set_xlim(0, max(vals) * 1.15)
+    ax.grid(axis="x", linestyle="--", linewidth=0.4, alpha=0.5)
+    fig.tight_layout()
+    fig.savefig(os.path.join(stats_dir, "papers_by_category.png"), dpi=200, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+    # ---------- Chart 2: Papers by Year (vertical bar) ----------
+    fig, ax = plt.subplots(figsize=(10, 4.5))
+    years = [y for y in stats["papers_by_year"].keys()]
+    year_vals = [stats["papers_by_year"][y] for y in years]
+    ax.bar(years, year_vals, color="#2E5C8A", width=0.65, edgecolor="white", linewidth=0.5)
+    ax.set_xlabel("年份 (Year)", fontsize=12)
+    ax.set_ylabel("论文数量 (Paper Count)", fontsize=12)
+    ax.set_title("历年论文收录趋势 (Annual Paper Collection Trend)", fontsize=14, fontweight="bold", pad=15)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_linewidth(0.6)
+    ax.spines["bottom"].set_linewidth(0.6)
+    ax.tick_params(axis="both", labelsize=10)
+    ax.grid(axis="y", linestyle="--", linewidth=0.4, alpha=0.5)
+    fig.tight_layout()
+    fig.savefig(os.path.join(stats_dir, "papers_by_year.png"), dpi=200, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+    # ---------- Chart 3: Abstract Coverage (donut) ----------
+    fig, ax = plt.subplots(figsize=(5.5, 5.5))
+    total = stats["total_papers"]
+    have_abs = stats["total_abstracts"]
+    no_abs = total - have_abs
+    sizes = [have_abs, no_abs]
+    labels = [f"含摘要\n({have_abs/total*100:.1f}%)", f"暂无摘要\n({no_abs/total*100:.1f}%)"]
+    colors_donut = ["#7BA05B", "#E8E8E8"]
+    explode = (0.02, 0)
+
+    wedges, texts = ax.pie(sizes, colors=colors_donut, startangle=90,
+                           wedgeprops=dict(width=0.45, edgecolor="white"),
+                           explode=explode)
+    ax.text(0, 0, f"{total:,}\nTotal", ha="center", va="center", fontsize=14, fontweight="bold", color="#333333")
+    ax.legend(wedges, labels, loc="lower center", bbox_to_anchor=(0.5, -0.05),
+              ncol=2, frameon=False, fontsize=10)
+    ax.set_title("摘要覆盖情况 (Abstract Coverage)", fontsize=14, fontweight="bold", pad=15)
+    fig.tight_layout()
+    fig.savefig(os.path.join(stats_dir, "abstract_coverage.png"), dpi=200, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+    # ---------- Chart 4: Overview Infographic (big numbers) ----------
+    fig, ax = plt.subplots(figsize=(10, 2.2))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 2.2)
+    ax.axis("off")
+
+    metrics = [
+        ("收录刊物系列", f"{stats['total_series']}", NATURE_COLORS[0]),
+        ("会议/年份实例", f"{stats['total_instances']}", NATURE_COLORS[1]),
+        ("总论文数量", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
+        ("含摘要论文", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
+    ]
+    n = len(metrics)
+    x_positions = [1.25 + i * 2.5 for i in range(n)]
+    for (label, value, color), x in zip(metrics, x_positions):
+        ax.text(x, 1.4, value, fontsize=22, fontweight="bold", ha="center", va="center", color=color)
+        ax.text(x, 0.6, label, fontsize=11, ha="center", va="center", color="#555555")
+        # subtle divider line
+        if x < x_positions[-1]:
+            ax.plot([x + 1.25, x + 1.25], [0.3, 1.7], color="#DDDDDD", linewidth=0.8)
+
+    fig.tight_layout()
+    fig.savefig(os.path.join(stats_dir, "stats_overview.png"), dpi=200, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
+def build_hierarchical_confs_list():
+    """Build a hierarchical markdown list of conferences grouped by category."""
+    confs = _load_all_confs()
+    assigned = set()
+    lines = []
+
+    for cat, names in CATEGORY_MAP.items():
+        cat_confs = []
+        for n in names:
+            if n in confs:
+                years = sorted(confs[n])
+                cat_confs.append((n, years))
+                assigned.add(n)
+        if not cat_confs:
+            continue
+        cat_confs.sort(key=lambda x: x[0])
+        lines.append(f"<details>\n<summary><b>{cat}</b> ({len(cat_confs)} 个系列)</summary>\n\n")
+        for name, years in cat_confs:
+            line = f"- **{name}** {min(years)}-{max(years)}"
+            if len(years) > 1:
+                line += f" ({len(years)} 届)"
+            lines.append(line + "\n")
+        lines.append("\n</details>\n")
+
+    # Any unassigned conferences
+    unassigned = sorted(set(confs.keys()) - assigned)
+    if unassigned:
+        lines.append(f"<details>\n<summary><b>其他</b> ({len(unassigned)} 个系列)</summary>\n\n")
+        for name in unassigned:
+            years = sorted(confs[name])
+            line = f"- **{name}** {min(years)}-{max(years)}"
+            if len(years) > 1:
+                line += f" ({len(years)} 届)"
+            lines.append(line + "\n")
+        lines.append("\n</details>\n")
+
+    return "".join(lines)
+
+
+def _read_meta():
+    if os.path.exists(meta_path):
+        with open(meta_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+def _write_meta(meta):
+    os.makedirs(os.path.dirname(meta_path), exist_ok=True)
+    with open(meta_path, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
+
+
+def build_recent_update_brief(meta: dict, stats: dict):
+    """Build the recent update brief markdown."""
+    last_date = meta.get("last_update", datetime.now().strftime("%Y-%m-%d"))
+    new_papers = meta.get("new_papers", 0)
+    new_confs = meta.get("new_conferences", 0)
+
+    lines = [
+        f"- 📅 **最近更新日期**: {last_date}",
+        f"- 🆕 **本次新增论文**: {new_papers:,} 篇",
+    ]
+    if new_confs:
+        lines.append(f"- 📢 **本次新增会议**: {new_confs} 个")
+    lines.append(f"- 📊 **数据库规模**: {stats['total_papers']:,} 篇论文 / {stats['total_series']} 个刊物系列 / {stats['total_abstracts']:,} 篇含摘要")
+
+    return "\n".join(lines)
+
+
+def build_stats_section():
+    """Build the statistics markdown section referencing generated images."""
+    lines = [
+        "<p align=\"center\">",
+        '  <img src="./pics/stats/stats_overview.png" alt="统计概览" width="850" />',
+        "</p>",
+        "",
+        "<table>",
+        "  <tr>",
+        '    <td align="center"><img src="./pics/stats/papers_by_category.png" alt="各领域论文数量" width="500" /></td>',
+        '    <td align="center"><img src="./pics/stats/abstract_coverage.png" alt="摘要覆盖情况" width="330" /></td>',
+        "  </tr>",
+        "  <tr>",
+        '    <td colspan="2" align="center"><img src="./pics/stats/papers_by_year.png" alt="历年论文收录趋势" width="800" /></td>',
+        "  </tr>",
+        "</table>",
+    ]
+    return "\n".join(lines)
 
 
 def update_readme():
-    readme_path = "README.md"
     with open(readme_path, "r", encoding="utf-8") as f:
         src = f.read()
 
-    confs_list = {}
-    for files in [acl_conf_path, dblp_conf_path, nips_conf_path, iclr_conf_path, thecvf_conf_path]:
-        with open(files, "r") as f:
-            for conf in json.load(f):
-                # print(conf)
-                year = re.search(r"\d{4}", conf["name"]).group()
-                # cut by year
-                conf_name = re.sub(r"\d{4}(.*)", "", conf["name"]).strip()
+    # Load cache for stats
+    cache_data = load_cache(cache_path) if os.path.exists(cache_path) else {}
+    stats = compute_stats(cache_data)
+    meta = _read_meta()
 
-                if conf_name.upper() not in confs_list.keys():
-                    confs_list[conf_name.upper()] = set()
-                confs_list[conf_name.upper()].add(year)
+    # Generate charts
+    generate_charts(stats)
 
-    # 4 confs for one line
-    confs_list_str = "```text\n"
-    waiting_list = []
-    for conf in confs_list.keys():
-        if len(waiting_list) == 4:
-            confs_list_str += get_one_line(waiting_list) + "\n"
-            waiting_list = []
-        waiting_list.append({conf: list(confs_list[conf])})
-    if len(waiting_list) != 0:
-        confs_list_str += get_one_line(waiting_list) + "\n"
-    confs_list_str += "```\n"
+    # Update recent update section
+    recent_update_md = build_recent_update_brief(meta, stats)
+    src = generate_new_readme(src, recent_update_md, COMMENT_RECENT_UPDATE_START, COMMENT_RECENT_UPDATE_END)
+
+    # Update stats section
+    stats_md = build_stats_section()
+    src = generate_new_readme(src, stats_md, COMMENT_STATS_START, COMMENT_STATS_END)
+
+    # Update confs list section
+    confs_md = build_hierarchical_confs_list()
+    src = generate_new_readme(src, confs_md, COMMENT_CONFS_LIST_START, COMMENT_CONFS_LIST_END)
 
     with open(readme_path, "w", encoding="utf-8") as f:
-        src = generate_new_readme(src, confs_list_str, COMMENT_CONFS_LIST_START, COMMENT_CONFS_LIST_END)
         f.write(src)
 
 
 def force_update():
     res = collect(cache_file=None, force=True)
     save_cache(cache_path, res)
+    stats = compute_stats(res)
+    meta = {
+        "last_update": datetime.now().strftime("%Y-%m-%d"),
+        "new_papers": stats["total_papers"],
+        "new_conferences": stats["total_instances"],
+    }
+    _write_meta(meta)
     update_readme()
 
 
@@ -95,7 +365,8 @@ def incremental_update(soft_timeout=None):
 
     after_count = sum(len(papers) for papers in res.values())
     new_confs = set(res.keys()) - before_confs
-    print(f"[+] Collected {after_count - before_count} new papers across {len(new_confs)} new conference(s).")
+    new_papers = after_count - before_count
+    print(f"[+] Collected {new_papers} new papers across {len(new_confs)} new conference(s).")
     if new_confs:
         print(f"    New conferences: {', '.join(sorted(new_confs))}")
 
@@ -108,6 +379,13 @@ def incremental_update(soft_timeout=None):
                 print(f"[!] Previous/current run had {len(failures)} failure(s). They will be retried in the next run.")
         except Exception:
             pass
+
+    meta = {
+        "last_update": datetime.now().strftime("%Y-%m-%d"),
+        "new_papers": new_papers,
+        "new_conferences": len(new_confs),
+    }
+    _write_meta(meta)
 
     update_readme()
     print("[+] README updated.")
