@@ -40,20 +40,22 @@ PaperVault 是一个用于收集和检索人工智能领域学术论文的全自
 <!-- stats-start -->
 
 <p align="center">
-  <img src="./pics/stats/stats_overview.png" alt="统计概览" width="850" />
+  <img src="./pics/stats/stats_overview.svg" alt="统计概览" width="850" />
 </p>
 
 <p align="center">
-  <img src="./pics/stats/wordcloud.png" alt="刊物系列词云" width="900" />
+  <img src="./pics/stats/papers_by_category.svg" alt="各领域论文数量" width="850" />
 </p>
 
 <p align="center">
-  <img src="./pics/stats/papers_by_category.png" alt="各领域论文数量" width="800" />
+  <img src="./pics/stats/papers_by_year.svg" alt="历年论文收录趋势" width="850" />
 </p>
 
 <p align="center">
-  <img src="./pics/stats/papers_by_year.png" alt="历年论文收录趋势" width="800" />
+  <img src="./pics/stats/wordcloud.svg" alt="刊物系列词云" width="900" />
 </p>
+
+📊 [查看交互式统计图表 (View Interactive Statistics)](./docs/stats.html)
 
 <!-- stats-end -->
 
