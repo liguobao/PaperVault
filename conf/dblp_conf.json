@@ -972,8 +972,16 @@
         "url": "https://dblp.org/db/conf/miccai/miccai2025-15.html"
     },
     {
+        "name": "MICCAI2025",
+        "url": "https://dblp.org/db/conf/miccai/miccai2025-16.html"
+    },
+    {
         "name": "FAST2025",
         "url": "https://dblp.org/db/conf/fast/fast2025.html"
+    },
+    {
+        "name": "FAST2026",
+        "url": "https://dblp.org/db/conf/fast/fast2026.html"
     },
     {
         "name": "ICDM2024",
@@ -1066,6 +1074,22 @@
     {
         "name": "ECIR2023",
         "url": "https://dblp.org/db/conf/ecir/ecir2023-1.html"
+    },
+    {
+        "name": "ECIR2026",
+        "url": "https://dblp.org/db/conf/ecir/ecir2026-1.html"
+    },
+    {
+        "name": "ECIR2026",
+        "url": "https://dblp.org/db/conf/ecir/ecir2026-2.html"
+    },
+    {
+        "name": "ECIR2026",
+        "url": "https://dblp.org/db/conf/ecir/ecir2026-3.html"
+    },
+    {
+        "name": "ECIR2026",
+        "url": "https://dblp.org/db/conf/ecir/ecir2026-4.html"
     },
     {
         "name": "COLT2023",
@@ -1184,6 +1208,10 @@
         "url": "https://dblp.org/db/journals/jmlr/jmlr25.html"
     },
     {
+        "name": "JMLR2026",
+        "url": "https://dblp.org/db/journals/jmlr/jmlr26.html"
+    },
+    {
         "name": "VLDB2023",
         "url": "https://dblp.org/db/journals/pvldb/pvldb17.html"
     },
@@ -1208,6 +1236,10 @@
         "url": "https://dblp.org/db/journals/tip/tip34.html"
     },
     {
+        "name": "TIP2026",
+        "url": "https://dblp.org/db/journals/tip/tip35.html"
+    },
+    {
         "name": "TPAMI2023",
         "url": "https://dblp.org/db/journals/pami/pami45.html"
     },
@@ -1218,6 +1250,10 @@
     {
         "name": "TPAMI2025",
         "url": "https://dblp.org/db/journals/pami/pami47.html"
+    },
+    {
+        "name": "TPAMI2026",
+        "url": "https://dblp.org/db/journals/pami/pami48.html"
     },
     {
         "name": "TKDE2023",
@@ -1262,6 +1298,10 @@
     {
         "name": "IJCV2025",
         "url": "https://dblp.org/db/journals/ijcv/ijcv133.html"
+    },
+    {
+        "name": "IJCV2026",
+        "url": "https://dblp.org/db/journals/ijcv/ijcv134.html"
     },
     {
         "name": "TNNLS2023",
@@ -1340,6 +1380,10 @@
         "url": "https://dblp.org/db/conf/infocom/infocom2021.html"
     },
     {
+        "name": "INFOCOM2025",
+        "url": "https://dblp.org/db/conf/infocom/infocom2025.html"
+    },
+    {
         "name": "MOBICOM2022",
         "url": "https://dblp.org/db/conf/mobicom/mobicom2022.html"
     },
@@ -1374,6 +1418,10 @@
     {
         "name": "NSDI2025",
         "url": "https://dblp.org/db/conf/nsdi/nsdi2025.html"
+    },
+    {
+        "name": "NSDI2026",
+        "url": "https://dblp.org/db/conf/nsdi/nsdi2026.html"
     },
     {
         "name": "DAC2020",
@@ -1440,6 +1488,10 @@
         "url": "https://dblp.org/db/conf/sp/sp2020.html"
     },
     {
+        "name": "SP2025",
+        "url": "https://dblp.org/db/conf/sp/sp2025.html"
+    },
+    {
         "name": "STOC2025",
         "url": "https://dblp.org/db/conf/stoc/stoc2025.html"
     },
@@ -1462,6 +1514,10 @@
     {
         "name": "AI2025",
         "url": "https://dblp.org/db/journals/ai/ai55.html"
+    },
+    {
+        "name": "AI2026",
+        "url": "https://dblp.org/db/journals/ai/ai56.html"
     },
     {
         "name": "MLJ2019",
@@ -1590,5 +1646,45 @@
     {
         "name": "TPDS2026",
         "url": "https://dblp.org/db/journals/tpds/tpds35.html"
+    },
+    {
+        "name": "ALT2025",
+        "url": "https://dblp.org/db/conf/alt/alt2025.html"
+    },
+    {
+        "name": "UAI2025",
+        "url": "https://dblp.org/db/conf/uai/uai2025.html"
+    },
+    {
+        "name": "OSDI2025",
+        "url": "https://dblp.org/db/conf/osdi/osdi2025.html"
+    },
+    {
+        "name": "SOSP2025",
+        "url": "https://dblp.org/db/conf/sosp/sosp2025.html"
+    },
+    {
+        "name": "ISCA2025",
+        "url": "https://dblp.org/db/conf/isca/isca2025.html"
+    },
+    {
+        "name": "EUROSYS2025",
+        "url": "https://dblp.org/db/conf/eurosys/eurosys2025.html"
+    },
+    {
+        "name": "EUROSYS2026",
+        "url": "https://dblp.org/db/conf/eurosys/eurosys2026.html"
+    },
+    {
+        "name": "USS2025",
+        "url": "https://dblp.org/db/conf/uss/uss2025.html"
+    },
+    {
+        "name": "ICSE2025",
+        "url": "https://dblp.org/db/conf/icse/icse2025.html"
+    },
+    {
+        "name": "FOCS2025",
+        "url": "https://dblp.org/db/conf/focs/focs2025.html"
     }
 ]

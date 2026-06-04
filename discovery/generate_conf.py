@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import re
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -95,6 +96,7 @@ def run(
     end_year: int = None,
     dry_run: bool = False,
     only: str = None,
+    soft_timeout: float = None,
 ):
     if end_year is None:
         end_year = datetime.now().year
@@ -102,6 +104,8 @@ def run(
         start_year = end_year - 1  # 默认只检查最近两年
 
     print(f"[*] Discovery range: {start_year} ~ {end_year}")
+    if soft_timeout:
+        print(f"[*] Soft timeout: {soft_timeout}s ({soft_timeout / 3600:.1f}h)")
 
     tasks = [
         ("acl_conf.json", ACLDiscovery),
@@ -119,10 +123,22 @@ def run(
             continue
         grouped.setdefault(filename, []).append(cls)
 
+    start_time = time.time()
+
+    def _is_timeout():
+        if soft_timeout and start_time is not None:
+            elapsed = time.time() - start_time
+            if elapsed >= soft_timeout:
+                print(f"[!] Soft timeout ({soft_timeout}s, elapsed {elapsed:.0f}s) reached.")
+                return True
+        return False
+
     for filename, classes in grouped.items():
         existing = load_conf(filename)
         all_new = []
         for cls in classes:
+            if _is_timeout():
+                break
             print(f"[*] Running {cls.__name__} for {filename} ...")
             inst = cls(existing_conf=existing)
             try:
@@ -143,6 +159,10 @@ def run(
         else:
             save_conf(filename, merged)
 
+        if _is_timeout():
+            print("[!] Stopping due to soft timeout. Partial results have been saved.")
+            break
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Auto-discover conference configs")
@@ -150,6 +170,8 @@ if __name__ == "__main__":
     parser.add_argument("--end-year", type=int, help="End year (inclusive)")
     parser.add_argument("--dry-run", action="store_true", help="Do not write files")
     parser.add_argument("--only", type=str, help="Only process one conf file, e.g. acl_conf.json")
+    parser.add_argument("--soft-timeout", type=float, default=None,
+                        help="Soft timeout in seconds. Save progress and exit gracefully when reached (e.g. 18000 for 5h)")
     args = parser.parse_args()
 
     run(
@@ -157,4 +179,5 @@ if __name__ == "__main__":
         end_year=args.end_year,
         dry_run=args.dry_run,
         only=args.only,
+        soft_timeout=args.soft_timeout,
     )
