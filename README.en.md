@@ -18,16 +18,16 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- recent-update-start -->
 
 - 📅 **Last Updated**: 2026-06-04
-- 🆕 **New Papers This Update**: 5,305
-- 📢 **New Conferences This Update**: 72
-- 📊 **Database Scale**: 256,424 papers / 57 publication series / 131,571 with abstracts
+- 🆕 **New Papers This Update**: 4,006
+- 📢 **New Conferences This Update**: 20
+- 📊 **Database Scale**: 260,430 papers / 66 publication series / 131,571 with abstracts
 
 <!-- recent-update-end -->
 
 ### Current Phase
 <!-- auto-summary-start -->
 
-- The database contains **250,000+** papers spanning 57+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
+- The database contains **260,000+** papers spanning 66+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
 
 <!-- auto-summary-end -->
 
@@ -66,12 +66,12 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <details>
 <summary><b>Machine Learning</b> (9 series)</summary>
 
-- **AI** 2020-2025 (4 editions)
+- **AI** 2020-2026 (5 editions)
 - **AISTATS** 2019-2025 (7 editions)
 - **COLT** 2019-2025 (7 editions)
 - **ICLR** 2019-2025 (7 editions)
 - **ICML** 2019-2025 (7 editions)
-- **JMLR** 2019-2025 (7 editions)
+- **JMLR** 2019-2026 (8 editions)
 - **MLSYS** 2019-2025 (7 editions)
 - **NIPS** 2000-2025 (26 editions)
 - **TNNLS** 2020-2025 (6 editions)
@@ -95,10 +95,10 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 - **CVPR** 2013-2026 (14 editions)
 - **ECCV** 2018-2024 (4 editions)
 - **ICCV** 2013-2025 (7 editions)
-- **IJCV** 2020-2025 (6 editions)
+- **IJCV** 2020-2026 (7 editions)
 - **MICCAI** 2019-2025 (7 editions)
-- **TIP** 2020-2025 (6 editions)
-- **TPAMI** 2020-2025 (6 editions)
+- **TIP** 2020-2026 (7 editions)
+- **TPAMI** 2020-2026 (7 editions)
 - **WACV** 2020-2026 (7 editions)
 
 </details>
@@ -106,7 +106,7 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <summary><b>Data Mining & Information Retrieval</b> (8 series)</summary>
 
 - **CIKM** 2019-2025 (7 editions)
-- **ECIR** 2019-2025 (7 editions)
+- **ECIR** 2019-2026 (8 editions)
 - **ICDM** 2019-2025 (6 editions)
 - **KDD** 2019-2024 (5 editions)
 - **RECSYS** 2019-2025 (7 editions)
@@ -118,7 +118,7 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <details>
 <summary><b>Database & Systems</b> (9 series)</summary>
 
-- **FAST** 2019-2025 (6 editions)
+- **FAST** 2019-2026 (7 editions)
 - **SIGMOD** 2019-2022 (4 editions)
 - **TC** 2019-2026 (7 editions)
 - **TCAD** 2020-2026 (7 editions)
@@ -150,12 +150,12 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <summary><b>Networking & Security</b> (7 series)</summary>
 
 - **DAC** 2020-2025 (6 editions)
-- **INFOCOM** 2019-2021 (3 editions)
+- **INFOCOM** 2019-2025 (4 editions)
 - **MOBICOM** 2022-2025 (3 editions)
 - **NDSS** 2019-2026 (8 editions)
-- **NSDI** 2019-2025 (6 editions)
+- **NSDI** 2019-2026 (7 editions)
 - **SIGCOMM** 2020-2025 (6 editions)
-- **SP** 2019-2020 (2 editions)
+- **SP** 2019-2025 (3 editions)
 
 </details>
 <details>
@@ -163,6 +163,20 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 
 - **ISWC** 2019-2022 (4 editions)
 - **STOC** 2025-2025
+
+</details>
+<details>
+<summary><b>Others</b> (9 series)</summary>
+
+- **ALT** 2025-2025
+- **EUROSYS** 2025-2026 (2 editions)
+- **FOCS** 2025-2025
+- **ICSE** 2025-2025
+- **ISCA** 2025-2025
+- **OSDI** 2025-2025
+- **SOSP** 2025-2025
+- **UAI** 2025-2025
+- **USS** 2025-2025
 
 </details>
 
