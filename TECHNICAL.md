@@ -6,10 +6,10 @@ PaperVault 采用**前后端分离**架构：
 
 - **后端**：Python Flask 提供 REST API，启动时加载本地 JSON 缓存，所有检索均在内存中完成，不依赖数据库。
 - **前端**：Vue 3 + Vite + TypeScript 构建的单页应用（SPA），打包后输出为静态文件，由 Flask 直接托管。
-- **数据层**：`cache/cache.jsonl` 为单一本地缓存文件（JSON Lines 格式），使用 **Git LFS** 管理；`conf/*.json` 定义需要采集的会议列表。
+- **数据层**：`cache/cache.jsonl.gz` 为单一本地缓存文件（JSON Lines 格式），使用 **Git LFS** 管理；`conf/*.json` 定义需要采集的会议列表。
 
 ```
-conf/*.json  ──►  collector.py  ──►  cache/cache.jsonl
+conf/*.json  ──►  collector.py  ──►  cache/cache.jsonl.gz
                                          ▲
                                          │
                                     app.py (Flask)
@@ -69,7 +69,7 @@ conf/*.json  ──►  collector.py  ──►  cache/cache.jsonl
 
 ### 2.3 缓存加载机制
 
-`app.py` 在模块导入时即执行 `load_data()`，将 `cache/cache.jsonl` 流式读入内存，按会议和年份组织为嵌套字典 `cache_data`。此后所有搜索均在内存中进行，无磁盘 I/O。
+`app.py` 在模块导入时即执行 `load_data()`，将 `cache/cache.jsonl.gz` 流式读入内存，按会议和年份组织为嵌套字典 `cache_data`。此后所有搜索均在内存中进行，无磁盘 I/O。
 
 ---
 
@@ -166,7 +166,7 @@ cache_conf = [name for name in cache_res.keys()]
 | `url` | 是 | 该会议在对应数据源的列表页 URL |
 | `tag` | 部分需要 | ACL Anthology 等需要额外路径标识，DBLP/OpenReview 等不需要 |
 
-### 5.2 缓存格式 (`cache/cache.jsonl`)
+### 5.2 缓存格式 (`cache/cache.jsonl.gz`)
 
 每行为一篇论文的 JSON 对象，额外包含 `conf` 字段标识所属会议：
 
