@@ -44,7 +44,7 @@ meta_path = os.path.join(os.path.dirname(__file__), "cache", "readme_meta.json")
 NATURE_COLORS = [
     "#2E5C8A", "#7BA05B", "#C44E52", "#DD8452",
     "#9370DB", "#55A3B9", "#8C8C8C", "#E3A018",
-    "#4C4C4C", "#A0C4E8",
+    "#4C4C4C", "#A0C4E8", "#C49C94",
 ]
 
 # 按 CCF 第七版推荐目录分类（A 类为核心，同时包含项目已收录的其他会议/期刊）
@@ -75,7 +75,7 @@ CATEGORY_MAP = {
     ],
     "计算机图形学与多媒体": [
         "TOG", "TIP", "TVCG", "TMM",
-        "MM", "SIGGRAPH", "VR", "IEEE VIS", "BMVC", "MICCAI", "ICME",
+        "MM", "SIGGRAPH", "VR", "IEEEVIS", "BMVC", "MICCAI", "ICME",
     ],
     "人工智能": [
         "AI", "TPAMI", "IJCV", "JMLR",
@@ -90,7 +90,7 @@ CATEGORY_MAP = {
         "ICASSP", "INTERSPEECH", "TASLP",
     ],
     "交叉/综合/新兴": [
-        "JACM", "PROC. IEEE", "SCIS", "BIOINFORMATICS",
+        "JACM", "PROCIEEE", "SCIS", "BIOINFORMATICS",
         "RTSS", "ISWC",
     ],
 }
@@ -122,7 +122,7 @@ CATEGORY_MAP_EN = {
     ],
     "Computer Graphics & Multimedia": [
         "TOG", "TIP", "TVCG", "TMM",
-        "MM", "SIGGRAPH", "VR", "IEEE VIS", "BMVC", "MICCAI", "ICME",
+        "MM", "SIGGRAPH", "VR", "IEEEVIS", "BMVC", "MICCAI", "ICME",
     ],
     "Artificial Intelligence": [
         "AI", "TPAMI", "IJCV", "JMLR",
@@ -137,7 +137,7 @@ CATEGORY_MAP_EN = {
         "ICASSP", "INTERSPEECH", "TASLP",
     ],
     "Interdisciplinary / Comprehensive / Emerging": [
-        "JACM", "PROC. IEEE", "SCIS", "BIOINFORMATICS",
+        "JACM", "PROCIEEE", "SCIS", "BIOINFORMATICS",
         "RTSS", "ISWC",
     ],
 }
