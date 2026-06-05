@@ -268,9 +268,11 @@ class DBLPDiscovery(BaseDiscovery):
         if not text:
             return results
 
+        from urllib.parse import urljoin
+
         soup = BeautifulSoup(text, "html.parser")
         for a in soup.find_all("a", href=True):
-            href = a["href"]
+            href = urljoin(meta["root"], a["href"])
             if not _CONF_LINK_RE.match(href):
                 continue
 
