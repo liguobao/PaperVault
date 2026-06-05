@@ -192,8 +192,7 @@ JOURNALS: Dict[str, Dict[str, Any]] = {
     "siamcomp":{"root":"https://dblp.org/db/journals/siamcomp/index.html","start_year":2019,"name":"SICOMP"},
     # --- 人机交互与普适计算 ---
     "tochi": {"root": "https://dblp.org/db/journals/tochi/index.html", "start_year": 2019, "name": "TOCHI"},
-    "ijmms": {"root": "https://dblp.org/db/journals/ijmms/index.html", "start_year": 2019, "name": "IJHCS"},
-    # --- 交叉/综合/新兴 ---
+    "ijhcs": {"root": "https://dblp.org/db/journals/ijhcs/index.html", "start_year": 2019, "name": "IJHCS"},
     "jacm":  {"root": "https://dblp.org/db/journals/jacm/index.html",  "start_year": 2019, "name": "JACM"},
     "pieee": {"root": "https://dblp.org/db/journals/pieee/index.html", "start_year": 2019, "name": "Proc. IEEE"},
     "chinaf":{"root": "https://dblp.org/db/journals/chinaf/index.html","start_year": 2019, "name": "SCIS"},
