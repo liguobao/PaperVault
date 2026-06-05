@@ -310,16 +310,19 @@ class DBLPDiscovery(BaseDiscovery):
         if not text:
             return results
 
+        from urllib.parse import urljoin
+
         soup = BeautifulSoup(text, "html.parser")
         for a in soup.find_all("a", href=True):
-            href = a["href"]
+            href = urljoin(meta["root"], a["href"])
             if not _JOURNAL_LINK_RE.match(href):
                 continue
 
-            # 从链接文本提取年份，例如 "Volume 44: 2022"
-            link_text = a.get_text(strip=True)
-            m = _YEAR_RE.search(link_text)
+            # DBLP 常把年份放在 <a> 之外（例如 li 文本 "Volume 44: 2022"）
+            container_text = a.parent.get_text(" ", strip=True)
+            m = _YEAR_RE.search(container_text)
             if not m:
+                continue
                 continue
             year = int(m.group(1))
             if year < start_year or year > end_year:
