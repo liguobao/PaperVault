@@ -30,10 +30,10 @@ CACHE_TTL_NOT_EXIST = 7 * 86400   # 已确认不存在的 URL 缓存 7 天
 # 正则：从根目录页面提取有效链接
 # ---------------------------------------------------------------------------
 _CONF_LINK_RE = re.compile(
-    r"^https?://dblp(?:\.org|\.uni-trier\.de)/db/conf/([^/]+)/\1\d{4}(?:-\d+)?\.html$"
+    r"^https?://dblp(?:\.org|\.uni-trier\.de)/db/conf/[^/]+/[^/]*\d{4}(?:-\d+)?\.html$"
 )
 _JOURNAL_LINK_RE = re.compile(
-    r"^https?://dblp(?:\.org|\.uni-trier\.de)/db/journals/([^/]+)/\1\d+\.html$"
+    r"^https?://dblp(?:\.org|\.uni-trier\.de)/db/journals/[^/]+/[^/]*\d+\.html$"
 )
 _YEAR_RE = re.compile(r"(\d{4})")
 
