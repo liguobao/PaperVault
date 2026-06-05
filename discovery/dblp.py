@@ -1,14 +1,41 @@
-"""DBLP 自动发现（会议 + 期刊）"""
+"""DBLP 自动发现（会议 + 期刊）
+
+重构后逻辑：
+1. 周期性访问各刊物在 DBLP 的根目录（index.html）。
+2. 从根目录页面解析出所有卷/年份的直达链接。
+3. 仅保留目标年份范围内的链接，并过滤掉已在 dblp_conf.json 或其他信源
+   （ACL / CVF / OpenReview / NeurIPS）中覆盖的条目。
+4. 对于根目录无法访问的少数刊物，保留轻量的 fallback HEAD 探测。
+
+CCF 第七版 A 类会议与期刊已按分类补全；与其他信源重复的会议（如 ACL、
+CVPR、ICCV、ECCV、WACV、ICLR、NeurIPS、MLSys）已从 DBLP 发现列表中剔除，
+避免重复获取。
+"""
 
 import json
+import re
 import time
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Set
+
+from bs4 import BeautifulSoup
+
 from .base import BaseDiscovery
 
 CACHE_FILE = Path("cache/dblp_discovery_cache.json")
 CACHE_TTL_EXIST = 30 * 86400      # 已确认存在的 URL 缓存 30 天
 CACHE_TTL_NOT_EXIST = 7 * 86400   # 已确认不存在的 URL 缓存 7 天
+
+# ---------------------------------------------------------------------------
+# 正则：从根目录页面提取有效链接
+# ---------------------------------------------------------------------------
+_CONF_LINK_RE = re.compile(
+    r"^https?://dblp(?:\.org|\.uni-trier\.de)/db/conf/([^/]+)/\1\d{4}(?:-\d+)?\.html$"
+)
+_JOURNAL_LINK_RE = re.compile(
+    r"^https?://dblp(?:\.org|\.uni-trier\.de)/db/journals/([^/]+)/\1\d+\.html$"
+)
+_YEAR_RE = re.compile(r"(\d{4})")
 
 
 def _load_cache() -> dict:
@@ -27,177 +54,193 @@ def _save_cache(cache: dict):
         json.dump(cache, f, ensure_ascii=False, indent=2)
 
 
-# 会议缩写 → 起始年份
-CONFERENCES = {
-    "icassp": 2019,
-    "www": 2019,
-    "iclr": 2019,
-    "icml": 2019,
-    "aaai": 2019,
-    "ijcai": 2019,
-    "cvpr": 2019,
-    "iccv": 2019,
-    "mm": 2019,
-    "kdd": 2019,
-    "cikm": 2019,
-    "sigir": 2019,
-    "wsdm": 2019,
-    "ecir": 2019,
-    "eccv": 2020,  # 偶数年，多卷
-    "colt": 2019,
-    "aistats": 2019,
-    "interspeech": 2019,
-    "iswc": 2019,
-    "recsys": 2019,
-    "icme": 2019,
-    "bmvc": 2019,
-    "miccai": 2019,  # 多卷
-    "fast": 2019,
-    "sigmod": 2019,
-    "icdm": 2019,
-    # --- 新增（来自 FL-paper-update-tracker） ---
-    "alt": 2019,
-    "uai": 2019,
-    "osdi": 2019,    # 双年（奇数年）
-    "sosp": 2019,    # 双年（奇数年）
-    "isca": 2019,
-    "eurosys": 2019,
-    "sigcomm": 2019,
-    "infocom": 2019,
-    "mobicom": 2019,
-    "nsdi": 2019,
-    "dac": 2019,
-    "ndss": 2019,
-    "sp": 2019,      # IEEE S&P
-    "uss": 2019,     # USENIX Security
-    "icse": 2019,
-    "stoc": 2019,
-    "focs": 2019,    # IEEE FOCS (会议，非期刊)
+# ---------------------------------------------------------------------------
+# 会议配置（根目录页面 + 起始年份 + 配置名称前缀）
+# 注意：已剔除被其他信源覆盖的会议 —— ACL/EMNLP/NAACL/EACL/COLING
+# (ACL), CVPR/ICCV/ECCV/WACV (CVF), ICLR/NIPS (OpenReview), MLSys (NIPS)
+# ---------------------------------------------------------------------------
+CONFERENCES: Dict[str, Dict[str, Any]] = {
+    # --- 人工智能 ---
+    "aaai":   {"root": "https://dblp.org/db/conf/aaai/index.html",   "start_year": 2019, "name": "AAAI"},
+    "icml":   {"root": "https://dblp.org/db/conf/icml/index.html",   "start_year": 2019, "name": "ICML"},
+    "ijcai":  {"root": "https://dblp.org/db/conf/ijcai/index.html",  "start_year": 2019, "name": "IJCAI"},
+    # --- 计算机图形学与多媒体 ---
+    "mm":     {"root": "https://dblp.org/db/conf/mm/index.html",     "start_year": 2019, "name": "MM"},
+    "vr":     {"root": "https://dblp.org/db/conf/vr/index.html",     "start_year": 2019, "name": "VR"},
+    "visualization": {"root": "https://dblp.org/db/conf/visualization/index.html", "start_year": 2019, "name": "IEEE VIS"},
+    "siggraph": {"root": "https://dblp.org/db/conf/siggraph/index.html", "start_year": 2019, "name": "SIGGRAPH"},
+    # --- 数据库/数据挖掘/内容检索 ---
+    "kdd":    {"root": "https://dblp.org/db/conf/kdd/index.html",    "start_year": 2019, "name": "KDD"},
+    "sigir":  {"root": "https://dblp.org/db/conf/sigir/index.html",  "start_year": 2019, "name": "SIGIR"},
+    "cikm":   {"root": "https://dblp.org/db/conf/cikm/index.html",   "start_year": 2019, "name": "CIKM"},
+    "wsdm":   {"root": "https://dblp.org/db/conf/wsdm/index.html",   "start_year": 2019, "name": "WSDM"},
+    "www":    {"root": "https://dblp.org/db/conf/www/index.html",    "start_year": 2019, "name": "WWW"},
+    "ecir":   {"root": "https://dblp.org/db/conf/ecir/index.html",   "start_year": 2019, "name": "ECIR"},
+    "icdm":   {"root": "https://dblp.org/db/conf/icdm/index.html",   "start_year": 2019, "name": "ICDM"},
+    "recsys": {"root": "https://dblp.org/db/conf/recsys/index.html", "start_year": 2019, "name": "RECSYS"},
+    "vldb":   {"root": "https://dblp.org/db/conf/vldb/index.html",   "start_year": 2019, "name": "VLDB"},
+    "icde":   {"root": "https://dblp.org/db/conf/icde/index.html",   "start_year": 2019, "name": "ICDE"},
+    # --- 语音与多媒体 ---
+    "icassp":      {"root": "https://dblp.org/db/conf/icassp/index.html",      "start_year": 2019, "name": "ICASSP"},
+    "interspeech": {"root": "https://dblp.org/db/conf/interspeech/index.html", "start_year": 2019, "name": "INTERSPEECH"},
+    # 注意：icme 无独立根目录，fallback 见下方
+    "icme":        {"root": "https://dblp.org/db/conf/icmcs/icme/index.html",  "start_year": 2019, "name": "ICME", "fallback": True},
+    # --- 机器学习（理论向）---
+    "colt":   {"root": "https://dblp.org/db/conf/colt/index.html",   "start_year": 2019, "name": "COLT"},
+    "aistats":{"root": "https://dblp.org/db/conf/aistats/index.html","start_year": 2019, "name": "AISTATS"},
+    "alt":    {"root": "https://dblp.org/db/conf/alt/index.html",    "start_year": 2019, "name": "ALT"},
+    "uai":    {"root": "https://dblp.org/db/conf/uai/index.html",    "start_year": 2019, "name": "UAI"},
+    # --- 数据库与系统 ---
+    "fast":   {"root": "https://dblp.org/db/conf/fast/index.html",   "start_year": 2019, "name": "FAST"},
+    "sigmod": {"root": "https://dblp.org/db/conf/sigmod/index.html", "start_year": 2019, "name": "SIGMOD"},
+    # --- 其他 ---
+    "iswc":   {"root": "https://dblp.org/db/conf/semweb/iswc/index.html", "start_year": 2019, "name": "ISWC"},
+    "bmvc":   {"root": "https://dblp.org/db/conf/bmvc/index.html",   "start_year": 2019, "name": "BMVC"},
+    "miccai": {"root": "https://dblp.org/db/conf/miccai/index.html", "start_year": 2019, "name": "MICCAI"},
+    # --- 计算机体系结构/高性能计算/存储系统 ---
+    "ppopp":  {"root": "https://dblp.org/db/conf/ppopp/index.html",  "start_year": 2019, "name": "PPoPP"},
+    "hpca":   {"root": "https://dblp.org/db/conf/hpca/index.html",   "start_year": 2019, "name": "HPCA"},
+    "micro":  {"root": "https://dblp.org/db/conf/micro/index.html",  "start_year": 2019, "name": "MICRO"},
+    "sc":     {"root": "https://dblp.org/db/conf/sc/index.html",     "start_year": 2019, "name": "SC"},
+    "asplos": {"root": "https://dblp.org/db/conf/asplos/index.html", "start_year": 2019, "name": "ASPLOS"},
+    "isca":   {"root": "https://dblp.org/db/conf/isca/index.html",   "start_year": 2019, "name": "ISCA"},
+    "usenix": {"root": "https://dblp.org/db/conf/usenix/index.html", "start_year": 2019, "name": "ATC"},
+    "eurosys":{"root": "https://dblp.org/db/conf/eurosys/index.html","start_year": 2019, "name": "EUROSYS"},
+    "hpdc":   {"root": "https://dblp.org/db/conf/hpdc/index.html",   "start_year": 2019, "name": "HPDC"},
+    "dac":    {"root": "https://dblp.org/db/conf/dac/index.html",    "start_year": 2019, "name": "DAC"},
+    # --- 计算机网络 ---
+    "sigcomm":{"root": "https://dblp.org/db/conf/sigcomm/index.html","start_year": 2019, "name": "SIGCOMM"},
+    "infocom":{"root": "https://dblp.org/db/conf/infocom/index.html","start_year": 2019, "name": "INFOCOM"},
+    "mobicom":{"root": "https://dblp.org/db/conf/mobicom/index.html","start_year": 2019, "name": "MOBICOM"},
+    "nsdi":   {"root": "https://dblp.org/db/conf/nsdi/index.html",   "start_year": 2019, "name": "NSDI"},
+    # --- 网络与信息安全 ---
+    "ccs":    {"root": "https://dblp.org/db/conf/ccs/index.html",    "start_year": 2019, "name": "CCS"},
+    "eurocrypt":{"root":"https://dblp.org/db/conf/eurocrypt/index.html","start_year":2019,"name":"EUROCRYPT"},
+    "crypto": {"root": "https://dblp.org/db/conf/crypto/index.html", "start_year": 2019, "name": "CRYPTO"},
+    "sp":     {"root": "https://dblp.org/db/conf/sp/index.html",     "start_year": 2019, "name": "SP"},
+    "uss":    {"root": "https://dblp.org/db/conf/uss/index.html",    "start_year": 2019, "name": "USS"},
+    "ndss":   {"root": "https://dblp.org/db/conf/ndss/index.html",   "start_year": 2019, "name": "NDSS"},
+    # --- 软件工程/系统软件/程序设计语言 ---
+    "pldi":   {"root": "https://dblp.org/db/conf/pldi/index.html",   "start_year": 2019, "name": "PLDI"},
+    "popl":   {"root": "https://dblp.org/db/conf/popl/index.html",   "start_year": 2019, "name": "POPL"},
+    "sigsoft":{"root": "https://dblp.org/db/conf/sigsoft/index.html","start_year": 2019, "name": "FSE"},
+    "sosp":   {"root": "https://dblp.org/db/conf/sosp/index.html",   "start_year": 2019, "name": "SOSP"},
+    "oopsla": {"root": "https://dblp.org/db/conf/oopsla/index.html", "start_year": 2019, "name": "OOPSLA"},
+    "kbse":   {"root": "https://dblp.org/db/conf/kbse/index.html",   "start_year": 2019, "name": "ASE"},
+    "icse":   {"root": "https://dblp.org/db/conf/icse/index.html",   "start_year": 2019, "name": "ICSE"},
+    "issta":  {"root": "https://dblp.org/db/conf/issta/index.html",  "start_year": 2019, "name": "ISSTA"},
+    "osdi":   {"root": "https://dblp.org/db/conf/osdi/index.html",   "start_year": 2019, "name": "OSDI"},
+    "fm":     {"root": "https://dblp.org/db/conf/fm/index.html",     "start_year": 2019, "name": "FM"},
+    # --- 计算机科学理论 ---
+    "stoc":   {"root": "https://dblp.org/db/conf/stoc/index.html",   "start_year": 2019, "name": "STOC"},
+    "soda":   {"root": "https://dblp.org/db/conf/soda/index.html",   "start_year": 2019, "name": "SODA"},
+    "cav":    {"root": "https://dblp.org/db/conf/cav/index.html",    "start_year": 2019, "name": "CAV"},
+    "focs":   {"root": "https://dblp.org/db/conf/focs/index.html",   "start_year": 2019, "name": "FOCS"},
+    "lics":   {"root": "https://dblp.org/db/conf/lics/index.html",   "start_year": 2019, "name": "LICS"},
+    # --- 人机交互与普适计算 ---
+    "cscw":   {"root": "https://dblp.org/db/conf/cscw/index.html",   "start_year": 2019, "name": "CSCW"},
+    "chi":    {"root": "https://dblp.org/db/conf/chi/index.html",    "start_year": 2019, "name": "CHI"},
+    "huc":    {"root": "https://dblp.org/db/conf/huc/index.html",    "start_year": 2019, "name": "UBICOMP"},
+    "uist":   {"root": "https://dblp.org/db/conf/uist/index.html",   "start_year": 2019, "name": "UIST"},
+    # --- 交叉/综合/新兴 ---
+    "rtss":   {"root": "https://dblp.org/db/conf/rtss/index.html",   "start_year": 2019, "name": "RTSS"},
 }
 
-# 特殊 DBLP path（与缩写不同）
-DBLP_PATH_OVERRIDE = {
-    "iswc": "conf/semweb/iswc",
-    "icme": "conf/icmcs/icme",
-}
-
-# 双年会议（仅在奇数年举办）
-BIENNIAL_ODD = {"osdi", "sosp"}
-
-# 多卷会议（需要尝试 -1, -2, -3 …）
-MULTI_VOLUME = {"eccv", "miccai", "ecir"}
-
-# 期刊：DBLP path + 卷号计算公式（vol = f(year)）
-# name_map 用于将 DBLP 缩写映射为配置中的会议名前缀
+# ---------------------------------------------------------------------------
+# 期刊配置（根目录页面 + 起始年份 + 配置名称前缀）
+# ---------------------------------------------------------------------------
 JOURNALS: Dict[str, Dict[str, Any]] = {
-    "jmlr":  {
-        "path": "journals/jmlr/jmlr",
-        "volume_for": lambda y: y % 100,
-        "name": "JMLR",
-        "start_year": 2019,
-    },
-    "pvldb": {
-        "path": "journals/pvldb/pvldb",
-        "volume_for": lambda y: y - 2006,
-        "name": "VLDB",
-        "start_year": 2019,
-    },
-    "tip":   {
-        "path": "journals/tip/tip",
-        "volume_for": lambda y: y - 1991,
-        "name": "TIP",
-        "start_year": 2019,
-    },
-    "pami":  {
-        "path": "journals/pami/pami",
-        "volume_for": lambda y: y - 1978,
-        "name": "TPAMI",
-        "start_year": 2019,
-    },
-    "tkde":  {
-        "path": "journals/tkde/tkde",
-        "volume_for": lambda y: y - 1988 + 1,
-        "name": "TKDE",
-        "start_year": 2019,
-    },
-    "tois":  {
-        "path": "journals/tois/tois",
-        "volume_for": lambda y: y - 1982 + 1,
-        "name": "TOIS",
-        "start_year": 2019,
-    },
-    "taslp": {
-        "path": "journals/taslp/taslp",
-        "volume_for": lambda y: y - 1992,
-        "name": "TASLP",
-        "start_year": 2019,
-    },
-    "ijcv":  {
-        "path": "journals/ijcv/ijcv",
-        "volume_for": lambda y: y - 1892,
-        "name": "IJCV",
-        "start_year": 2019,
-    },
-    "tnn":   {
-        "path": "journals/tnn/tnn",
-        "volume_for": lambda y: y - 1989 + 1,
-        "name": "TNNLS",
-        "start_year": 2019,
-    },
-    # --- 新增（来自 FL-paper-update-tracker） ---
-    "ai":    {
-        "path": "journals/ai/ai",
-        "volume_for": lambda y: y - 1970,
-        "name": "AI",
-        "start_year": 2019,
-    },
-    "ml":    {
-        "path": "journals/ml/ml",
-        "volume_for": lambda y: y - 1986,
-        "name": "MLJ",
-        "start_year": 2019,
-    },
-    "tocs":  {
-        "path": "journals/tocs/tocs",
-        "volume_for": lambda y: y - 1972,
-        "name": "TOCS",
-        "start_year": 2019,
-    },
-    "tos":   {
-        "path": "journals/tos/tos",
-        "volume_for": lambda y: y - 2005,
-        "name": "TOS",
-        "start_year": 2019,
-    },
-    "tpds":  {
-        "path": "journals/tpds/tpds",
-        "volume_for": lambda y: y - 1991,
-        "name": "TPDS",
-        "start_year": 2019,
-    },
-    "tcad":  {
-        "path": "journals/tcad/tcad",
-        "volume_for": lambda y: y - 1981,
-        "name": "TCAD",
-        "start_year": 2019,
-    },
-    "tc":    {
-        "path": "journals/tc/tc",
-        "volume_for": lambda y: y - 1951,
-        "name": "TC",
-        "start_year": 2019,
-    },
+    # --- 人工智能 ---
+    "ai":    {"root": "https://dblp.org/db/journals/ai/index.html",    "start_year": 2019, "name": "AI"},
+    "pami":  {"root": "https://dblp.org/db/journals/pami/index.html",  "start_year": 2019, "name": "TPAMI"},
+    "ijcv":  {"root": "https://dblp.org/db/journals/ijcv/index.html",  "start_year": 2019, "name": "IJCV"},
+    "jmlr":  {"root": "https://dblp.org/db/journals/jmlr/index.html",  "start_year": 2019, "name": "JMLR"},
+    # --- 计算机图形学与多媒体 ---
+    "tog":   {"root": "https://dblp.org/db/journals/tog/index.html",   "start_year": 2019, "name": "TOG"},
+    "tip":   {"root": "https://dblp.org/db/journals/tip/index.html",   "start_year": 2019, "name": "TIP"},
+    "tvcg":  {"root": "https://dblp.org/db/journals/tvcg/index.html",  "start_year": 2019, "name": "TVCG"},
+    "tmm":   {"root": "https://dblp.org/db/journals/tmm/index.html",   "start_year": 2019, "name": "TMM"},
+    # --- 数据库/数据挖掘/内容检索 ---
+    "tods":  {"root": "https://dblp.org/db/journals/tods/index.html",  "start_year": 2019, "name": "TODS"},
+    "tois":  {"root": "https://dblp.org/db/journals/tois/index.html",  "start_year": 2019, "name": "TOIS"},
+    "tkde":  {"root": "https://dblp.org/db/journals/tkde/index.html",  "start_year": 2019, "name": "TKDE"},
+    "vldb":  {"root": "https://dblp.org/db/journals/vldb/index.html",  "start_year": 2019, "name": "VLDBJ"},
+    "pvldb": {"root": "https://dblp.org/db/journals/pvldb/index.html", "start_year": 2019, "name": "VLDB"},
+    # --- 计算机体系结构/高性能计算/存储系统 ---
+    "tocs":  {"root": "https://dblp.org/db/journals/tocs/index.html",  "start_year": 2019, "name": "TOCS"},
+    "tos":   {"root": "https://dblp.org/db/journals/tos/index.html",   "start_year": 2019, "name": "TOS"},
+    "tcad":  {"root": "https://dblp.org/db/journals/tcad/index.html",  "start_year": 2019, "name": "TCAD"},
+    "tc":    {"root": "https://dblp.org/db/journals/tc/index.html",    "start_year": 2019, "name": "TC"},
+    "tpds":  {"root": "https://dblp.org/db/journals/tpds/index.html",  "start_year": 2019, "name": "TPDS"},
+    "taco":  {"root": "https://dblp.org/db/journals/taco/index.html",  "start_year": 2019, "name": "TACO"},
+    # --- 计算机网络 ---
+    "jsac":  {"root": "https://dblp.org/db/journals/jsac/index.html",  "start_year": 2019, "name": "JSAC"},
+    "tmc":   {"root": "https://dblp.org/db/journals/tmc/index.html",   "start_year": 2019, "name": "TMC"},
+    "ton":   {"root": "https://dblp.org/db/journals/ton/index.html",   "start_year": 2019, "name": "TON"},
+    # --- 网络与信息安全 ---
+    "tdsc":  {"root": "https://dblp.org/db/journals/tdsc/index.html",  "start_year": 2019, "name": "TDSC"},
+    "tifs":  {"root": "https://dblp.org/db/journals/tifs/index.html",  "start_year": 2019, "name": "TIFS"},
+    "joc":   {"root": "https://dblp.org/db/journals/joc/index.html",   "start_year": 2019, "name": "JOC"},
+    # --- 软件工程/系统软件/程序设计语言 ---
+    "toplas":{"root": "https://dblp.org/db/journals/toplas/index.html","start_year": 2019, "name": "TOPLAS"},
+    "tosem": {"root": "https://dblp.org/db/journals/tosem/index.html", "start_year": 2019, "name": "TOSEM"},
+    "tse":   {"root": "https://dblp.org/db/journals/tse/index.html",   "start_year": 2019, "name": "TSE"},
+    "tsc":   {"root": "https://dblp.org/db/journals/tsc/index.html",   "start_year": 2019, "name": "TSC"},
+    # --- 计算机科学理论 ---
+    "tit":   {"root": "https://dblp.org/db/journals/tit/index.html",   "start_year": 2019, "name": "TIT"},
+    "iandc": {"root": "https://dblp.org/db/journals/iandc/index.html", "start_year": 2019, "name": "IANDC"},
+    "siamcomp":{"root":"https://dblp.org/db/journals/siamcomp/index.html","start_year":2019,"name":"SICOMP"},
+    # --- 人机交互与普适计算 ---
+    "tochi": {"root": "https://dblp.org/db/journals/tochi/index.html", "start_year": 2019, "name": "TOCHI"},
+    "ijmms": {"root": "https://dblp.org/db/journals/ijmms/index.html", "start_year": 2019, "name": "IJHCS"},
+    # --- 交叉/综合/新兴 ---
+    "jacm":  {"root": "https://dblp.org/db/journals/jacm/index.html",  "start_year": 2019, "name": "JACM"},
+    "pieee": {"root": "https://dblp.org/db/journals/pieee/index.html", "start_year": 2019, "name": "Proc. IEEE"},
+    "chinaf":{"root": "https://dblp.org/db/journals/chinaf/index.html","start_year": 2019, "name": "SCIS"},
+    "bioinformatics":{"root":"https://dblp.org/db/journals/bioinformatics/index.html","start_year":2019,"name":"Bioinformatics"},
+    # --- 已有期刊（保留历史名称映射）---
+    "tnn":   {"root": "https://dblp.org/db/journals/tnn/index.html",   "start_year": 2019, "name": "TNNLS"},
+    "taslp": {"root": "https://dblp.org/db/journals/taslp/index.html", "start_year": 2019, "name": "TASLP"},
+    "ml":    {"root": "https://dblp.org/db/journals/ml/index.html",    "start_year": 2019, "name": "MLJ"},
+}
+
+# ---------------------------------------------------------------------------
+# 被其他信源覆盖、应在 DBLP 中跳过的会议/期刊前缀
+# ---------------------------------------------------------------------------
+_OTHER_SOURCE_PREFIXES: Set[str] = {
+    # ACL 信源
+    "ACL", "EMNLP", "NAACL", "EACL", "COLING",
+    # CVF 信源
+    "CVPR", "ICCV", "ECCV", "WACV",
+    # OpenReview / NIPS 信源
+    "ICLR", "NIPS", "MLSYS",
 }
 
 
 class DBLPDiscovery(BaseDiscovery):
-    def __init__(self, name: str = "", existing_conf: List[Dict[str, Any]] = None):
+    def __init__(
+        self,
+        name: str = "",
+        existing_conf: List[Dict[str, Any]] = None,
+        other_confs: List[Dict[str, Any]] = None,
+    ):
         super().__init__(name, existing_conf)
         self._cache = _load_cache()
         self._cache_dirty = False
+        self._skip_prefixes = set(_OTHER_SOURCE_PREFIXES)
 
+        # 从其他信源的 existing_conf 中再提取已被覆盖的前缀
+        if other_confs:
+            for item in other_confs:
+                n = item.get("name", "")
+                m = re.match(r"^([A-Za-z]+)", n)
+                if m:
+                    self._skip_prefixes.add(m.group(1).upper())
+
+    # -----------------------------------------------------------------------
+    # 缓存 HEAD（保留给 fallback 场景）
+    # -----------------------------------------------------------------------
     def _head_ok_cached(self, url: str, timeout: int = 10) -> bool:
-        """带缓存的 HEAD 检查，避免对相同 URL 重复请求。"""
         now = time.time()
         entry = self._cache.get(url)
         if entry:
@@ -211,62 +254,178 @@ class DBLPDiscovery(BaseDiscovery):
         self._cache_dirty = True
         return result
 
+    # -----------------------------------------------------------------------
+    # 解析会议根目录
+    # -----------------------------------------------------------------------
+    def _discover_conf_from_root(
+        self,
+        meta: Dict[str, Any],
+        start_year: int,
+        end_year: int,
+        existing_urls: Set[str],
+    ) -> List[Dict[str, Any]]:
+        results = []
+        text = self._get_text(meta["root"], timeout=15, retries=2)
+        if not text:
+            return results
+
+        soup = BeautifulSoup(text, "html.parser")
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            if not _CONF_LINK_RE.match(href):
+                continue
+
+            m = _YEAR_RE.search(href)
+            if not m:
+                continue
+            year = int(m.group(1))
+            if year < start_year or year > end_year:
+                continue
+
+            name = f"{meta['name']}{year}"
+            # 多卷会议（如 ECCV, MICCAI）只按 URL 去重，避免已有某一卷时漏掉其他卷
+            href_filename = href.split("/")[-1]
+            is_multi_volume = "-" in href_filename and href_filename.endswith(".html")
+            if is_multi_volume:
+                if href in existing_urls:
+                    continue
+            else:
+                if name in self.existing_names or href in existing_urls:
+                    continue
+            results.append({"name": name, "url": href})
+
+        return results
+
+    # -----------------------------------------------------------------------
+    # 解析期刊根目录
+    # -----------------------------------------------------------------------
+    def _discover_journal_from_root(
+        self,
+        meta: Dict[str, Any],
+        start_year: int,
+        end_year: int,
+        existing_urls: Set[str],
+    ) -> List[Dict[str, Any]]:
+        results = []
+        text = self._get_text(meta["root"], timeout=15, retries=2)
+        if not text:
+            return results
+
+        soup = BeautifulSoup(text, "html.parser")
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            if not _JOURNAL_LINK_RE.match(href):
+                continue
+
+            # 从链接文本提取年份，例如 "Volume 44: 2022"
+            link_text = a.get_text(strip=True)
+            m = _YEAR_RE.search(link_text)
+            if not m:
+                continue
+            year = int(m.group(1))
+            if year < start_year or year > end_year:
+                continue
+
+            name = f"{meta['name']}{year}"
+            if name in self.existing_names or href in existing_urls:
+                continue
+            results.append({"name": name, "url": href})
+
+        return results
+
+    # -----------------------------------------------------------------------
+    # Fallback：旧式 HEAD 探测（用于根目录不存在的少数会议）
+    # -----------------------------------------------------------------------
+    def _discover_conf_fallback(
+        self,
+        abbrev: str,
+        meta: Dict[str, Any],
+        start_year: int,
+        end_year: int,
+        existing_urls: Set[str],
+    ) -> List[Dict[str, Any]]:
+        results = []
+        path_override = {
+            "iswc": "conf/semweb/iswc",
+            "icme": "conf/icmcs/icme",
+        }
+        path = path_override.get(abbrev, f"conf/{abbrev}/{abbrev}")
+
+        for year in range(start_year, end_year + 1):
+            name = f"{meta['name']}{year}"
+            if name in self.existing_names:
+                continue
+
+            base_url = f"https://dblp.org/db/{path}{year}.html"
+            if abbrev == "miccai":
+                # 多卷会议：连续 3 次失败停止
+                consecutive_fail = 0
+                for vol in range(1, 41):
+                    url = f"https://dblp.org/db/{path}{year}-{vol}.html"
+                    if url in existing_urls:
+                        consecutive_fail = 0
+                        continue
+                    if self._head_ok_cached(url):
+                        results.append({"name": name, "url": url})
+                        consecutive_fail = 0
+                    else:
+                        consecutive_fail += 1
+                        if consecutive_fail >= 3:
+                            break
+                    time.sleep(0.3)
+                if not any(r["name"] == name for r in results):
+                    if base_url not in existing_urls and self._head_ok_cached(base_url):
+                        results.append({"name": name, "url": base_url})
+                        time.sleep(0.3)
+            else:
+                if base_url not in existing_urls and self._head_ok_cached(base_url):
+                    results.append({"name": name, "url": base_url})
+                time.sleep(0.3)
+        return results
+
+    # -----------------------------------------------------------------------
+    # 主发现逻辑
+    # -----------------------------------------------------------------------
     def discover(self, start_year: int, end_year: int) -> List[Dict[str, Any]]:
         results = []
         existing_urls = {item.get("url") for item in self.existing}
 
         try:
             # ---------- 会议 ----------
-            for abbrev, conf_start in CONFERENCES.items():
-                for year in range(max(start_year, conf_start), end_year + 1):
-                    name = f"{abbrev.upper()}{year}"
-                    path = DBLP_PATH_OVERRIDE.get(abbrev, f"conf/{abbrev}/{abbrev}")
-                    base_url = f"https://dblp.org/db/{path}{year}.html"
+            for abbrev, meta in CONFERENCES.items():
+                if meta["name"] in self._skip_prefixes:
+                    continue
 
-                    # 跳过双年会议的非举办年份
-                    if abbrev in BIENNIAL_ODD and year % 2 == 0:
-                        continue
+                conf_start = meta.get("start_year", 2019)
+                sy = max(start_year, conf_start)
+                if sy > end_year:
+                    continue
 
-                    if abbrev in MULTI_VOLUME:
-                        # 多卷会议：尝试所有卷号，连续 3 次失败才停止，避免网络抖动导致漏卷
-                        consecutive_fail = 0
-                        for vol in range(1, 41):
-                            url = f"https://dblp.org/db/{path}{year}-{vol}.html"
-                            if url in existing_urls:
-                                consecutive_fail = 0
-                                continue
-                            if self._head_ok_cached(url):
-                                results.append({"name": name, "url": url})
-                                consecutive_fail = 0
-                            else:
-                                consecutive_fail += 1
-                                if consecutive_fail >= 3:
-                                    break
-                            time.sleep(0.5)
-                        # 没有任何卷时回退到 base_url
-                        if not any(r["name"] == name for r in results):
-                            if base_url not in existing_urls and self._head_ok_cached(base_url):
-                                results.append({"name": name, "url": base_url})
-                                time.sleep(0.5)
-                    else:
-                        # 非多卷会议：若 name 已存在则直接跳过，减少无效请求
-                        if name in self.existing_names:
-                            continue
-                        if self._head_ok_cached(base_url):
-                            results.append({"name": name, "url": base_url})
-                        time.sleep(0.5)
+                discovered = self._discover_conf_from_root(
+                    meta, sy, end_year, existing_urls
+                )
+                if not discovered and meta.get("fallback"):
+                    discovered = self._discover_conf_fallback(
+                        abbrev, meta, sy, end_year, existing_urls
+                    )
+                results.extend(discovered)
+                time.sleep(0.5)
 
             # ---------- 期刊 ----------
             for abbrev, meta in JOURNALS.items():
-                for year in range(max(start_year, meta["start_year"]), end_year + 1):
-                    name = f"{meta['name']}{year}"
-                    if name in self.existing_names:
-                        continue
-                    vol = meta["volume_for"](year)
-                    url = f"https://dblp.org/db/{meta['path']}{vol}.html"
-                    if url not in existing_urls and self._head_ok_cached(url):
-                        results.append({"name": name, "url": url})
-                    time.sleep(0.5)
+                if meta["name"] in self._skip_prefixes:
+                    continue
+
+                journal_start = meta.get("start_year", 2019)
+                sy = max(start_year, journal_start)
+                if sy > end_year:
+                    continue
+
+                discovered = self._discover_journal_from_root(
+                    meta, sy, end_year, existing_urls
+                )
+                results.extend(discovered)
+                time.sleep(0.5)
 
         finally:
             if self._cache_dirty:
