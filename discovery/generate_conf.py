@@ -133,6 +133,13 @@ def run(
                 return True
         return False
 
+    # 预加载其他信源配置，供 DBLP 去重使用
+    other_confs = []
+    for other_file in ["acl_conf.json", "iclr_conf.json", "nips_conf.json", "thecvf_conf.json"]:
+        other_path = CONF_DIR / other_file
+        if other_path.exists():
+            other_confs.extend(load_conf(other_file))
+
     for filename, classes in grouped.items():
         existing = load_conf(filename)
         all_new = []
@@ -140,7 +147,10 @@ def run(
             if _is_timeout():
                 break
             print(f"[*] Running {cls.__name__} for {filename} ...")
-            inst = cls(existing_conf=existing)
+            if cls.__name__ == "DBLPDiscovery":
+                inst = cls(existing_conf=existing, other_confs=other_confs)
+            else:
+                inst = cls(existing_conf=existing)
             try:
                 new = inst.discover(start_year, end_year)
             except Exception as e:

@@ -47,28 +47,99 @@ NATURE_COLORS = [
     "#4C4C4C", "#A0C4E8",
 ]
 
+# 按 CCF 第七版推荐目录分类（A 类为核心，同时包含项目已收录的其他会议/期刊）
 CATEGORY_MAP = {
-    "机器学习": ["ICML", "NIPS", "ICLR", "COLT", "AISTATS", "MLSYS", "JMLR", "TNNLS", "AI"],
-    "自然语言处理": ["ACL", "EMNLP", "NAACL", "EACL", "COLING", "TASLP"],
-    "计算机视觉": ["CVPR", "ICCV", "ECCV", "WACV", "TIP", "TPAMI", "IJCV", "BMVC", "MICCAI"],
-    "数据挖掘与信息检索": ["KDD", "SIGIR", "CIKM", "WSDM", "ECIR", "WWW", "ICDM", "RECSYS"],
-    "数据库与系统": ["VLDB", "SIGMOD", "TKDE", "TOIS", "FAST", "TCAD", "TC", "TOS", "TPDS"],
-    "语音与多媒体": ["ICASSP", "INTERSPEECH", "MM", "ICME"],
-    "人工智能综合": ["AAAI", "IJCAI", "MLJ"],
-    "网络与安全": ["SIGCOMM", "NSDI", "MOBICOM", "INFOCOM", "NDSS", "SP", "DAC"],
-    "其他": ["ISWC", "STOC"],
+    "计算机体系结构/高性能计算/存储系统": [
+        "TOCS", "TOS", "TCAD", "TC", "TPDS", "TACO",
+        "PPoPP", "FAST", "DAC", "HPCA", "MICRO", "SC", "ASPLOS", "ISCA", "ATC", "EUROSYS", "HPDC",
+    ],
+    "计算机网络": [
+        "JSAC", "TMC", "TON",
+        "SIGCOMM", "MOBICOM", "INFOCOM", "NSDI",
+    ],
+    "网络与信息安全": [
+        "TDSC", "TIFS", "JOC",
+        "CCS", "EUROCRYPT", "SP", "CRYPTO", "USS", "NDSS",
+    ],
+    "软件工程/系统软件/程序设计语言": [
+        "TOPLAS", "TOSEM", "TSE", "TSC",
+        "PLDI", "POPL", "FSE", "SOSP", "OOPSLA", "ASE", "ICSE", "ISSTA", "OSDI", "FM",
+    ],
+    "数据库/数据挖掘/内容检索": [
+        "TODS", "TOIS", "TKDE", "VLDBJ",
+        "SIGMOD", "KDD", "ICDE", "SIGIR", "VLDB", "CIKM", "WSDM", "WWW", "ECIR", "ICDM", "RECSYS",
+    ],
+    "计算机科学理论": [
+        "TIT", "IANDC", "SICOMP",
+        "STOC", "SODA", "CAV", "FOCS", "LICS", "COLT", "ALT",
+    ],
+    "计算机图形学与多媒体": [
+        "TOG", "TIP", "TVCG", "TMM",
+        "MM", "SIGGRAPH", "VR", "IEEE VIS", "BMVC", "MICCAI", "ICME",
+    ],
+    "人工智能": [
+        "AI", "TPAMI", "IJCV", "JMLR",
+        "AAAI", "NIPS", "ACL", "CVPR", "ICCV", "ICML", "ICLR", "AISTATS", "UAI", "TNNLS", "MLJ", "IJCAI",
+        "COLING", "EACL", "EMNLP", "NAACL", "ECCV", "WACV", "MLSYS",
+    ],
+    "人机交互与普适计算": [
+        "TOCHI", "IJHCS",
+        "CSCW", "CHI", "UBICOMP", "UIST",
+    ],
+    "语音": [
+        "ICASSP", "INTERSPEECH", "TASLP",
+    ],
+    "交叉/综合/新兴": [
+        "JACM", "PROC. IEEE", "SCIS", "BIOINFORMATICS",
+        "RTSS", "ISWC",
+    ],
 }
 
 CATEGORY_MAP_EN = {
-    "Machine Learning": ["ICML", "NIPS", "ICLR", "COLT", "AISTATS", "MLSYS", "JMLR", "TNNLS", "AI"],
-    "Natural Language Processing": ["ACL", "EMNLP", "NAACL", "EACL", "COLING", "TASLP"],
-    "Computer Vision": ["CVPR", "ICCV", "ECCV", "WACV", "TIP", "TPAMI", "IJCV", "BMVC", "MICCAI"],
-    "Data Mining & Information Retrieval": ["KDD", "SIGIR", "CIKM", "WSDM", "ECIR", "WWW", "ICDM", "RECSYS"],
-    "Database & Systems": ["VLDB", "SIGMOD", "TKDE", "TOIS", "FAST", "TCAD", "TC", "TOS", "TPDS"],
-    "Speech & Multimedia": ["ICASSP", "INTERSPEECH", "MM", "ICME"],
-    "General AI": ["AAAI", "IJCAI", "MLJ"],
-    "Networking & Security": ["SIGCOMM", "NSDI", "MOBICOM", "INFOCOM", "NDSS", "SP", "DAC"],
-    "Others": ["ISWC", "STOC"],
+    "Computer Architecture / HPC / Storage": [
+        "TOCS", "TOS", "TCAD", "TC", "TPDS", "TACO",
+        "PPoPP", "FAST", "DAC", "HPCA", "MICRO", "SC", "ASPLOS", "ISCA", "ATC", "EUROSYS", "HPDC",
+    ],
+    "Computer Networks": [
+        "JSAC", "TMC", "TON",
+        "SIGCOMM", "MOBICOM", "INFOCOM", "NSDI",
+    ],
+    "Network & Information Security": [
+        "TDSC", "TIFS", "JOC",
+        "CCS", "EUROCRYPT", "SP", "CRYPTO", "USS", "NDSS",
+    ],
+    "Software Engineering / Systems / PL": [
+        "TOPLAS", "TOSEM", "TSE", "TSC",
+        "PLDI", "POPL", "FSE", "SOSP", "OOPSLA", "ASE", "ICSE", "ISSTA", "OSDI", "FM",
+    ],
+    "Database / Data Mining / IR": [
+        "TODS", "TOIS", "TKDE", "VLDBJ",
+        "SIGMOD", "KDD", "ICDE", "SIGIR", "VLDB", "CIKM", "WSDM", "WWW", "ECIR", "ICDM", "RECSYS",
+    ],
+    "Theoretical Computer Science": [
+        "TIT", "IANDC", "SICOMP",
+        "STOC", "SODA", "CAV", "FOCS", "LICS", "COLT", "ALT",
+    ],
+    "Computer Graphics & Multimedia": [
+        "TOG", "TIP", "TVCG", "TMM",
+        "MM", "SIGGRAPH", "VR", "IEEE VIS", "BMVC", "MICCAI", "ICME",
+    ],
+    "Artificial Intelligence": [
+        "AI", "TPAMI", "IJCV", "JMLR",
+        "AAAI", "NIPS", "ACL", "CVPR", "ICCV", "ICML", "ICLR", "AISTATS", "UAI", "TNNLS", "MLJ", "IJCAI",
+        "COLING", "EACL", "EMNLP", "NAACL", "ECCV", "WACV", "MLSYS",
+    ],
+    "Human-Computer Interaction & Ubicomp": [
+        "TOCHI", "IJHCS",
+        "CSCW", "CHI", "UBICOMP", "UIST",
+    ],
+    "Speech": [
+        "ICASSP", "INTERSPEECH", "TASLP",
+    ],
+    "Interdisciplinary / Comprehensive / Emerging": [
+        "JACM", "PROC. IEEE", "SCIS", "BIOINFORMATICS",
+        "RTSS", "ISWC",
+    ],
 }
 
 # Map each publication series to its category color for consistent theming across charts

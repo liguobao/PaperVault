@@ -64,46 +64,45 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- confs-list-start -->
 
 <details>
-<summary><b>Machine Learning</b> (9 series)</summary>
+<summary><b>Computer Architecture / HPC / Storage</b> (8 series)</summary>
 
-- **AI** 2020-2026 (5 editions)
-- **AISTATS** 2019-2025 (7 editions)
-- **COLT** 2019-2025 (7 editions)
-- **ICLR** 2019-2025 (7 editions)
-- **ICML** 2019-2025 (7 editions)
-- **JMLR** 2019-2026 (8 editions)
-- **MLSYS** 2019-2025 (7 editions)
-- **NIPS** 2000-2025 (26 editions)
-- **TNNLS** 2020-2025 (6 editions)
-
-</details>
-<details>
-<summary><b>Natural Language Processing</b> (6 series)</summary>
-
-- **ACL** 2000-2025 (26 editions)
-- **COLING** 2000-2025 (14 editions)
-- **EACL** 2003-2026 (10 editions)
-- **EMNLP** 2000-2025 (26 editions)
-- **NAACL** 2000-2025 (18 editions)
-- **TASLP** 2020-2024 (5 editions)
+- **DAC** 2020-2025 (6 editions)
+- **EUROSYS** 2025-2026 (2 editions)
+- **FAST** 2019-2026 (7 editions)
+- **ISCA** 2019-2025 (2 editions)
+- **TC** 2019-2026 (7 editions)
+- **TCAD** 2020-2026 (7 editions)
+- **TOS** 2024-2026 (3 editions)
+- **TPDS** 2020-2026 (7 editions)
 
 </details>
 <details>
-<summary><b>Computer Vision</b> (9 series)</summary>
+<summary><b>Computer Networks</b> (4 series)</summary>
 
-- **BMVC** 2019-2024 (4 editions)
-- **CVPR** 2013-2026 (14 editions)
-- **ECCV** 2018-2024 (4 editions)
-- **ICCV** 2013-2025 (7 editions)
-- **IJCV** 2020-2026 (7 editions)
-- **MICCAI** 2019-2025 (7 editions)
-- **TIP** 2020-2026 (7 editions)
-- **TPAMI** 2020-2026 (7 editions)
-- **WACV** 2020-2026 (7 editions)
+- **INFOCOM** 2019-2025 (4 editions)
+- **MOBICOM** 2022-2025 (3 editions)
+- **NSDI** 2019-2026 (7 editions)
+- **SIGCOMM** 2020-2025 (6 editions)
 
 </details>
 <details>
-<summary><b>Data Mining & Information Retrieval</b> (8 series)</summary>
+<summary><b>Network & Information Security</b> (3 series)</summary>
+
+- **NDSS** 2019-2026 (8 editions)
+- **SP** 2019-2025 (3 editions)
+- **USS** 2025-2025
+
+</details>
+<details>
+<summary><b>Software Engineering / Systems / PL</b> (3 series)</summary>
+
+- **ICSE** 2025-2025
+- **OSDI** 2025-2025
+- **SOSP** 2019-2025 (2 editions)
+
+</details>
+<details>
+<summary><b>Database / Data Mining / IR</b> (12 series)</summary>
 
 - **CIKM** 2019-2025 (7 editions)
 - **ECIR** 2019-2026 (8 editions)
@@ -111,72 +110,73 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 - **KDD** 2019-2024 (5 editions)
 - **RECSYS** 2019-2025 (7 editions)
 - **SIGIR** 2019-2025 (7 editions)
+- **SIGMOD** 2019-2022 (4 editions)
+- **TKDE** 2020-2025 (6 editions)
+- **TOIS** 2020-2025 (6 editions)
+- **VLDB** 2019-2025 (7 editions)
 - **WSDM** 2019-2026 (8 editions)
 - **WWW** 2019-2026 (8 editions)
 
 </details>
 <details>
-<summary><b>Database & Systems</b> (9 series)</summary>
+<summary><b>Theoretical Computer Science</b> (4 series)</summary>
 
-- **FAST** 2019-2026 (7 editions)
-- **SIGMOD** 2019-2022 (4 editions)
-- **TC** 2019-2026 (7 editions)
-- **TCAD** 2020-2026 (7 editions)
-- **TKDE** 2020-2025 (6 editions)
-- **TOIS** 2020-2025 (6 editions)
-- **TOS** 2024-2026 (3 editions)
-- **TPDS** 2020-2026 (7 editions)
-- **VLDB** 2019-2025 (7 editions)
-
-</details>
-<details>
-<summary><b>Speech & Multimedia</b> (4 series)</summary>
-
-- **ICASSP** 2019-2025 (7 editions)
-- **ICME** 2019-2025 (7 editions)
-- **INTERSPEECH** 2019-2025 (7 editions)
-- **MM** 2019-2025 (7 editions)
-
-</details>
-<details>
-<summary><b>General AI</b> (3 series)</summary>
-
-- **AAAI** 2019-2026 (8 editions)
-- **IJCAI** 2019-2025 (7 editions)
-- **MLJ** 2019-2026 (6 editions)
-
-</details>
-<details>
-<summary><b>Networking & Security</b> (7 series)</summary>
-
-- **DAC** 2020-2025 (6 editions)
-- **INFOCOM** 2019-2025 (4 editions)
-- **MOBICOM** 2022-2025 (3 editions)
-- **NDSS** 2019-2026 (8 editions)
-- **NSDI** 2019-2026 (7 editions)
-- **SIGCOMM** 2020-2025 (6 editions)
-- **SP** 2019-2025 (3 editions)
-
-</details>
-<details>
-<summary><b>Others</b> (2 series)</summary>
-
-- **ISWC** 2019-2022 (4 editions)
+- **ALT** 2019-2025 (3 editions)
+- **COLT** 2019-2025 (7 editions)
+- **FOCS** 2025-2025
 - **STOC** 2025-2025
 
 </details>
 <details>
-<summary><b>Others</b> (9 series)</summary>
+<summary><b>Computer Graphics & Multimedia</b> (5 series)</summary>
 
-- **ALT** 2019-2025 (3 editions)
-- **EUROSYS** 2025-2026 (2 editions)
-- **FOCS** 2025-2025
-- **ICSE** 2025-2025
-- **ISCA** 2019-2025 (2 editions)
-- **OSDI** 2025-2025
-- **SOSP** 2019-2025 (2 editions)
+- **BMVC** 2019-2024 (4 editions)
+- **ICME** 2019-2025 (7 editions)
+- **MICCAI** 2019-2025 (7 editions)
+- **MM** 2019-2025 (7 editions)
+- **TIP** 2020-2026 (7 editions)
+
+</details>
+<details>
+<summary><b>Artificial Intelligence</b> (23 series)</summary>
+
+- **AAAI** 2019-2026 (8 editions)
+- **ACL** 2000-2025 (26 editions)
+- **AI** 2020-2026 (5 editions)
+- **AISTATS** 2019-2025 (7 editions)
+- **COLING** 2000-2025 (14 editions)
+- **CVPR** 2013-2026 (14 editions)
+- **EACL** 2003-2026 (10 editions)
+- **ECCV** 2018-2024 (4 editions)
+- **EMNLP** 2000-2025 (26 editions)
+- **ICCV** 2013-2025 (7 editions)
+- **ICLR** 2019-2025 (7 editions)
+- **ICML** 2019-2025 (7 editions)
+- **IJCAI** 2019-2025 (7 editions)
+- **IJCV** 2020-2026 (7 editions)
+- **JMLR** 2019-2026 (8 editions)
+- **MLJ** 2019-2026 (6 editions)
+- **MLSYS** 2019-2025 (7 editions)
+- **NAACL** 2000-2025 (18 editions)
+- **NIPS** 2000-2025 (26 editions)
+- **TNNLS** 2020-2025 (6 editions)
+- **TPAMI** 2020-2026 (7 editions)
 - **UAI** 2019-2025 (3 editions)
-- **USS** 2025-2025
+- **WACV** 2020-2026 (7 editions)
+
+</details>
+<details>
+<summary><b>Speech</b> (3 series)</summary>
+
+- **ICASSP** 2019-2025 (7 editions)
+- **INTERSPEECH** 2019-2025 (7 editions)
+- **TASLP** 2020-2024 (5 editions)
+
+</details>
+<details>
+<summary><b>Interdisciplinary / Comprehensive / Emerging</b> (1 series)</summary>
+
+- **ISWC** 2019-2022 (4 editions)
 
 </details>
 
