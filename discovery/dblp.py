@@ -67,7 +67,7 @@ CONFERENCES: Dict[str, Dict[str, Any]] = {
     # --- 计算机图形学与多媒体 ---
     "mm":     {"root": "https://dblp.org/db/conf/mm/index.html",     "start_year": 2019, "name": "MM"},
     "vr":     {"root": "https://dblp.org/db/conf/vr/index.html",     "start_year": 2019, "name": "VR"},
-    "visualization": {"root": "https://dblp.org/db/conf/visualization/index.html", "start_year": 2019, "name": "IEEE VIS"},
+    "visualization": {"root": "https://dblp.org/db/conf/visualization/index.html", "start_year": 2019, "name": "IEEEVIS"},
     "siggraph": {"root": "https://dblp.org/db/conf/siggraph/index.html", "start_year": 2019, "name": "SIGGRAPH"},
     # --- 数据库/数据挖掘/内容检索 ---
     "kdd":    {"root": "https://dblp.org/db/conf/kdd/index.html",    "start_year": 2019, "name": "KDD"},
@@ -194,7 +194,7 @@ JOURNALS: Dict[str, Dict[str, Any]] = {
     "tochi": {"root": "https://dblp.org/db/journals/tochi/index.html", "start_year": 2019, "name": "TOCHI"},
     "ijhcs": {"root": "https://dblp.org/db/journals/ijhcs/index.html", "start_year": 2019, "name": "IJHCS"},
     "jacm":  {"root": "https://dblp.org/db/journals/jacm/index.html",  "start_year": 2019, "name": "JACM"},
-    "pieee": {"root": "https://dblp.org/db/journals/pieee/index.html", "start_year": 2019, "name": "Proc. IEEE"},
+    "pieee": {"root": "https://dblp.org/db/journals/pieee/index.html", "start_year": 2019, "name": "PROCIEEE"},
     "chinaf":{"root": "https://dblp.org/db/journals/chinaf/index.html","start_year": 2019, "name": "SCIS"},
     "bioinformatics":{"root":"https://dblp.org/db/journals/bioinformatics/index.html","start_year":2019,"name":"Bioinformatics"},
     # --- 已有期刊（保留历史名称映射）---
