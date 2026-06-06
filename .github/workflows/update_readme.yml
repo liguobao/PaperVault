@@ -47,8 +47,14 @@ jobs:
 
       - name: Install Chinese fonts
         run: |
-          sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
-          rm -rf ~/.cache/matplotlib
+          sudo apt-get update && sudo apt-get install -y fonts-noto-cjk fontconfig
+
+      - name: Verify Chinese fonts
+        run: |
+          echo "[*] Installed CJK fonts:"
+          fc-list :lang=zh -f "%{family}\t%{file}\n" | head -10
+          echo "[*] Matplotlib cache dir:"
+          python -c "import matplotlib; print(matplotlib.get_cachedir())"
 
       - name: Run rebuild
         run: |
