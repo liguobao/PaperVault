@@ -64,7 +64,7 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- confs-list-start -->
 
 <details>
-<summary><b>Computer Architecture / HPC / Storage</b> (16 series)</summary>
+<summary><b>Computer Architecture / HPC / Storage</b> (17 series)</summary>
 
 - **ASPLOS** 2000-2026 (23 editions)
 - **ATC** 2007-2025 (19 editions)
@@ -75,6 +75,7 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 - **HPDC** 2000-2025 (26 editions)
 - **ISCA** 2000-2025 (26 editions)
 - **MICRO** 2019-2025 (7 editions)
+- **PPOPP** 2019-2026 (8 editions)
 - **SC** 2000-2025 (26 editions)
 - **TACO** 2019-2026 (8 editions)
 - **TC** 2019-2026 (8 editions)
@@ -235,12 +236,6 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 - **PROCIEEE** 2000-2025 (26 editions)
 - **RTSS** 2000-2025 (26 editions)
 - **SCIS** 2001-2026 (26 editions)
-
-</details>
-<details>
-<summary><b>Others</b> (1 series)</summary>
-
-- **PPOPP** 2019-2026 (8 editions)
 
 </details>
 
