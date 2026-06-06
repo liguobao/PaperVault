@@ -409,7 +409,11 @@ def _find_cjk_font():
                 family = family_part.split(",")[0].strip()
                 match = _matches_candidate(os.path.basename(filepath))
                 if match:
-                    return match[0], filepath
+                    # Use the actual family name reported by fc-list instead of
+                    # the hard-coded candidate name. A .ttc file may contain
+                    # multiple sub-fonts (e.g. Mono vs Sans) and the hard-coded
+                    # name may not match what fontconfig reports.
+                    return family, filepath
                 # If filename doesn't match but family does, still trust fc-list
                 for expected_family, _ in candidates:
                     if expected_family.lower() in family.lower():
