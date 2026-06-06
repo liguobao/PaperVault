@@ -368,27 +368,81 @@ def _find_cjk_font():
         else (None, None).
     """
     candidates = [
-        ("Noto Sans CJK SC", ["NotoSansCJK-Regular.ttc", "NotoSansCJKsc-Regular.otf", "NotoSansSC-Regular.otf"]),
-        ("Noto Sans SC", ["NotoSansSC-Regular.otf", "NotoSansCJK-Regular.ttc"]),
-        ("WenQuanYi Micro Hei", ["wqy-microhei.ttc", "wqy-zenhei.ttc"]),
-        ("SimHei", ["simhei.ttf"]),
-        ("Microsoft YaHei", ["msyh.ttf", "msyh.ttc"]),
+        ("Noto Sans CJK SC", ["NotoSansCJK", "NotoSansCJKsc", "NotoSansSC"]),
+        ("Noto Sans SC", ["NotoSansSC", "NotoSansCJK"]),
+        ("WenQuanYi Micro Hei", ["wqy-microhei", "wqy-zenhei"]),
+        ("WenQuanYi Zen Hei", ["wqy-zenhei", "wqy-microhei"]),
+        ("SimHei", ["simhei"]),
+        ("Microsoft YaHei", ["msyh"]),
     ]
 
-    # Try font manager first (after cache refresh)
+    # Helper to check whether a file path looks like a CJK font we expect
+    def _matches_candidate(filename: str) -> tuple[str, str] | None:
+        lower_name = filename.lower()
+        for family, keywords in candidates:
+            if any(kw.lower() in lower_name for kw in keywords):
+                return family, filename
+        return None
+
+    # ------------------------------------------------------------------
+    # 1) Try fc-list first (most reliable on Linux CI environments)
+    # ------------------------------------------------------------------
+    try:
+        import subprocess
+
+        result = subprocess.run(
+            ["fc-list", ":lang=zh", "-f", "%{family}\t%{file}\n"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if result.returncode == 0:
+            for line in result.stdout.strip().splitlines():
+                parts = line.split("\t", 1)
+                if len(parts) != 2:
+                    continue
+                family_part, filepath = parts
+                filepath = filepath.strip()
+                if not os.path.exists(filepath):
+                    continue
+                # family_part may contain multiple families separated by comma
+                family = family_part.split(",")[0].strip()
+                match = _matches_candidate(os.path.basename(filepath))
+                if match:
+                    return match[0], filepath
+                # If filename doesn't match but family does, still trust fc-list
+                for expected_family, _ in candidates:
+                    if expected_family.lower() in family.lower():
+                        return expected_family, filepath
+    except Exception:
+        pass
+
+    # ------------------------------------------------------------------
+    # 2) Try matplotlib font manager (with filename verification)
+    # ------------------------------------------------------------------
     for family, _ in candidates:
         try:
-            path = fm.findfont(fm.FontProperties(family=family), fallback_to_default=False)
+            path = fm.findfont(
+                fm.FontProperties(family=family), fallback_to_default=False
+            )
             if path and os.path.exists(path):
-                return family, path
+                # Critical: ensure the returned file is actually a CJK font,
+                # NOT a fallback like DejaVuSans.ttf which matplotlib may
+                # return despite fallback_to_default=False in some versions.
+                if _matches_candidate(os.path.basename(path)):
+                    return family, path
         except Exception:
             continue
 
-    # Search common system paths
+    # ------------------------------------------------------------------
+    # 3) Search common system paths
+    # ------------------------------------------------------------------
     common_paths = [
         "/usr/share/fonts/opentype/noto",
         "/usr/share/fonts/truetype/noto",
         "/usr/share/fonts/noto-cjk",
+        "/usr/share/fonts/truetype/noto-cjk",
+        "/usr/share/fonts/opentype/noto-cjk",
         "/usr/share/fonts/truetype/wqy",
         "/usr/local/share/fonts",
         os.path.expanduser("~/.fonts"),
@@ -397,22 +451,19 @@ def _find_cjk_font():
         "C:/Windows/Fonts",  # Windows
     ]
 
-    for family, filenames in candidates:
+    for family, keywords in candidates:
         for directory in common_paths:
             if not os.path.isdir(directory):
                 continue
-            for filename in filenames:
-                filepath = os.path.join(directory, filename)
-                if os.path.exists(filepath):
-                    return family, filepath
-                # Also try recursive search (shallow, max 2 levels)
-                for root, _, files in os.walk(directory):
-                    if filename in files:
-                        return family, os.path.join(root, filename)
-                    # Limit depth
-                    depth = root[len(directory):].count(os.sep)
-                    if depth >= 2:
-                        break
+            for root, _, files in os.walk(directory):
+                for f in files:
+                    lower_f = f.lower()
+                    if any(kw.lower() in lower_f for kw in keywords):
+                        return family, os.path.join(root, f)
+                # Limit depth to 2 levels
+                depth = root[len(directory):].count(os.sep)
+                if depth >= 2:
+                    break
     return None, None
 
 
@@ -426,8 +477,15 @@ def _ensure_chinese_font():
         str | None: Path to the CJK font file if found, else None.
     """
     # Clear matplotlib font cache so newly installed fonts are discovered
-    cache_dir = os.path.expanduser("~/.cache/matplotlib")
-    if os.path.isdir(cache_dir):
+    # Use matplotlib.get_cachedir() for portability across platforms
+    try:
+        import matplotlib
+
+        cache_dir = matplotlib.get_cachedir()
+    except Exception:
+        cache_dir = os.path.expanduser("~/.cache/matplotlib")
+
+    if cache_dir and os.path.isdir(cache_dir):
         for cache_file in glob.glob(os.path.join(cache_dir, "fontlist-*.json")):
             try:
                 os.remove(cache_file)
