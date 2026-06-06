@@ -18,16 +18,16 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- recent-update-start -->
 
 - 📅 **Last Updated**: 2026-06-06
-- 🆕 **New Papers This Update**: 74,714
-- 📢 **New Conferences This Update**: 285
-- 📊 **Database Scale**: 423,781 papers / 120 publication series / 131,571 with abstracts
+- 🆕 **New Papers This Update**: 22,526
+- 📢 **New Conferences This Update**: 296
+- 📊 **Database Scale**: 446,307 papers / 120 publication series / 131,571 with abstracts
 
 <!-- recent-update-end -->
 
 ### Current Phase
 <!-- auto-summary-start -->
 
-- The database contains **420,000+** papers spanning 120+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
+- The database contains **440,000+** papers spanning 120+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
 
 <!-- auto-summary-end -->
 
