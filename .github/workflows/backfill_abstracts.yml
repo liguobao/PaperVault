@@ -7,8 +7,8 @@ env:
 
 on:
   schedule:
-    # 每天运行1次，每次处理最多 6000 篇最高优先级论文 
-     - cron: "0 16 * * *"
+    # 每周二运行1次，每次处理最多 6000 篇最高优先级论文 
+     - cron: "0 16 * * 2"
   workflow_dispatch:
     inputs:
       target_conf:
