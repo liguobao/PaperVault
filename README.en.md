@@ -18,16 +18,16 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <!-- recent-update-start -->
 
 - 📅 **Last Updated**: 2026-06-06
-- 🆕 **New Papers This Update**: 88,197
-- 📢 **New Conferences This Update**: 462
-- 📊 **Database Scale**: 349,067 papers / 117 publication series / 131,571 with abstracts
+- 🆕 **New Papers This Update**: 74,714
+- 📢 **New Conferences This Update**: 285
+- 📊 **Database Scale**: 423,781 papers / 120 publication series / 131,571 with abstracts
 
 <!-- recent-update-end -->
 
 ### Current Phase
 <!-- auto-summary-start -->
 
-- The database contains **340,000+** papers spanning 117+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
+- The database contains **420,000+** papers spanning 120+ top-tier conferences and journals across NLP, CV, ML, DM, DB, and Speech.
 
 <!-- auto-summary-end -->
 
@@ -66,20 +66,20 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <details>
 <summary><b>Computer Architecture / HPC / Storage</b> (16 series)</summary>
 
-- **ASPLOS** 2019-2026 (8 editions)
-- **ATC** 2019-2025 (7 editions)
+- **ASPLOS** 2000-2026 (23 editions)
+- **ATC** 2007-2025 (19 editions)
 - **DAC** 2019-2025 (7 editions)
-- **EUROSYS** 2019-2026 (8 editions)
+- **EUROSYS** 2006-2026 (21 editions)
 - **FAST** 2019-2026 (8 editions)
 - **HPCA** 2019-2026 (8 editions)
-- **HPDC** 2019-2025 (7 editions)
-- **ISCA** 2019-2025 (7 editions)
+- **HPDC** 2000-2025 (26 editions)
+- **ISCA** 2000-2025 (26 editions)
 - **MICRO** 2019-2025 (7 editions)
-- **SC** 2019-2025 (7 editions)
+- **SC** 2000-2025 (26 editions)
 - **TACO** 2019-2026 (8 editions)
 - **TC** 2019-2026 (8 editions)
 - **TCAD** 2019-2026 (8 editions)
-- **TOCS** 2019-2026 (8 editions)
+- **TOCS** 2000-2026 (27 editions)
 - **TOS** 2019-2026 (7 editions)
 - **TPDS** 2020-2026 (7 editions)
 
@@ -92,8 +92,8 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 - **MOBICOM** 2019-2025 (7 editions)
 - **NSDI** 2019-2026 (8 editions)
 - **SIGCOMM** 2019-2025 (7 editions)
-- **TMC** 2019-2026 (8 editions)
-- **TON** 2019-2026 (8 editions)
+- **TMC** 2002-2026 (25 editions)
+- **TON** 2000-2026 (27 editions)
 
 </details>
 <details>
@@ -102,88 +102,90 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 - **CCS** 2019-2025 (7 editions)
 - **CRYPTO** 2019-2025 (7 editions)
 - **EUROCRYPT** 2019-2026 (8 editions)
-- **JOC** 2019-2026 (8 editions)
-- **NDSS** 2019-2026 (8 editions)
+- **JOC** 2000-2026 (27 editions)
+- **NDSS** 2000-2026 (27 editions)
 - **SP** 2019-2025 (7 editions)
-- **TDSC** 2019-2026 (8 editions)
-- **TIFS** 2019-2026 (8 editions)
+- **TDSC** 2004-2026 (23 editions)
+- **TIFS** 2006-2026 (21 editions)
 - **USS** 2019-2025 (7 editions)
 
 </details>
 <details>
-<summary><b>Software Engineering / Systems / PL</b> (12 series)</summary>
+<summary><b>Software Engineering / Systems / PL</b> (14 series)</summary>
 
-- **ASE** 2019-2025 (7 editions)
-- **FM** 2019-2026 (5 editions)
-- **FSE** 2019-2023 (5 editions)
+- **ASE** 2000-2025 (26 editions)
+- **FM** 2001-2026 (17 editions)
+- **FSE** 2000-2023 (24 editions)
 - **ICSE** 2019-2025 (7 editions)
 - **ISSTA** 2019-2024 (6 editions)
-- **OSDI** 2020-2025 (6 editions)
-- **PLDI** 2019-2022 (4 editions)
-- **SOSP** 2019-2025 (5 editions)
-- **TOPLAS** 2019-2026 (8 editions)
-- **TOSEM** 2019-2026 (8 editions)
-- **TSC** 2019-2026 (8 editions)
-- **TSE** 2019-2026 (8 editions)
+- **OOPSLA** 2000-2016 (17 editions)
+- **OSDI** 2000-2025 (16 editions)
+- **PLDI** 2000-2022 (23 editions)
+- **POPL** 2000-2017 (18 editions)
+- **SOSP** 2001-2025 (14 editions)
+- **TOPLAS** 2000-2026 (25 editions)
+- **TOSEM** 2000-2026 (25 editions)
+- **TSC** 2008-2026 (19 editions)
+- **TSE** 2000-2026 (27 editions)
 
 </details>
 <details>
 <summary><b>Database / Data Mining / IR</b> (15 series)</summary>
 
-- **CIKM** 2019-2025 (7 editions)
+- **CIKM** 2000-2025 (26 editions)
 - **ECIR** 2019-2026 (8 editions)
 - **ICDE** 2019-2025 (7 editions)
 - **ICDM** 2019-2025 (7 editions)
-- **KDD** 2019-2026 (8 editions)
+- **KDD** 2000-2026 (27 editions)
 - **RECSYS** 2019-2025 (7 editions)
-- **SIGIR** 2019-2025 (7 editions)
+- **SIGIR** 2000-2025 (26 editions)
 - **SIGMOD** 2019-2022 (4 editions)
 - **TKDE** 2019-2025 (7 editions)
 - **TODS** 2019-2026 (8 editions)
 - **TOIS** 2019-2025 (7 editions)
-- **VLDB** 2019-2025 (7 editions)
-- **VLDBJ** 2019-2026 (8 editions)
-- **WSDM** 2019-2026 (8 editions)
-- **WWW** 2019-2026 (8 editions)
+- **VLDB** 2008-2025 (18 editions)
+- **VLDBJ** 2000-2026 (27 editions)
+- **WSDM** 2008-2026 (19 editions)
+- **WWW** 2001-2026 (26 editions)
 
 </details>
 <details>
 <summary><b>Theoretical Computer Science</b> (10 series)</summary>
 
 - **ALT** 2019-2025 (7 editions)
-- **CAV** 2019-2025 (7 editions)
+- **CAV** 2000-2025 (26 editions)
 - **COLT** 2019-2025 (7 editions)
-- **FOCS** 2019-2025 (7 editions)
-- **IANDC** 2019-2026 (8 editions)
-- **LICS** 2019-2025 (7 editions)
+- **FOCS** 2000-2025 (26 editions)
+- **IANDC** 2000-2026 (27 editions)
+- **LICS** 2000-2025 (26 editions)
 - **SICOMP** 2019-2026 (8 editions)
-- **SODA** 2019-2026 (8 editions)
-- **STOC** 2019-2025 (7 editions)
-- **TIT** 2019-2026 (8 editions)
+- **SODA** 2000-2026 (27 editions)
+- **STOC** 2000-2025 (26 editions)
+- **TIT** 2000-2026 (27 editions)
 
 </details>
 <details>
 <summary><b>Computer Graphics & Multimedia</b> (11 series)</summary>
 
-- **BMVC** 2019-2024 (6 editions)
-- **ICME** 2019-2025 (7 editions)
-- **IEEEVIS** 2019-2024 (6 editions)
+- **BMVC** 2000-2024 (25 editions)
+- **ICME** 2015-2025 (9 editions)
+- **IEEEVIS** 2000-2024 (13 editions)
 - **MICCAI** 2019-2025 (7 editions)
-- **MM** 2019-2025 (7 editions)
-- **SIGGRAPH** 2022-2025 (4 editions)
-- **TIP** 2019-2026 (8 editions)
-- **TMM** 2019-2026 (8 editions)
-- **TOG** 2019-2026 (8 editions)
-- **TVCG** 2019-2026 (8 editions)
-- **VR** 2019-2026 (8 editions)
+- **MM** 2000-2025 (26 editions)
+- **SIGGRAPH** 2000-2025 (13 editions)
+- **TIP** 2000-2026 (27 editions)
+- **TMM** 2000-2026 (27 editions)
+- **TOG** 2000-2026 (25 editions)
+- **TVCG** 2000-2026 (27 editions)
+- **VR** 2000-2026 (27 editions)
 
 </details>
 <details>
 <summary><b>Artificial Intelligence</b> (23 series)</summary>
 
-- **AAAI** 2019-2026 (8 editions)
+- **AAAI** 2000-2026 (24 editions)
 - **ACL** 2000-2025 (26 editions)
-- **AI** 2019-2026 (8 editions)
+- **AI** 2000-2026 (27 editions)
 - **AISTATS** 2019-2025 (7 editions)
 - **COLING** 2000-2025 (14 editions)
 - **CVPR** 2013-2026 (14 editions)
@@ -192,25 +194,26 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 - **EMNLP** 2000-2025 (26 editions)
 - **ICCV** 2013-2025 (7 editions)
 - **ICLR** 2019-2025 (7 editions)
-- **ICML** 2019-2025 (7 editions)
-- **IJCAI** 2019-2025 (7 editions)
-- **IJCV** 2019-2026 (8 editions)
-- **JMLR** 2019-2026 (8 editions)
-- **MLJ** 2019-2026 (8 editions)
+- **ICML** 2000-2025 (26 editions)
+- **IJCAI** 2001-2025 (18 editions)
+- **IJCV** 2000-2026 (27 editions)
+- **JMLR** 2000-2026 (26 editions)
+- **MLJ** 2000-2026 (27 editions)
 - **MLSYS** 2019-2025 (7 editions)
 - **NAACL** 2000-2025 (18 editions)
 - **NIPS** 2000-2025 (26 editions)
-- **TNNLS** 2019-2025 (7 editions)
-- **TPAMI** 2019-2026 (8 editions)
+- **TNNLS** 2000-2025 (26 editions)
+- **TPAMI** 2000-2026 (27 editions)
 - **UAI** 2019-2025 (7 editions)
 - **WACV** 2020-2026 (7 editions)
 
 </details>
 <details>
-<summary><b>Human-Computer Interaction & Ubicomp</b> (4 series)</summary>
+<summary><b>Human-Computer Interaction & Ubicomp</b> (5 series)</summary>
 
 - **CHI** 2019-2026 (8 editions)
-- **TOCHI** 2019-2026 (8 editions)
+- **CSCW** 2000-2017 (13 editions)
+- **TOCHI** 2000-2026 (27 editions)
 - **UBICOMP** 2019-2019
 - **UIST** 2019-2025 (7 editions)
 
@@ -219,8 +222,8 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 <summary><b>Speech</b> (3 series)</summary>
 
 - **ICASSP** 2019-2025 (7 editions)
-- **INTERSPEECH** 2019-2025 (7 editions)
-- **TASLP** 2019-2024 (6 editions)
+- **INTERSPEECH** 2000-2025 (26 editions)
+- **TASLP** 2000-2024 (25 editions)
 
 </details>
 <details>
@@ -228,10 +231,10 @@ PaperVault is a fully automated tool for collecting and retrieving academic pape
 
 - **BIOINFORMATICS** 2019-2026 (7 editions)
 - **ISWC** 2019-2022 (4 editions)
-- **JACM** 2019-2026 (8 editions)
-- **PROCIEEE** 2019-2025 (7 editions)
-- **RTSS** 2019-2025 (7 editions)
-- **SCIS** 2019-2026 (8 editions)
+- **JACM** 2000-2026 (26 editions)
+- **PROCIEEE** 2000-2025 (26 editions)
+- **RTSS** 2000-2025 (26 editions)
+- **SCIS** 2001-2026 (26 editions)
 
 </details>
 <details>
