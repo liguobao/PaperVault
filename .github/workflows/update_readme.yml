@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "更新模式: force (全量重建缓存并更新 README) 或 readme (仅更新 README)" 
+        description: "更新模式: readme (仅更新 README, 默认) 或 force (全量重建缓存并更新 README)"
         required: false
-        default: "force"
+        default: "readme"
 
 jobs:
   rebuild:
@@ -59,12 +59,12 @@ jobs:
 
       - name: Run rebuild
         run: |
-          if [ "${{ github.event.inputs.mode }}" == "readme" ]; then
-            echo "[*] README-only mode"
-            python maintain.py
-          else
+          if [ "${{ github.event.inputs.mode }}" == "force" ]; then
             echo "[*] Force rebuild mode"
             python maintain.py force
+          else
+            echo "[*] README-only mode"
+            python maintain.py
           fi
 
       - name: Setup GIT user
