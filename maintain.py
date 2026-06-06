@@ -7,6 +7,7 @@ import re
 from datetime import datetime
 from collections import defaultdict
 
+import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.font_manager as fm
@@ -51,7 +52,7 @@ NATURE_COLORS = [
 CATEGORY_MAP = {
     "计算机体系结构/高性能计算/存储系统": [
         "TOCS", "TOS", "TCAD", "TC", "TPDS", "TACO",
-        "PPoPP", "FAST", "DAC", "HPCA", "MICRO", "SC", "ASPLOS", "ISCA", "ATC", "EUROSYS", "HPDC",
+        "PPOPP", "FAST", "DAC", "HPCA", "MICRO", "SC", "ASPLOS", "ISCA", "ATC", "EUROSYS", "HPDC",
     ],
     "计算机网络": [
         "JSAC", "TMC", "TON",
@@ -98,7 +99,7 @@ CATEGORY_MAP = {
 CATEGORY_MAP_EN = {
     "Computer Architecture / HPC / Storage": [
         "TOCS", "TOS", "TCAD", "TC", "TPDS", "TACO",
-        "PPoPP", "FAST", "DAC", "HPCA", "MICRO", "SC", "ASPLOS", "ISCA", "ATC", "EUROSYS", "HPDC",
+        "PPOPP", "FAST", "DAC", "HPCA", "MICRO", "SC", "ASPLOS", "ISCA", "ATC", "EUROSYS", "HPDC",
     ],
     "Computer Networks": [
         "JSAC", "TMC", "TON",
@@ -213,16 +214,19 @@ chartCat.setOption({
 const chartYear = echarts.init(document.getElementById('chart-year'));
 chartYear.setOption({
   title: { text: '历年论文收录趋势 (Annual Paper Collection Trend)', left: 'center', textStyle: { fontSize: 16, fontWeight: 'bold' } },
-  tooltip: { trigger: 'axis' },
-  grid: { left: '3%', right: '4%', bottom: '3%', top: '12%', containLabel: true },
-  xAxis: { type: 'category', data: yearData.years, name: '年份 (Year)', nameTextStyle: { fontWeight: 'bold' } },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+  legend: { data: yearData.categories, bottom: 0, type: 'scroll', textStyle: { fontSize: 11 } },
+  grid: { left: '3%', right: '4%', bottom: '12%', top: '12%', containLabel: true },
+  xAxis: { type: 'category', data: yearData.years, name: '年份 (Year)', nameTextStyle: { fontWeight: 'bold' }, axisLabel: { interval: 1, rotate: 30 } },
   yAxis: { type: 'value', name: '论文数量 (Paper Count)', nameTextStyle: { fontWeight: 'bold' } },
-  series: [{
+  series: yearData.series.map((s, i) => ({
+    name: s.name,
     type: 'bar',
-    data: yearData.values,
-    itemStyle: { color: '#2E5C8A' },
+    stack: 'total',
+    data: s.data,
+    itemStyle: { color: yearData.colors[i] },
     barWidth: '55%'
-  }]
+  }))
 });
 
 // ---------- Word Cloud ----------
@@ -287,6 +291,7 @@ def compute_stats(cache_data: dict):
     total_abstracts = 0
     papers_by_year = defaultdict(int)
     papers_by_conf = defaultdict(int)
+    papers_by_year_cat = defaultdict(lambda: defaultdict(int))
     for conf_key, papers in cache_data.items():
         m = re.match(r"([A-Za-z]+)(\d{4})", conf_key)
         conf_base = m.group(1).upper() if m else conf_key
@@ -296,6 +301,11 @@ def compute_stats(cache_data: dict):
         for p in papers:
             if p.get("paper_abstract") and str(p.get("paper_abstract")).strip():
                 total_abstracts += 1
+        # Categorize by year for stacked chart
+        for cat, names in CATEGORY_MAP.items():
+            if conf_base in names:
+                papers_by_year_cat[year][cat] += len(papers)
+                break
 
     confs_list = _load_all_confs()
     total_series = len(confs_list)
@@ -313,6 +323,7 @@ def compute_stats(cache_data: dict):
         "total_series": total_series,
         "total_instances": total_instances,
         "papers_by_year": dict(sorted(papers_by_year.items())),
+        "papers_by_year_cat": {y: dict(papers_by_year_cat[y]) for y in sorted(papers_by_year_cat.keys())},
         "papers_by_conf": dict(papers_by_conf),
         "cat_stats": cat_stats,
     }
@@ -328,8 +339,16 @@ def generate_stats_html(stats: dict):
     cat_colors = [NATURE_COLORS[i % len(NATURE_COLORS)] for i in range(len(CATEGORY_MAP))]
 
     # Prepare year data
-    years = list(stats["papers_by_year"].keys())
-    year_values = [stats["papers_by_year"][y] for y in years]
+    years = sorted(stats["papers_by_year_cat"].keys())
+    cat_names = list(CATEGORY_MAP.keys())
+    cat_labels = [f"{zh} ({en})" for zh, en in zip(CATEGORY_MAP.keys(), CATEGORY_MAP_EN.keys())]
+    year_series = []
+    for i, cat in enumerate(cat_names):
+        year_series.append({
+            "name": cat_labels[i],
+            "data": [stats["papers_by_year_cat"].get(y, {}).get(cat, 0) for y in years]
+        })
+    year_colors = [NATURE_COLORS[i % len(NATURE_COLORS)] for i in range(len(cat_names))]
 
     # Prepare wordcloud data with per-series colors
     wordcloud_data = []
@@ -352,7 +371,9 @@ def generate_stats_html(stats: dict):
     }, ensure_ascii=False))
     html = html.replace("{{year_data}}", json.dumps({
         "years": years,
-        "values": year_values,
+        "series": year_series,
+        "categories": cat_names,
+        "colors": year_colors,
     }, ensure_ascii=False))
     html = html.replace("{{wordcloud_data}}", json.dumps(wordcloud_data, ensure_ascii=False))
 
@@ -500,7 +521,13 @@ def _ensure_chinese_font():
 
     family, font_path = _find_cjk_font()
 
-    if family:
+    if family and font_path:
+        # Explicitly register the font with matplotlib so it is available
+        # even when the system font scan misses it (common in CI).
+        try:
+            fm.fontManager.addfont(font_path)
+        except Exception as exc:
+            print(f"[!] Warning: addfont failed for {font_path}: {exc}")
         plt.rcParams["font.sans-serif"] = [family, "DejaVu Sans", "sans-serif"]
         plt.rcParams["axes.unicode_minus"] = False
         plt.rcParams["svg.fonttype"] = "path"
@@ -573,11 +600,23 @@ def generate_charts_svg(stats: dict):
     fig.savefig(os.path.join(stats_dir, "papers_by_category.svg"), format="svg", bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
-    # ---------- Chart 2: Papers by Year (vertical bar) ----------
-    fig, ax = plt.subplots(figsize=(10, 4.8))
-    years = [y for y in stats["papers_by_year"].keys()]
-    year_vals = [stats["papers_by_year"][y] for y in years]
-    ax.bar(years, year_vals, color="#2E5C8A", width=0.65, edgecolor="white", linewidth=0.5)
+    # ---------- Chart 2: Papers by Year (stacked vertical bar) ----------
+    fig, ax = plt.subplots(figsize=(11, 6.2))
+    years = sorted(stats["papers_by_year_cat"].keys())
+    bottom = np.zeros(len(years))
+
+    cat_keys = list(CATEGORY_MAP.keys() if has_cjk else CATEGORY_MAP_EN.keys())
+    cat_labels = [f"{zh}\n({en})" for zh, en in zip(CATEGORY_MAP.keys(), CATEGORY_MAP_EN.keys())] if has_cjk else list(CATEGORY_MAP_EN.keys())
+    for i, cat in enumerate(cat_keys):
+        vals = [stats["papers_by_year_cat"].get(y, {}).get(cat, 0) for y in years]
+        ax.bar(
+            years, vals, bottom=bottom,
+            color=NATURE_COLORS[i % len(NATURE_COLORS)],
+            width=0.65, edgecolor="white", linewidth=0.5,
+            label=cat_labels[i],
+        )
+        bottom += vals
+
     ax.set_xlabel(xlabel_year, fontsize=13, fontweight="bold")
     ax.set_ylabel(ylabel_year, fontsize=13, fontweight="bold")
     ax.set_title(title_year, fontsize=15, fontweight="bold", pad=18)
@@ -586,6 +625,11 @@ def generate_charts_svg(stats: dict):
     ax.spines["left"].set_linewidth(0.8)
     ax.spines["bottom"].set_linewidth(0.8)
     ax.tick_params(axis="both", labelsize=10, labelcolor="#1a1a1a")
+    # Thin out x-axis labels to avoid crowding: show every other year + rotate
+    show_indices = list(range(0, len(years), 2))
+    ax.set_xticks(show_indices)
+    ax.set_xticklabels([years[i] for i in show_indices], rotation=45, ha="right")
+    ax.legend(loc="upper left", bbox_to_anchor=(1.02, 1), frameon=False, fontsize=9)
     ax.grid(axis="y", linestyle="--", linewidth=0.4, alpha=0.5)
     fig.tight_layout()
     fig.savefig(os.path.join(stats_dir, "papers_by_year.svg"), format="svg", bbox_inches="tight", facecolor="white")
