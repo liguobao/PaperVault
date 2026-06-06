@@ -9377,6 +9377,2954 @@
     "DBLP::https://dblp.org/db/journals/ijcv/ijcv74.html": {
       "name": "IJCV2007",
       "ts": "2026-06-06T15:22:15"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv75.html": {
+      "name": "IJCV2007",
+      "ts": "2026-06-06T15:33:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv76.html": {
+      "name": "IJCV2008",
+      "ts": "2026-06-06T15:34:00"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv77.html": {
+      "name": "IJCV2008",
+      "ts": "2026-06-06T15:34:24"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv78.html": {
+      "name": "IJCV2008",
+      "ts": "2026-06-06T15:34:49"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv79.html": {
+      "name": "IJCV2008",
+      "ts": "2026-06-06T15:35:16"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv80.html": {
+      "name": "IJCV2008",
+      "ts": "2026-06-06T15:35:41"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv81.html": {
+      "name": "IJCV2009",
+      "ts": "2026-06-06T15:36:04"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv82.html": {
+      "name": "IJCV2009",
+      "ts": "2026-06-06T15:36:28"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv83.html": {
+      "name": "IJCV2009",
+      "ts": "2026-06-06T15:36:52"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv84.html": {
+      "name": "IJCV2009",
+      "ts": "2026-06-06T15:37:17"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv85.html": {
+      "name": "IJCV2009",
+      "ts": "2026-06-06T15:37:42"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv86.html": {
+      "name": "IJCV2010",
+      "ts": "2026-06-06T15:38:09"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv87.html": {
+      "name": "IJCV2010",
+      "ts": "2026-06-06T15:38:33"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv88.html": {
+      "name": "IJCV2010",
+      "ts": "2026-06-06T15:38:57"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv89.html": {
+      "name": "IJCV2010",
+      "ts": "2026-06-06T15:39:21"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv90.html": {
+      "name": "IJCV2010",
+      "ts": "2026-06-06T15:39:45"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv91.html": {
+      "name": "IJCV2011",
+      "ts": "2026-06-06T15:40:09"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv92.html": {
+      "name": "IJCV2011",
+      "ts": "2026-06-06T15:40:32"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv93.html": {
+      "name": "IJCV2011",
+      "ts": "2026-06-06T15:40:56"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv94.html": {
+      "name": "IJCV2011",
+      "ts": "2026-06-06T15:41:19"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv95.html": {
+      "name": "IJCV2011",
+      "ts": "2026-06-06T15:41:43"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv96.html": {
+      "name": "IJCV2012",
+      "ts": "2026-06-06T15:42:06"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv97.html": {
+      "name": "IJCV2012",
+      "ts": "2026-06-06T15:42:30"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv98.html": {
+      "name": "IJCV2012",
+      "ts": "2026-06-06T15:42:53"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv99.html": {
+      "name": "IJCV2012",
+      "ts": "2026-06-06T15:43:17"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv100.html": {
+      "name": "IJCV2012",
+      "ts": "2026-06-06T15:43:40"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv101.html": {
+      "name": "IJCV2013",
+      "ts": "2026-06-06T15:44:03"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv102.html": {
+      "name": "IJCV2013",
+      "ts": "2026-06-06T15:44:27"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv103.html": {
+      "name": "IJCV2013",
+      "ts": "2026-06-06T15:44:50"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv104.html": {
+      "name": "IJCV2013",
+      "ts": "2026-06-06T15:45:13"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv105.html": {
+      "name": "IJCV2013",
+      "ts": "2026-06-06T15:45:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv106.html": {
+      "name": "IJCV2014",
+      "ts": "2026-06-06T15:46:00"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv107.html": {
+      "name": "IJCV2014",
+      "ts": "2026-06-06T15:46:24"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv108.html": {
+      "name": "IJCV2014",
+      "ts": "2026-06-06T15:46:48"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv109.html": {
+      "name": "IJCV2014",
+      "ts": "2026-06-06T15:47:12"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv110.html": {
+      "name": "IJCV2014",
+      "ts": "2026-06-06T15:47:35"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv111.html": {
+      "name": "IJCV2015",
+      "ts": "2026-06-06T15:47:58"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv112.html": {
+      "name": "IJCV2015",
+      "ts": "2026-06-06T15:48:22"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv113.html": {
+      "name": "IJCV2015",
+      "ts": "2026-06-06T15:48:45"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv114.html": {
+      "name": "IJCV2015",
+      "ts": "2026-06-06T15:49:08"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv115.html": {
+      "name": "IJCV2015",
+      "ts": "2026-06-06T15:49:32"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv116.html": {
+      "name": "IJCV2016",
+      "ts": "2026-06-06T15:49:57"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv117.html": {
+      "name": "IJCV2016",
+      "ts": "2026-06-06T15:50:23"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv118.html": {
+      "name": "IJCV2016",
+      "ts": "2026-06-06T15:50:48"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv119.html": {
+      "name": "IJCV2016",
+      "ts": "2026-06-06T15:51:12"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv120.html": {
+      "name": "IJCV2016",
+      "ts": "2026-06-06T15:51:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv121.html": {
+      "name": "IJCV2017",
+      "ts": "2026-06-06T15:52:00"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv122.html": {
+      "name": "IJCV2017",
+      "ts": "2026-06-06T15:52:34"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv123.html": {
+      "name": "IJCV2017",
+      "ts": "2026-06-06T15:52:57"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv124.html": {
+      "name": "IJCV2017",
+      "ts": "2026-06-06T15:53:21"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv125.html": {
+      "name": "IJCV2017",
+      "ts": "2026-06-06T15:53:45"
+    },
+    "DBLP::https://dblp.org/db/journals/ijcv/ijcv126.html": {
+      "name": "IJCV2018",
+      "ts": "2026-06-06T15:54:09"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn11.html": {
+      "name": "TNNLS2000",
+      "ts": "2026-06-06T15:54:37"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn12.html": {
+      "name": "TNNLS2001",
+      "ts": "2026-06-06T15:55:05"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn13.html": {
+      "name": "TNNLS2002",
+      "ts": "2026-06-06T15:55:30"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn14.html": {
+      "name": "TNNLS2003",
+      "ts": "2026-06-06T15:55:57"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn15.html": {
+      "name": "TNNLS2004",
+      "ts": "2026-06-06T15:56:23"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn16.html": {
+      "name": "TNNLS2005",
+      "ts": "2026-06-06T15:56:50"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn17.html": {
+      "name": "TNNLS2006",
+      "ts": "2026-06-06T15:57:15"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn18.html": {
+      "name": "TNNLS2007",
+      "ts": "2026-06-06T15:57:42"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn19.html": {
+      "name": "TNNLS2008",
+      "ts": "2026-06-06T15:58:09"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn20.html": {
+      "name": "TNNLS2009",
+      "ts": "2026-06-06T15:58:39"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn21.html": {
+      "name": "TNNLS2010",
+      "ts": "2026-06-06T15:59:22"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn22.html": {
+      "name": "TNNLS2011",
+      "ts": "2026-06-06T15:59:48"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn23.html": {
+      "name": "TNNLS2012",
+      "ts": "2026-06-06T16:00:17"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn24.html": {
+      "name": "TNNLS2013",
+      "ts": "2026-06-06T16:00:46"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn25.html": {
+      "name": "TNNLS2014",
+      "ts": "2026-06-06T16:01:15"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn26.html": {
+      "name": "TNNLS2015",
+      "ts": "2026-06-06T16:02:10"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn27.html": {
+      "name": "TNNLS2016",
+      "ts": "2026-06-06T16:02:40"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn28.html": {
+      "name": "TNNLS2017",
+      "ts": "2026-06-06T16:03:15"
+    },
+    "DBLP::https://dblp.org/db/journals/tnn/tnn29.html": {
+      "name": "TNNLS2018",
+      "ts": "2026-06-06T16:04:05"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2000.html": {
+      "name": "NDSS2000",
+      "ts": "2026-06-06T16:04:33"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2001.html": {
+      "name": "NDSS2001",
+      "ts": "2026-06-06T16:04:56"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2002.html": {
+      "name": "NDSS2002",
+      "ts": "2026-06-06T16:06:02"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2003.html": {
+      "name": "NDSS2003",
+      "ts": "2026-06-06T16:06:44"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2004.html": {
+      "name": "NDSS2004",
+      "ts": "2026-06-06T16:07:26"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2005.html": {
+      "name": "NDSS2005",
+      "ts": "2026-06-06T16:07:51"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2006.html": {
+      "name": "NDSS2006",
+      "ts": "2026-06-06T16:08:16"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2007.html": {
+      "name": "NDSS2007",
+      "ts": "2026-06-06T16:08:39"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2008.html": {
+      "name": "NDSS2008",
+      "ts": "2026-06-06T16:09:03"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2009.html": {
+      "name": "NDSS2009",
+      "ts": "2026-06-06T16:09:26"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2010.html": {
+      "name": "NDSS2010",
+      "ts": "2026-06-06T16:09:50"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2011.html": {
+      "name": "NDSS2011",
+      "ts": "2026-06-06T16:10:15"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2012.html": {
+      "name": "NDSS2012",
+      "ts": "2026-06-06T16:10:39"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2013.html": {
+      "name": "NDSS2013",
+      "ts": "2026-06-06T16:11:03"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2014.html": {
+      "name": "NDSS2014",
+      "ts": "2026-06-06T16:11:28"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2015.html": {
+      "name": "NDSS2015",
+      "ts": "2026-06-06T16:11:53"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2016.html": {
+      "name": "NDSS2016",
+      "ts": "2026-06-06T16:12:16"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2017.html": {
+      "name": "NDSS2017",
+      "ts": "2026-06-06T16:12:41"
+    },
+    "DBLP::https://dblp.org/db/conf/ndss/ndss2018.html": {
+      "name": "NDSS2018",
+      "ts": "2026-06-06T16:13:06"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2000.html": {
+      "name": "STOC2000",
+      "ts": "2026-06-06T16:13:34"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2001.html": {
+      "name": "STOC2001",
+      "ts": "2026-06-06T16:13:58"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2002.html": {
+      "name": "STOC2002",
+      "ts": "2026-06-06T16:14:24"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2003.html": {
+      "name": "STOC2003",
+      "ts": "2026-06-06T16:14:48"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2004.html": {
+      "name": "STOC2004",
+      "ts": "2026-06-06T16:15:11"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2005.html": {
+      "name": "STOC2005",
+      "ts": "2026-06-06T16:15:35"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2006.html": {
+      "name": "STOC2006",
+      "ts": "2026-06-06T16:15:59"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2007.html": {
+      "name": "STOC2007",
+      "ts": "2026-06-06T16:16:23"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2008.html": {
+      "name": "STOC2008",
+      "ts": "2026-06-06T16:16:47"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2009.html": {
+      "name": "STOC2009",
+      "ts": "2026-06-06T16:17:13"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2010.html": {
+      "name": "STOC2010",
+      "ts": "2026-06-06T16:17:37"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2011.html": {
+      "name": "STOC2011",
+      "ts": "2026-06-06T16:18:01"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2012.html": {
+      "name": "STOC2012",
+      "ts": "2026-06-06T16:18:26"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2013.html": {
+      "name": "STOC2013",
+      "ts": "2026-06-06T16:18:50"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2014.html": {
+      "name": "STOC2014",
+      "ts": "2026-06-06T16:19:15"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2015.html": {
+      "name": "STOC2015",
+      "ts": "2026-06-06T16:19:39"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2016.html": {
+      "name": "STOC2016",
+      "ts": "2026-06-06T16:20:04"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2017.html": {
+      "name": "STOC2017",
+      "ts": "2026-06-06T16:20:29"
+    },
+    "DBLP::https://dblp.org/db/conf/stoc/stoc2018.html": {
+      "name": "STOC2018",
+      "ts": "2026-06-06T16:20:54"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai116.html": {
+      "name": "AI2000",
+      "ts": "2026-06-06T16:21:19"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai117.html": {
+      "name": "AI2000",
+      "ts": "2026-06-06T16:21:48"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai118.html": {
+      "name": "AI2000",
+      "ts": "2026-06-06T16:22:12"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai119.html": {
+      "name": "AI2000",
+      "ts": "2026-06-06T16:22:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai120.html": {
+      "name": "AI2000",
+      "ts": "2026-06-06T16:23:00"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai121.html": {
+      "name": "AI2000",
+      "ts": "2026-06-06T16:23:24"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai122.html": {
+      "name": "AI2000",
+      "ts": "2026-06-06T16:23:47"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai123.html": {
+      "name": "AI2000",
+      "ts": "2026-06-06T16:24:11"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai124.html": {
+      "name": "AI2000",
+      "ts": "2026-06-06T16:24:34"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai125.html": {
+      "name": "AI2001",
+      "ts": "2026-06-06T16:24:58"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai126.html": {
+      "name": "AI2001",
+      "ts": "2026-06-06T16:25:21"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai127.html": {
+      "name": "AI2001",
+      "ts": "2026-06-06T16:25:45"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai128.html": {
+      "name": "AI2001",
+      "ts": "2026-06-06T16:26:10"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai129.html": {
+      "name": "AI2001",
+      "ts": "2026-06-06T16:26:41"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai130.html": {
+      "name": "AI2001",
+      "ts": "2026-06-06T16:27:06"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai131.html": {
+      "name": "AI2001",
+      "ts": "2026-06-06T16:27:31"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai132.html": {
+      "name": "AI2001",
+      "ts": "2026-06-06T16:27:55"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai133.html": {
+      "name": "AI2001",
+      "ts": "2026-06-06T16:28:19"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai134.html": {
+      "name": "AI2002",
+      "ts": "2026-06-06T16:28:58"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai135.html": {
+      "name": "AI2002",
+      "ts": "2026-06-06T16:29:31"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai136.html": {
+      "name": "AI2002",
+      "ts": "2026-06-06T16:29:56"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai137.html": {
+      "name": "AI2002",
+      "ts": "2026-06-06T16:30:20"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai138.html": {
+      "name": "AI2002",
+      "ts": "2026-06-06T16:30:46"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai139.html": {
+      "name": "AI2002",
+      "ts": "2026-06-06T16:31:09"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai140.html": {
+      "name": "AI2002",
+      "ts": "2026-06-06T16:31:33"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai141.html": {
+      "name": "AI2002",
+      "ts": "2026-06-06T16:31:56"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai142.html": {
+      "name": "AI2002",
+      "ts": "2026-06-06T16:32:20"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai143.html": {
+      "name": "AI2003",
+      "ts": "2026-06-06T16:32:43"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai144.html": {
+      "name": "AI2003",
+      "ts": "2026-06-06T16:33:07"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai145.html": {
+      "name": "AI2003",
+      "ts": "2026-06-06T16:33:31"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai146.html": {
+      "name": "AI2003",
+      "ts": "2026-06-06T16:33:55"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai147.html": {
+      "name": "AI2003",
+      "ts": "2026-06-06T16:34:20"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai148.html": {
+      "name": "AI2003",
+      "ts": "2026-06-06T16:34:45"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai149.html": {
+      "name": "AI2003",
+      "ts": "2026-06-06T16:35:10"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai150.html": {
+      "name": "AI2003",
+      "ts": "2026-06-06T16:35:34"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai151.html": {
+      "name": "AI2003",
+      "ts": "2026-06-06T16:36:00"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai152.html": {
+      "name": "AI2004",
+      "ts": "2026-06-06T16:36:25"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai153.html": {
+      "name": "AI2004",
+      "ts": "2026-06-06T16:36:49"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai154.html": {
+      "name": "AI2004",
+      "ts": "2026-06-06T16:37:13"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai155.html": {
+      "name": "AI2004",
+      "ts": "2026-06-06T16:37:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai156.html": {
+      "name": "AI2004",
+      "ts": "2026-06-06T16:38:00"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai157.html": {
+      "name": "AI2004",
+      "ts": "2026-06-06T16:38:24"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai158.html": {
+      "name": "AI2004",
+      "ts": "2026-06-06T16:38:47"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai159.html": {
+      "name": "AI2004",
+      "ts": "2026-06-06T16:39:11"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai160.html": {
+      "name": "AI2004",
+      "ts": "2026-06-06T16:39:34"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai161.html": {
+      "name": "AI2005",
+      "ts": "2026-06-06T16:39:57"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai162.html": {
+      "name": "AI2005",
+      "ts": "2026-06-06T16:40:21"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai163.html": {
+      "name": "AI2005",
+      "ts": "2026-06-06T16:40:44"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai164.html": {
+      "name": "AI2005",
+      "ts": "2026-06-06T16:41:07"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai165.html": {
+      "name": "AI2005",
+      "ts": "2026-06-06T16:41:31"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai166.html": {
+      "name": "AI2005",
+      "ts": "2026-06-06T16:41:54"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai167.html": {
+      "name": "AI2005",
+      "ts": "2026-06-06T16:42:18"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai168.html": {
+      "name": "AI2005",
+      "ts": "2026-06-06T16:42:41"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai169.html": {
+      "name": "AI2005",
+      "ts": "2026-06-06T16:43:05"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai170.html": {
+      "name": "AI2006",
+      "ts": "2026-06-06T16:43:28"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai171.html": {
+      "name": "AI2007",
+      "ts": "2026-06-06T16:43:52"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai172.html": {
+      "name": "AI2008",
+      "ts": "2026-06-06T16:44:16"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai173.html": {
+      "name": "AI2009",
+      "ts": "2026-06-06T16:44:39"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai174.html": {
+      "name": "AI2010",
+      "ts": "2026-06-06T16:45:04"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai175.html": {
+      "name": "AI2011",
+      "ts": "2026-06-06T16:45:29"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai176.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:45:52"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai177.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:46:16"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai180.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:46:39"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai182.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:47:03"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai184.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:47:26"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai186.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:47:50"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai187.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:48:14"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai189.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:48:39"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai190.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:49:08"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai191.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:49:44"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai193.html": {
+      "name": "AI2012",
+      "ts": "2026-06-06T16:50:10"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai194.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:50:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai195.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:51:09"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai196.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:52:03"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai197.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:52:27"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai198.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:52:50"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai199.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:53:14"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai201.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:53:38"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai202.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:54:02"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai203.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:54:26"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai204.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:54:49"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai205.html": {
+      "name": "AI2013",
+      "ts": "2026-06-06T16:55:13"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai206.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:55:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai207.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:56:00"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai208.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:56:23"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai209.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:56:47"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai210.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:57:10"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai211.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:57:33"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai212.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:57:57"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai213.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:58:20"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai214.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:58:44"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai215.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:59:08"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai216.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:59:31"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai217.html": {
+      "name": "AI2014",
+      "ts": "2026-06-06T16:59:55"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai218.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:00:19"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai219.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:00:42"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai220.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:01:06"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai221.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:01:29"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai222.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:01:53"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai223.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:02:16"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai224.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:02:40"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai225.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:03:03"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai226.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:03:27"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai227.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:03:50"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai228.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:04:13"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai229.html": {
+      "name": "AI2015",
+      "ts": "2026-06-06T17:04:37"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai230.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:05:01"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai231.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:05:24"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai232.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:05:48"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai233.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:06:12"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai234.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:06:35"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai235.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:06:59"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai236.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:07:22"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai237.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:07:46"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai238.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:08:09"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai239.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:08:33"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai240.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:08:56"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai241.html": {
+      "name": "AI2016",
+      "ts": "2026-06-06T17:09:19"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai242.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:09:43"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai243.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:10:08"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai244.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:10:31"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai245.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:10:54"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai246.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:11:18"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai247.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:11:41"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai248.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:12:04"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai249.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:12:28"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai250.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:12:51"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai251.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:13:15"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai252.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:13:38"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai253.html": {
+      "name": "AI2017",
+      "ts": "2026-06-06T17:14:02"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai254.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:14:25"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai255.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:14:48"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai256.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:15:12"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai257.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:15:35"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai258.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:15:58"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai259.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:16:22"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai260.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:16:45"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai261.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:17:09"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai262.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:17:32"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai263.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:17:55"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai264.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:18:18"
+    },
+    "DBLP::https://dblp.org/db/journals/ai/ai265.html": {
+      "name": "AI2018",
+      "ts": "2026-06-06T17:18:42"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml41.html": {
+      "name": "MLJ2000",
+      "ts": "2026-06-06T17:19:05"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml42.html": {
+      "name": "MLJ2001",
+      "ts": "2026-06-06T17:19:29"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml43.html": {
+      "name": "MLJ2001",
+      "ts": "2026-06-06T17:19:52"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml44.html": {
+      "name": "MLJ2001",
+      "ts": "2026-06-06T17:20:15"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml45.html": {
+      "name": "MLJ2001",
+      "ts": "2026-06-06T17:20:39"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml46.html": {
+      "name": "MLJ2002",
+      "ts": "2026-06-06T17:21:02"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml47.html": {
+      "name": "MLJ2002",
+      "ts": "2026-06-06T17:21:26"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml48.html": {
+      "name": "MLJ2002",
+      "ts": "2026-06-06T17:21:49"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml49.html": {
+      "name": "MLJ2002",
+      "ts": "2026-06-06T17:22:13"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml50.html": {
+      "name": "MLJ2003",
+      "ts": "2026-06-06T17:22:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml51.html": {
+      "name": "MLJ2003",
+      "ts": "2026-06-06T17:23:00"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml52.html": {
+      "name": "MLJ2003",
+      "ts": "2026-06-06T17:23:23"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml53.html": {
+      "name": "MLJ2003",
+      "ts": "2026-06-06T17:23:46"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml54.html": {
+      "name": "MLJ2004",
+      "ts": "2026-06-06T17:24:10"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml55.html": {
+      "name": "MLJ2004",
+      "ts": "2026-06-06T17:24:33"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml56.html": {
+      "name": "MLJ2004",
+      "ts": "2026-06-06T17:24:57"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml57.html": {
+      "name": "MLJ2004",
+      "ts": "2026-06-06T17:25:20"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml58.html": {
+      "name": "MLJ2005",
+      "ts": "2026-06-06T17:25:43"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml59.html": {
+      "name": "MLJ2005",
+      "ts": "2026-06-06T17:26:07"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml60.html": {
+      "name": "MLJ2005",
+      "ts": "2026-06-06T17:26:30"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml61.html": {
+      "name": "MLJ2005",
+      "ts": "2026-06-06T17:26:54"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml62.html": {
+      "name": "MLJ2006",
+      "ts": "2026-06-06T17:27:17"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml63.html": {
+      "name": "MLJ2006",
+      "ts": "2026-06-06T17:27:40"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml64.html": {
+      "name": "MLJ2006",
+      "ts": "2026-06-06T17:28:04"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml65.html": {
+      "name": "MLJ2006",
+      "ts": "2026-06-06T17:28:29"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml66.html": {
+      "name": "MLJ2007",
+      "ts": "2026-06-06T17:28:52"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml67.html": {
+      "name": "MLJ2007",
+      "ts": "2026-06-06T17:29:16"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml68.html": {
+      "name": "MLJ2007",
+      "ts": "2026-06-06T17:29:39"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml69.html": {
+      "name": "MLJ2007",
+      "ts": "2026-06-06T17:30:03"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml70.html": {
+      "name": "MLJ2008",
+      "ts": "2026-06-06T17:30:26"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml71.html": {
+      "name": "MLJ2008",
+      "ts": "2026-06-06T17:30:50"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml72.html": {
+      "name": "MLJ2008",
+      "ts": "2026-06-06T17:31:13"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml73.html": {
+      "name": "MLJ2008",
+      "ts": "2026-06-06T17:31:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml74.html": {
+      "name": "MLJ2009",
+      "ts": "2026-06-06T17:32:00"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml75.html": {
+      "name": "MLJ2009",
+      "ts": "2026-06-06T17:32:24"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml76.html": {
+      "name": "MLJ2009",
+      "ts": "2026-06-06T17:32:47"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml77.html": {
+      "name": "MLJ2009",
+      "ts": "2026-06-06T17:33:11"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml78.html": {
+      "name": "MLJ2010",
+      "ts": "2026-06-06T17:33:34"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml79.html": {
+      "name": "MLJ2010",
+      "ts": "2026-06-06T17:33:58"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml80.html": {
+      "name": "MLJ2010",
+      "ts": "2026-06-06T17:34:21"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml81.html": {
+      "name": "MLJ2010",
+      "ts": "2026-06-06T17:34:45"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml82.html": {
+      "name": "MLJ2011",
+      "ts": "2026-06-06T17:35:09"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml83.html": {
+      "name": "MLJ2011",
+      "ts": "2026-06-06T17:35:33"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml84.html": {
+      "name": "MLJ2011",
+      "ts": "2026-06-06T17:35:57"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml85.html": {
+      "name": "MLJ2011",
+      "ts": "2026-06-06T17:36:21"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml86.html": {
+      "name": "MLJ2012",
+      "ts": "2026-06-06T17:36:44"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml87.html": {
+      "name": "MLJ2012",
+      "ts": "2026-06-06T17:37:08"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml88.html": {
+      "name": "MLJ2012",
+      "ts": "2026-06-06T17:37:31"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml89.html": {
+      "name": "MLJ2012",
+      "ts": "2026-06-06T17:37:55"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml90.html": {
+      "name": "MLJ2013",
+      "ts": "2026-06-06T17:38:18"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml91.html": {
+      "name": "MLJ2013",
+      "ts": "2026-06-06T17:38:41"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml92.html": {
+      "name": "MLJ2013",
+      "ts": "2026-06-06T17:39:05"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml93.html": {
+      "name": "MLJ2013",
+      "ts": "2026-06-06T17:39:28"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml94.html": {
+      "name": "MLJ2014",
+      "ts": "2026-06-06T17:39:52"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml95.html": {
+      "name": "MLJ2014",
+      "ts": "2026-06-06T17:40:16"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml96.html": {
+      "name": "MLJ2014",
+      "ts": "2026-06-06T17:40:39"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml97.html": {
+      "name": "MLJ2014",
+      "ts": "2026-06-06T17:41:03"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml98.html": {
+      "name": "MLJ2015",
+      "ts": "2026-06-06T17:41:26"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml99.html": {
+      "name": "MLJ2015",
+      "ts": "2026-06-06T17:41:50"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml100.html": {
+      "name": "MLJ2015",
+      "ts": "2026-06-06T17:42:15"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml101.html": {
+      "name": "MLJ2015",
+      "ts": "2026-06-06T17:42:38"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml102.html": {
+      "name": "MLJ2016",
+      "ts": "2026-06-06T17:43:02"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml103.html": {
+      "name": "MLJ2016",
+      "ts": "2026-06-06T17:43:25"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml104.html": {
+      "name": "MLJ2016",
+      "ts": "2026-06-06T17:43:49"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml105.html": {
+      "name": "MLJ2016",
+      "ts": "2026-06-06T17:44:13"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml106.html": {
+      "name": "MLJ2017",
+      "ts": "2026-06-06T17:44:36"
+    },
+    "DBLP::https://dblp.org/db/journals/ml/ml107.html": {
+      "name": "MLJ2018",
+      "ts": "2026-06-06T17:45:00"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2000.html": {
+      "name": "OSDI2000",
+      "ts": "2026-06-06T17:45:24"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2002.html": {
+      "name": "OSDI2002",
+      "ts": "2026-06-06T17:45:47"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2004.html": {
+      "name": "OSDI2004",
+      "ts": "2026-06-06T17:46:11"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/worlds2004.html": {
+      "name": "OSDI2004",
+      "ts": "2026-06-06T17:46:34"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2006.html": {
+      "name": "OSDI2006",
+      "ts": "2026-06-06T17:46:58"
+    },
+    "DBLP::https://dblp.org/db/conf/hotdep/hotdep2006.html": {
+      "name": "OSDI2006",
+      "ts": "2026-06-06T17:47:21"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/worlds2006.html": {
+      "name": "OSDI2006",
+      "ts": "2026-06-06T17:47:44"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2008.html": {
+      "name": "OSDI2008",
+      "ts": "2026-06-06T17:48:08"
+    },
+    "DBLP::https://dblp.org/db/conf/hotdep/hotdep2008.html": {
+      "name": "OSDI2008",
+      "ts": "2026-06-06T17:48:31"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/wasl2008.html": {
+      "name": "OSDI2008",
+      "ts": "2026-06-06T17:48:55"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/hotpower2008.html": {
+      "name": "OSDI2008",
+      "ts": "2026-06-06T17:49:18"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/wiov2008.html": {
+      "name": "OSDI2008",
+      "ts": "2026-06-06T17:49:42"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/sysml2008.html": {
+      "name": "OSDI2008",
+      "ts": "2026-06-06T17:50:05"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2010.html": {
+      "name": "OSDI2010",
+      "ts": "2026-06-06T17:50:29"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/slaml2010.html": {
+      "name": "OSDI2010",
+      "ts": "2026-06-06T17:50:52"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/netecon2010.html": {
+      "name": "OSDI2010",
+      "ts": "2026-06-06T17:51:16"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2012.html": {
+      "name": "OSDI2012",
+      "ts": "2026-06-06T17:51:41"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/hotpower2012.html": {
+      "name": "OSDI2012",
+      "ts": "2026-06-06T17:52:05"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/mad2012.html": {
+      "name": "OSDI2012",
+      "ts": "2026-06-06T17:52:28"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2014.html": {
+      "name": "OSDI2014",
+      "ts": "2026-06-06T17:52:52"
+    },
+    "DBLP::https://dblp.org/db/conf/hotdep/hotdep2014.html": {
+      "name": "OSDI2014",
+      "ts": "2026-06-06T17:53:15"
+    },
+    "DBLP::https://dblp.org/db/conf/hotpower/hotpower2014.html": {
+      "name": "OSDI2014",
+      "ts": "2026-06-06T17:53:39"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/inflow2014.html": {
+      "name": "OSDI2014",
+      "ts": "2026-06-06T17:54:02"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/trios2014.html": {
+      "name": "OSDI2014",
+      "ts": "2026-06-06T17:54:25"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2016.html": {
+      "name": "OSDI2016",
+      "ts": "2026-06-06T17:54:49"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/inflow2016.html": {
+      "name": "OSDI2016",
+      "ts": "2026-06-06T17:55:13"
+    },
+    "DBLP::https://dblp.org/db/conf/osdi/osdi2018.html": {
+      "name": "OSDI2018",
+      "ts": "2026-06-06T17:55:36"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2001.html": {
+      "name": "SOSP2001",
+      "ts": "2026-06-06T17:56:00"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2003.html": {
+      "name": "SOSP2003",
+      "ts": "2026-06-06T17:56:23"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2005.html": {
+      "name": "SOSP2005",
+      "ts": "2026-06-06T17:56:47"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2007.html": {
+      "name": "SOSP2007",
+      "ts": "2026-06-06T17:57:11"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/plos2007.html": {
+      "name": "SOSP2007",
+      "ts": "2026-06-06T17:57:35"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2009.html": {
+      "name": "SOSP2009",
+      "ts": "2026-06-06T17:57:58"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/plos2009.html": {
+      "name": "SOSP2009",
+      "ts": "2026-06-06T17:58:22"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2011.html": {
+      "name": "SOSP2011",
+      "ts": "2026-06-06T17:58:45"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/plos2011.html": {
+      "name": "SOSP2011",
+      "ts": "2026-06-06T17:59:09"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/hotpower2011.html": {
+      "name": "SOSP2011",
+      "ts": "2026-06-06T17:59:32"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/mobiheld2011.html": {
+      "name": "SOSP2011",
+      "ts": "2026-06-06T17:59:56"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2013.html": {
+      "name": "SOSP2013",
+      "ts": "2026-06-06T18:00:19"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/trios2013.html": {
+      "name": "SOSP2013",
+      "ts": "2026-06-06T18:00:43"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/inflow2013.html": {
+      "name": "SOSP2013",
+      "ts": "2026-06-06T18:01:06"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/plos2013.html": {
+      "name": "SOSP2013",
+      "ts": "2026-06-06T18:01:30"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/hotpower2013.html": {
+      "name": "SOSP2013",
+      "ts": "2026-06-06T18:01:54"
+    },
+    "DBLP::https://dblp.org/db/conf/hotdep/hotdep2013.html": {
+      "name": "SOSP2013",
+      "ts": "2026-06-06T18:02:18"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2015.html": {
+      "name": "SOSP2015",
+      "ts": "2026-06-06T18:02:42"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/inflow2015.html": {
+      "name": "SOSP2015",
+      "ts": "2026-06-06T18:03:05"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/plos2015.html": {
+      "name": "SOSP2015",
+      "ts": "2026-06-06T18:03:29"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/hotpower2015.html": {
+      "name": "SOSP2015",
+      "ts": "2026-06-06T18:03:52"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/history2015.html": {
+      "name": "SOSP2015",
+      "ts": "2026-06-06T18:04:16"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/sosp2017.html": {
+      "name": "SOSP2017",
+      "ts": "2026-06-06T18:04:39"
+    },
+    "DBLP::https://dblp.org/db/conf/sosp/plos2017.html": {
+      "name": "SOSP2017",
+      "ts": "2026-06-06T18:05:03"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2000.html": {
+      "name": "ISCA2000",
+      "ts": "2026-06-06T18:05:27"
+    },
+    "DBLP::https://dblp.org/db/conf/wcae/wcae2000.html": {
+      "name": "ISCA2000",
+      "ts": "2026-06-06T18:05:50"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2001.html": {
+      "name": "ISCA2001",
+      "ts": "2026-06-06T18:06:14"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2002.html": {
+      "name": "ISCA2002",
+      "ts": "2026-06-06T18:06:37"
+    },
+    "DBLP::https://dblp.org/db/conf/wcae/wcae2002.html": {
+      "name": "ISCA2002",
+      "ts": "2026-06-06T18:07:01"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2003.html": {
+      "name": "ISCA2003",
+      "ts": "2026-06-06T18:07:25"
+    },
+    "DBLP::https://dblp.org/db/conf/wcae/wcae2003.html": {
+      "name": "ISCA2003",
+      "ts": "2026-06-06T18:07:48"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2004.html": {
+      "name": "ISCA2004",
+      "ts": "2026-06-06T18:08:12"
+    },
+    "DBLP::https://dblp.org/db/conf/wcae/wcae2004.html": {
+      "name": "ISCA2004",
+      "ts": "2026-06-06T18:08:36"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2005.html": {
+      "name": "ISCA2005",
+      "ts": "2026-06-06T18:08:59"
+    },
+    "DBLP::https://dblp.org/db/conf/wcae/wcae2005.html": {
+      "name": "ISCA2005",
+      "ts": "2026-06-06T18:09:23"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2006.html": {
+      "name": "ISCA2006",
+      "ts": "2026-06-06T18:09:47"
+    },
+    "DBLP::https://dblp.org/db/conf/wcae/wcae2006.html": {
+      "name": "ISCA2006",
+      "ts": "2026-06-06T18:10:10"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2007.html": {
+      "name": "ISCA2007",
+      "ts": "2026-06-06T18:10:34"
+    },
+    "DBLP::https://dblp.org/db/conf/wcae/wcae2007.html": {
+      "name": "ISCA2007",
+      "ts": "2026-06-06T18:10:59"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2008.html": {
+      "name": "ISCA2008",
+      "ts": "2026-06-06T18:11:22"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2009.html": {
+      "name": "ISCA2009",
+      "ts": "2026-06-06T18:11:46"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2010.html": {
+      "name": "ISCA2010",
+      "ts": "2026-06-06T18:12:10"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2011.html": {
+      "name": "ISCA2011",
+      "ts": "2026-06-06T18:12:34"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2012.html": {
+      "name": "ISCA2012",
+      "ts": "2026-06-06T18:12:58"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2013.html": {
+      "name": "ISCA2013",
+      "ts": "2026-06-06T18:13:22"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/mes2013.html": {
+      "name": "ISCA2013",
+      "ts": "2026-06-06T18:13:45"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/hasp2013.html": {
+      "name": "ISCA2013",
+      "ts": "2026-06-06T18:14:09"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2014.html": {
+      "name": "ISCA2014",
+      "ts": "2026-06-06T18:14:33"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/mes2014.html": {
+      "name": "ISCA2014",
+      "ts": "2026-06-06T18:14:57"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/hasp2014.html": {
+      "name": "ISCA2014",
+      "ts": "2026-06-06T18:15:20"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2015.html": {
+      "name": "ISCA2015",
+      "ts": "2026-06-06T18:15:44"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/mes2015.html": {
+      "name": "ISCA2015",
+      "ts": "2026-06-06T18:16:07"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/hasp2015.html": {
+      "name": "ISCA2015",
+      "ts": "2026-06-06T18:16:31"
+    },
+    "DBLP::https://dblp.org/db/conf/wcae/wcae2015.html": {
+      "name": "ISCA2015",
+      "ts": "2026-06-06T18:16:54"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2016.html": {
+      "name": "ISCA2016",
+      "ts": "2026-06-06T18:17:18"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/hasp2016.html": {
+      "name": "ISCA2016",
+      "ts": "2026-06-06T18:17:42"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/mes2016.html": {
+      "name": "ISCA2016",
+      "ts": "2026-06-06T18:18:06"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2017.html": {
+      "name": "ISCA2017",
+      "ts": "2026-06-06T18:18:31"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/hasp2017.html": {
+      "name": "ISCA2017",
+      "ts": "2026-06-06T18:18:54"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/timl2017.html": {
+      "name": "ISCA2017",
+      "ts": "2026-06-06T18:19:18"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/isca2018.html": {
+      "name": "ISCA2018",
+      "ts": "2026-06-06T18:19:42"
+    },
+    "DBLP::https://dblp.org/db/conf/isca/hasp2018.html": {
+      "name": "ISCA2018",
+      "ts": "2026-06-06T18:20:05"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2006.html": {
+      "name": "EUROSYS2006",
+      "ts": "2026-06-06T18:20:29"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2007.html": {
+      "name": "EUROSYS2007",
+      "ts": "2026-06-06T18:20:53"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/mai2007.html": {
+      "name": "EUROSYS2007",
+      "ts": "2026-06-06T18:21:16"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2008.html": {
+      "name": "EUROSYS2008",
+      "ts": "2026-06-06T18:21:40"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosec/eurosec2008.html": {
+      "name": "EUROSYS2008",
+      "ts": "2026-06-06T18:22:03"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/hpcvirt2008.html": {
+      "name": "EUROSYS2008",
+      "ts": "2026-06-06T18:22:27"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/iies2008.html": {
+      "name": "EUROSYS2008",
+      "ts": "2026-06-06T18:22:50"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/minema2008.html": {
+      "name": "EUROSYS2008",
+      "ts": "2026-06-06T18:23:14"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/realwsn2008.html": {
+      "name": "EUROSYS2008",
+      "ts": "2026-06-06T18:23:38"
+    },
+    "DBLP::https://dblp.org/db/conf/sns/sns2008.html": {
+      "name": "EUROSYS2008",
+      "ts": "2026-06-06T18:24:01"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/wdddm2008.html": {
+      "name": "EUROSYS2008",
+      "ts": "2026-06-06T18:24:25"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2009.html": {
+      "name": "EUROSYS2009",
+      "ts": "2026-06-06T18:24:49"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosec/eurosec2009.html": {
+      "name": "EUROSYS2009",
+      "ts": "2026-06-06T18:25:12"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/hpcvirt2009.html": {
+      "name": "EUROSYS2009",
+      "ts": "2026-06-06T18:25:36"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/iies2009.html": {
+      "name": "EUROSYS2009",
+      "ts": "2026-06-06T18:25:59"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/vdts2009.html": {
+      "name": "EUROSYS2009",
+      "ts": "2026-06-06T18:26:23"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/wdddm2009.html": {
+      "name": "EUROSYS2009",
+      "ts": "2026-06-06T18:26:47"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2010.html": {
+      "name": "EUROSYS2010",
+      "ts": "2026-06-06T18:27:10"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosec/eurosec2010.html": {
+      "name": "EUROSYS2010",
+      "ts": "2026-06-06T18:27:34"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/febid2010.html": {
+      "name": "EUROSYS2010",
+      "ts": "2026-06-06T18:27:57"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2011.html": {
+      "name": "EUROSYS2011",
+      "ts": "2026-06-06T18:28:21"
+    },
+    "DBLP::https://dblp.org/db/conf/badgers/badgers2011.html": {
+      "name": "EUROSYS2011",
+      "ts": "2026-06-06T18:28:44"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/cloudcp2011.html": {
+      "name": "EUROSYS2011",
+      "ts": "2026-06-06T18:29:08"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosec/eurosec2011.html": {
+      "name": "EUROSYS2011",
+      "ts": "2026-06-06T18:29:32"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2012.html": {
+      "name": "EUROSYS2012",
+      "ts": "2026-06-06T18:29:57"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/cloudcp2012.html": {
+      "name": "EUROSYS2012",
+      "ts": "2026-06-06T18:30:20"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/hotcdp2012.html": {
+      "name": "EUROSYS2012",
+      "ts": "2026-06-06T18:30:44"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/mpm2012.html": {
+      "name": "EUROSYS2012",
+      "ts": "2026-06-06T18:31:07"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2013.html": {
+      "name": "EUROSYS2013",
+      "ts": "2026-06-06T18:31:31"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/clouddp2013.html": {
+      "name": "EUROSYS2013",
+      "ts": "2026-06-06T18:31:54"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2014.html": {
+      "name": "EUROSYS2014",
+      "ts": "2026-06-06T18:32:18"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/clouddp2014.html": {
+      "name": "EUROSYS2014",
+      "ts": "2026-06-06T18:32:42"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosec/eurosec2014.html": {
+      "name": "EUROSYS2014",
+      "ts": "2026-06-06T18:33:05"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/papec2014.html": {
+      "name": "EUROSYS2014",
+      "ts": "2026-06-06T18:33:29"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2015.html": {
+      "name": "EUROSYS2015",
+      "ts": "2026-06-06T18:33:53"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/aimc2015.html": {
+      "name": "EUROSYS2015",
+      "ts": "2026-06-06T18:34:16"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/awes2015.html": {
+      "name": "EUROSYS2015",
+      "ts": "2026-06-06T18:34:40"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/clouddp2015.html": {
+      "name": "EUROSYS2015",
+      "ts": "2026-06-06T18:35:03"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosec/eurosec2015.html": {
+      "name": "EUROSYS2015",
+      "ts": "2026-06-06T18:35:27"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/papoc2015.html": {
+      "name": "EUROSYS2015",
+      "ts": "2026-06-06T18:35:50"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2016.html": {
+      "name": "EUROSYS2016",
+      "ts": "2026-06-06T18:36:14"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/crosscloud2016.html": {
+      "name": "EUROSYS2016",
+      "ts": "2026-06-06T18:36:37"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosec/eurosec2016.html": {
+      "name": "EUROSYS2016",
+      "ts": "2026-06-06T18:37:01"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/papoc2016.html": {
+      "name": "EUROSYS2016",
+      "ts": "2026-06-06T18:37:25"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2017.html": {
+      "name": "EUROSYS2017",
+      "ts": "2026-06-06T18:37:48"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/cloudng2017.html": {
+      "name": "EUROSYS2017",
+      "ts": "2026-06-06T18:38:12"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/ccb2017.html": {
+      "name": "EUROSYS2017",
+      "ts": "2026-06-06T18:38:35"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosec/eurosec2017.html": {
+      "name": "EUROSYS2017",
+      "ts": "2026-06-06T18:38:58"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/papoc2017.html": {
+      "name": "EUROSYS2017",
+      "ts": "2026-06-06T18:39:22"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/xdomo2017.html": {
+      "name": "EUROSYS2017",
+      "ts": "2026-06-06T18:39:45"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosys2018.html": {
+      "name": "EUROSYS2018",
+      "ts": "2026-06-06T18:40:09"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/crosscloud2018.html": {
+      "name": "EUROSYS2018",
+      "ts": "2026-06-06T18:40:33"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/eurosec2018.html": {
+      "name": "EUROSYS2018",
+      "ts": "2026-06-06T18:40:56"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/p2ds2018.html": {
+      "name": "EUROSYS2018",
+      "ts": "2026-06-06T18:41:20"
+    },
+    "DBLP::https://dblp.org/db/conf/eurosys/papoc2018.html": {
+      "name": "EUROSYS2018",
+      "ts": "2026-06-06T18:41:43"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2000.html": {
+      "name": "FOCS2000",
+      "ts": "2026-06-06T18:42:07"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2001.html": {
+      "name": "FOCS2001",
+      "ts": "2026-06-06T18:42:32"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2002.html": {
+      "name": "FOCS2002",
+      "ts": "2026-06-06T18:42:57"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2003.html": {
+      "name": "FOCS2003",
+      "ts": "2026-06-06T18:43:21"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2004.html": {
+      "name": "FOCS2004",
+      "ts": "2026-06-06T18:43:44"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2005.html": {
+      "name": "FOCS2005",
+      "ts": "2026-06-06T18:44:08"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2006.html": {
+      "name": "FOCS2006",
+      "ts": "2026-06-06T18:44:32"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2007.html": {
+      "name": "FOCS2007",
+      "ts": "2026-06-06T18:44:56"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2008.html": {
+      "name": "FOCS2008",
+      "ts": "2026-06-06T18:45:20"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2009.html": {
+      "name": "FOCS2009",
+      "ts": "2026-06-06T18:45:46"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2010.html": {
+      "name": "FOCS2010",
+      "ts": "2026-06-06T18:46:10"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2011.html": {
+      "name": "FOCS2011",
+      "ts": "2026-06-06T18:46:34"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2012.html": {
+      "name": "FOCS2012",
+      "ts": "2026-06-06T18:46:58"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2013.html": {
+      "name": "FOCS2013",
+      "ts": "2026-06-06T18:47:22"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2014.html": {
+      "name": "FOCS2014",
+      "ts": "2026-06-06T18:47:46"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2015.html": {
+      "name": "FOCS2015",
+      "ts": "2026-06-06T18:48:10"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2016.html": {
+      "name": "FOCS2016",
+      "ts": "2026-06-06T18:48:34"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2017.html": {
+      "name": "FOCS2017",
+      "ts": "2026-06-06T18:49:00"
+    },
+    "DBLP::https://dblp.org/db/conf/focs/focs2018.html": {
+      "name": "FOCS2018",
+      "ts": "2026-06-06T18:49:24"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2000.html": {
+      "name": "VR2000",
+      "ts": "2026-06-06T18:49:48"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2001.html": {
+      "name": "VR2001",
+      "ts": "2026-06-06T18:50:12"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2002.html": {
+      "name": "VR2002",
+      "ts": "2026-06-06T18:50:36"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2003.html": {
+      "name": "VR2003",
+      "ts": "2026-06-06T18:51:00"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2004.html": {
+      "name": "VR2004",
+      "ts": "2026-06-06T18:51:24"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2005.html": {
+      "name": "VR2005",
+      "ts": "2026-06-06T18:51:48"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2006.html": {
+      "name": "VR2006",
+      "ts": "2026-06-06T18:52:12"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2007.html": {
+      "name": "VR2007",
+      "ts": "2026-06-06T18:52:37"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2008.html": {
+      "name": "VR2008",
+      "ts": "2026-06-06T18:53:01"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2009.html": {
+      "name": "VR2009",
+      "ts": "2026-06-06T18:53:25"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2010.html": {
+      "name": "VR2010",
+      "ts": "2026-06-06T18:53:49"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2011.html": {
+      "name": "VR2011",
+      "ts": "2026-06-06T18:54:14"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2012.html": {
+      "name": "VR2012",
+      "ts": "2026-06-06T18:54:38"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2013.html": {
+      "name": "VR2013",
+      "ts": "2026-06-06T18:55:02"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2014.html": {
+      "name": "VR2014",
+      "ts": "2026-06-06T18:55:26"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2015.html": {
+      "name": "VR2015",
+      "ts": "2026-06-06T18:55:53"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2016.html": {
+      "name": "VR2016",
+      "ts": "2026-06-06T18:56:17"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2017.html": {
+      "name": "VR2017",
+      "ts": "2026-06-06T18:56:42"
+    },
+    "DBLP::https://dblp.org/db/conf/vr/vr2018.html": {
+      "name": "VR2018",
+      "ts": "2026-06-06T18:57:10"
+    },
+    "DBLP::https://dblp.org/db/conf/visualization/visualization2000.html": {
+      "name": "IEEEVIS2000",
+      "ts": "2026-06-06T18:57:34"
+    },
+    "DBLP::https://dblp.org/db/conf/infovis/infovis2000.html": {
+      "name": "IEEEVIS2000",
+      "ts": "2026-06-06T18:57:58"
+    },
+    "DBLP::https://dblp.org/db/conf/visualization/visualization2001.html": {
+      "name": "IEEEVIS2001",
+      "ts": "2026-06-06T18:58:22"
+    },
+    "DBLP::https://dblp.org/db/conf/infovis/infovis2001.html": {
+      "name": "IEEEVIS2001",
+      "ts": "2026-06-06T18:58:45"
+    },
+    "DBLP::https://dblp.org/db/conf/visualization/visualization2002.html": {
+      "name": "IEEEVIS2002",
+      "ts": "2026-06-06T18:59:09"
+    },
+    "DBLP::https://dblp.org/db/conf/infovis/infovis2002.html": {
+      "name": "IEEEVIS2002",
+      "ts": "2026-06-06T18:59:33"
+    },
+    "DBLP::https://dblp.org/db/conf/visualization/visualization2003.html": {
+      "name": "IEEEVIS2003",
+      "ts": "2026-06-06T18:59:57"
+    },
+    "DBLP::https://dblp.org/db/conf/infovis/infovis2003.html": {
+      "name": "IEEEVIS2003",
+      "ts": "2026-06-06T19:00:21"
+    },
+    "DBLP::https://dblp.org/db/conf/visualization/visualization2004.html": {
+      "name": "IEEEVIS2004",
+      "ts": "2026-06-06T19:00:46"
+    },
+    "DBLP::https://dblp.org/db/conf/infovis/infovis2004.html": {
+      "name": "IEEEVIS2004",
+      "ts": "2026-06-06T19:01:10"
+    },
+    "DBLP::https://dblp.org/db/conf/visualization/visualization2005.html": {
+      "name": "IEEEVIS2005",
+      "ts": "2026-06-06T19:01:36"
+    },
+    "DBLP::https://dblp.org/db/conf/infovis/infovis2005.html": {
+      "name": "IEEEVIS2005",
+      "ts": "2026-06-06T19:02:00"
+    },
+    "DBLP::https://dblp.org/db/conf/visualization/3dvis2014.html": {
+      "name": "IEEEVIS2014",
+      "ts": "2026-06-06T19:02:24"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/siggraph2000.html": {
+      "name": "SIGGRAPH2000",
+      "ts": "2026-06-06T19:02:48"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/siggraph2001.html": {
+      "name": "SIGGRAPH2001",
+      "ts": "2026-06-06T19:03:12"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/siggraph2003.html": {
+      "name": "SIGGRAPH2003",
+      "ts": "2026-06-06T19:03:37"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/sandbox2006.html": {
+      "name": "SIGGRAPH2006",
+      "ts": "2026-06-06T19:04:00"
+    },
+    "DBLP::https://dblp.org/db/conf/spbg/spbg2006.html": {
+      "name": "SIGGRAPH2006",
+      "ts": "2026-06-06T19:04:24"
+    },
+    "DBLP::https://dblp.org/db/conf/vg/vg2006.html": {
+      "name": "SIGGRAPH2006",
+      "ts": "2026-06-06T19:04:48"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/sandbox2007.html": {
+      "name": "SIGGRAPH2007",
+      "ts": "2026-06-06T19:05:12"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/edt2007.html": {
+      "name": "SIGGRAPH2007",
+      "ts": "2026-06-06T19:05:35"
+    },
+    "DBLP::https://dblp.org/db/conf/vg/vg2008.html": {
+      "name": "SIGGRAPH2008",
+      "ts": "2026-06-06T19:05:59"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/sandbox2008.html": {
+      "name": "SIGGRAPH2008",
+      "ts": "2026-06-06T19:06:23"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/sandbox2009.html": {
+      "name": "SIGGRAPH2009",
+      "ts": "2026-06-06T19:06:47"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/sandbox2010.html": {
+      "name": "SIGGRAPH2010",
+      "ts": "2026-06-06T19:07:11"
+    },
+    "DBLP::https://dblp.org/db/conf/siggraph/sandbox2011.html": {
+      "name": "SIGGRAPH2011",
+      "ts": "2026-06-06T19:07:36"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2000.html": {
+      "name": "SC2000",
+      "ts": "2026-06-06T19:08:00"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2001.html": {
+      "name": "SC2001",
+      "ts": "2026-06-06T19:08:24"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2002.html": {
+      "name": "SC2002",
+      "ts": "2026-06-06T19:08:48"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2003.html": {
+      "name": "SC2003",
+      "ts": "2026-06-06T19:09:12"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2004.html": {
+      "name": "SC2004",
+      "ts": "2026-06-06T19:09:35"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2005.html": {
+      "name": "SC2005",
+      "ts": "2026-06-06T19:10:00"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2006.html": {
+      "name": "SC2006",
+      "ts": "2026-06-06T19:10:28"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/vtdc2006.html": {
+      "name": "SC2006",
+      "ts": "2026-06-06T19:10:52"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2007.html": {
+      "name": "SC2007",
+      "ts": "2026-06-06T19:11:16"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/chinahpc2007.html": {
+      "name": "SC2007",
+      "ts": "2026-06-06T19:11:40"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/pdsw2007.html": {
+      "name": "SC2007",
+      "ts": "2026-06-06T19:12:03"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hprcta2007.html": {
+      "name": "SC2007",
+      "ts": "2026-06-06T19:12:27"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/vtdc2007.html": {
+      "name": "SC2007",
+      "ts": "2026-06-06T19:12:51"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2008.html": {
+      "name": "SC2008",
+      "ts": "2026-06-06T19:13:15"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hprcta2008.html": {
+      "name": "SC2008",
+      "ts": "2026-06-06T19:13:39"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/mtags2008.html": {
+      "name": "SC2008",
+      "ts": "2026-06-06T19:14:02"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2009.html": {
+      "name": "SC2009",
+      "ts": "2026-06-06T19:14:27"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/gce2009.html": {
+      "name": "SC2009",
+      "ts": "2026-06-06T19:14:50"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/mtags2009.html": {
+      "name": "SC2009",
+      "ts": "2026-06-06T19:15:14"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hprcta2009.html": {
+      "name": "SC2009",
+      "ts": "2026-06-06T19:15:37"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/whpcf2009.html": {
+      "name": "SC2009",
+      "ts": "2026-06-06T19:16:01"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2010.html": {
+      "name": "SC2010",
+      "ts": "2026-06-06T19:16:25"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/mtags2010.html": {
+      "name": "SC2010",
+      "ts": "2026-06-06T19:16:49"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hprcta2010.html": {
+      "name": "SC2010",
+      "ts": "2026-06-06T19:17:12"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2011.html": {
+      "name": "SC2011",
+      "ts": "2026-06-06T19:17:38"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/gce2011.html": {
+      "name": "SC2011",
+      "ts": "2026-06-06T19:18:02"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/whpcf2011.html": {
+      "name": "SC2011",
+      "ts": "2026-06-06T19:18:26"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/scala2011.html": {
+      "name": "SC2011",
+      "ts": "2026-06-06T19:18:49"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/mtags2011.html": {
+      "name": "SC2011",
+      "ts": "2026-06-06T19:19:13"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2012.html": {
+      "name": "SC2012",
+      "ts": "2026-06-06T19:19:38"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:20:02"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/e2sc2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:20:26"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hipcnapg2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:20:49"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/ndm2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:21:13"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/pdsw2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:21:36"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/scala2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:22:00"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sehpccse2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:22:24"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/ultravis2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:22:47"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/vhpc2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:23:11"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/whpcf2013.html": {
+      "name": "SC2013",
+      "ts": "2026-06-06T19:23:35"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:23:59"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/cohpc2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:24:23"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/e2sc2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:24:47"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/gce2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:25:11"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hptcdl2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:25:34"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hust2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:25:58"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/ndm2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:26:22"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/pdsw2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:26:46"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/scala2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:27:09"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sehpccse2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:27:33"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/vpa2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:27:57"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/whpcf2014.html": {
+      "name": "SC2014",
+      "ts": "2026-06-06T19:28:22"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:28:46"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/cohpc2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:29:10"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/e2sc2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:29:33"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hust2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:29:57"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/pdsw2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:30:21"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/pyhpc2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:30:45"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/vpa2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:31:09"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/whpcf2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:31:32"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/espt2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:31:56"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/ndm2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:32:20"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/scala2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:32:44"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sehpccse2015.html": {
+      "name": "SC2015",
+      "ts": "2026-06-06T19:33:07"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:33:32"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/comhpc2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:33:56"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/e2sc2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:34:19"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/espt2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:34:43"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hpgdmp2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:35:07"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/hust2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:35:31"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/mtags2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:35:54"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/paw2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:36:18"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/pyhpc2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:36:42"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/scala2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:37:05"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sehpccse2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:37:29"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/vpa2016.html": {
+      "name": "SC2016",
+      "ts": "2026-06-06T19:37:53"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2017.html": {
+      "name": "SC2017",
+      "ts": "2026-06-06T19:38:17"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/e2sc2017.html": {
+      "name": "SC2017",
+      "ts": "2026-06-06T19:38:40"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/scala2017.html": {
+      "name": "SC2017",
+      "ts": "2026-06-06T19:39:04"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/paw2017.html": {
+      "name": "SC2017",
+      "ts": "2026-06-06T19:39:28"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/pyhpc2017.html": {
+      "name": "SC2017",
+      "ts": "2026-06-06T19:39:52"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/sc2018.html": {
+      "name": "SC2018",
+      "ts": "2026-06-06T19:40:18"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/ftxs2018.html": {
+      "name": "SC2018",
+      "ts": "2026-06-06T19:40:41"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/mchpc2018.html": {
+      "name": "SC2018",
+      "ts": "2026-06-06T19:41:05"
+    },
+    "DBLP::https://dblp.org/db/conf/sc/espt2018.html": {
+      "name": "SC2018",
+      "ts": "2026-06-06T19:41:29"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2000.html": {
+      "name": "ASPLOS2000",
+      "ts": "2026-06-06T19:41:53"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2002.html": {
+      "name": "ASPLOS2002",
+      "ts": "2026-06-06T19:42:16"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2004.html": {
+      "name": "ASPLOS2004",
+      "ts": "2026-06-06T19:42:40"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2006.html": {
+      "name": "ASPLOS2006",
+      "ts": "2026-06-06T19:43:04"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/plos2006.html": {
+      "name": "ASPLOS2006",
+      "ts": "2026-06-06T19:43:28"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asid2006.html": {
+      "name": "ASPLOS2006",
+      "ts": "2026-06-06T19:43:52"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2008.html": {
+      "name": "ASPLOS2008",
+      "ts": "2026-06-06T19:44:15"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/mspc2008.html": {
+      "name": "ASPLOS2008",
+      "ts": "2026-06-06T19:44:39"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2009.html": {
+      "name": "ASPLOS2009",
+      "ts": "2026-06-06T19:45:03"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/gpgpu2009.html": {
+      "name": "ASPLOS2009",
+      "ts": "2026-06-06T19:45:27"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2010.html": {
+      "name": "ASPLOS2010",
+      "ts": "2026-06-06T19:45:51"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/gpgpu2010.html": {
+      "name": "ASPLOS2010",
+      "ts": "2026-06-06T19:46:15"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2011.html": {
+      "name": "ASPLOS2011",
+      "ts": "2026-06-06T19:46:38"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/gpgpu2011.html": {
+      "name": "ASPLOS2011",
+      "ts": "2026-06-06T19:47:02"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/change2011.html": {
+      "name": "ASPLOS2011",
+      "ts": "2026-06-06T19:47:26"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2012.html": {
+      "name": "ASPLOS2012",
+      "ts": "2026-06-06T19:47:50"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/gpgpu2012.html": {
+      "name": "ASPLOS2012",
+      "ts": "2026-06-06T19:48:13"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2013.html": {
+      "name": "ASPLOS2013",
+      "ts": "2026-06-06T19:48:37"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/gpgpu2013.html": {
+      "name": "ASPLOS2013",
+      "ts": "2026-06-06T19:49:01"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2014.html": {
+      "name": "ASPLOS2014",
+      "ts": "2026-06-06T19:49:26"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/gpgpu2014.html": {
+      "name": "ASPLOS2014",
+      "ts": "2026-06-06T19:49:50"
+    },
+    "DBLP::https://dblp.org/db/conf/vldb/bpoe2014.html": {
+      "name": "ASPLOS2014",
+      "ts": "2026-06-06T19:50:14"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2015.html": {
+      "name": "ASPLOS2015",
+      "ts": "2026-06-06T19:50:38"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2016.html": {
+      "name": "ASPLOS2016",
+      "ts": "2026-06-06T19:51:02"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2017.html": {
+      "name": "ASPLOS2017",
+      "ts": "2026-06-06T19:51:25"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/etcd2017.html": {
+      "name": "ASPLOS2017",
+      "ts": "2026-06-06T19:51:49"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/asplos2018.html": {
+      "name": "ASPLOS2018",
+      "ts": "2026-06-06T19:52:13"
+    },
+    "DBLP::https://dblp.org/db/conf/asplos/request2018.html": {
+      "name": "ASPLOS2018",
+      "ts": "2026-06-06T19:52:37"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2007.html": {
+      "name": "ATC2007",
+      "ts": "2026-06-06T19:53:01"
+    },
+    "DBLP::https://dblp.org/db/conf/sruti/sruti2007.html": {
+      "name": "ATC2007",
+      "ts": "2026-06-06T19:53:24"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2008.html": {
+      "name": "ATC2008",
+      "ts": "2026-06-06T19:53:48"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/lasco2008.html": {
+      "name": "ATC2008",
+      "ts": "2026-06-06T19:54:11"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2009.html": {
+      "name": "ATC2009",
+      "ts": "2026-06-06T19:54:36"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2010.html": {
+      "name": "ATC2010",
+      "ts": "2026-06-06T19:54:59"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2011.html": {
+      "name": "ATC2011",
+      "ts": "2026-06-06T19:55:23"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/wiov2011.html": {
+      "name": "ATC2011",
+      "ts": "2026-06-06T19:55:47"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2012.html": {
+      "name": "ATC2012",
+      "ts": "2026-06-06T19:56:11"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2013.html": {
+      "name": "ATC2013",
+      "ts": "2026-06-06T19:56:34"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/esos2013.html": {
+      "name": "ATC2013",
+      "ts": "2026-06-06T19:57:00"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2014.html": {
+      "name": "ATC2014",
+      "ts": "2026-06-06T19:57:24"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2015.html": {
+      "name": "ATC2015",
+      "ts": "2026-06-06T19:57:48"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2016.html": {
+      "name": "ATC2016",
+      "ts": "2026-06-06T19:58:12"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2017.html": {
+      "name": "ATC2017",
+      "ts": "2026-06-06T19:58:36"
+    },
+    "DBLP::https://dblp.org/db/conf/usenix/usenix2018.html": {
+      "name": "ATC2018",
+      "ts": "2026-06-06T19:59:01"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2000.html": {
+      "name": "HPDC2000",
+      "ts": "2026-06-06T19:59:24"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2001.html": {
+      "name": "HPDC2001",
+      "ts": "2026-06-06T19:59:48"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2002.html": {
+      "name": "HPDC2002",
+      "ts": "2026-06-06T20:00:12"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2003.html": {
+      "name": "HPDC2003",
+      "ts": "2026-06-06T20:00:36"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2004.html": {
+      "name": "HPDC2004",
+      "ts": "2026-06-06T20:01:00"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2005.html": {
+      "name": "HPDC2005",
+      "ts": "2026-06-06T20:01:24"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2006.html": {
+      "name": "HPDC2006",
+      "ts": "2026-06-06T20:01:49"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2007.html": {
+      "name": "HPDC2007",
+      "ts": "2026-06-06T20:02:13"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/upgrade2007.html": {
+      "name": "HPDC2007",
+      "ts": "2026-06-06T20:02:36"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/gmw2007.html": {
+      "name": "HPDC2007",
+      "ts": "2026-06-06T20:03:00"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/socp2007.html": {
+      "name": "HPDC2007",
+      "ts": "2026-06-06T20:03:24"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2008.html": {
+      "name": "HPDC2008",
+      "ts": "2026-06-06T20:03:48"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/upgrade2008.html": {
+      "name": "HPDC2008",
+      "ts": "2026-06-06T20:04:11"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2009.html": {
+      "name": "HPDC2009",
+      "ts": "2026-06-06T20:04:35"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/upgrade2009.html": {
+      "name": "HPDC2009",
+      "ts": "2026-06-06T20:04:59"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2010.html": {
+      "name": "HPDC2010",
+      "ts": "2026-06-06T20:05:24"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2011.html": {
+      "name": "HPDC2011",
+      "ts": "2026-06-06T20:05:48"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/dict2011.html": {
+      "name": "HPDC2011",
+      "ts": "2026-06-06T20:06:12"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/vtdc2011.html": {
+      "name": "HPDC2011",
+      "ts": "2026-06-06T20:06:35"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2012.html": {
+      "name": "HPDC2012",
+      "ts": "2026-06-06T20:06:59"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/dict2012.html": {
+      "name": "HPDC2012",
+      "ts": "2026-06-06T20:07:23"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/vtdc2012.html": {
+      "name": "HPDC2012",
+      "ts": "2026-06-06T20:07:47"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2013.html": {
+      "name": "HPDC2013",
+      "ts": "2026-06-06T20:08:11"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/ftxs2013.html": {
+      "name": "HPDC2013",
+      "ts": "2026-06-06T20:08:35"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/ormacloud2013.html": {
+      "name": "HPDC2013",
+      "ts": "2026-06-06T20:08:59"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hppn2013.html": {
+      "name": "HPDC2013",
+      "ts": "2026-06-06T20:09:22"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/vtdc2013.html": {
+      "name": "HPDC2013",
+      "ts": "2026-06-06T20:09:46"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2014.html": {
+      "name": "HPDC2014",
+      "ts": "2026-06-06T20:10:10"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/psfw2014.html": {
+      "name": "HPDC2014",
+      "ts": "2026-06-06T20:10:34"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/bigsystem2014.html": {
+      "name": "HPDC2014",
+      "ts": "2026-06-06T20:10:57"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/dict2014.html": {
+      "name": "HPDC2014",
+      "ts": "2026-06-06T20:11:21"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2015.html": {
+      "name": "HPDC2015",
+      "ts": "2026-06-06T20:11:45"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/bigsystem2015.html": {
+      "name": "HPDC2015",
+      "ts": "2026-06-06T20:12:09"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/ftxs2015.html": {
+      "name": "HPDC2015",
+      "ts": "2026-06-06T20:12:35"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/ross2015.html": {
+      "name": "HPDC2015",
+      "ts": "2026-06-06T20:12:58"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/scream2015.html": {
+      "name": "HPDC2015",
+      "ts": "2026-06-06T20:13:22"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/clhs2015.html": {
+      "name": "HPDC2015",
+      "ts": "2026-06-06T20:13:46"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/vtdc2015.html": {
+      "name": "HPDC2015",
+      "ts": "2026-06-06T20:14:09"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2016.html": {
+      "name": "HPDC2016",
+      "ts": "2026-06-06T20:14:33"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/ftxs2016.html": {
+      "name": "HPDC2016",
+      "ts": "2026-06-06T20:14:57"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/sem4hpc2016.html": {
+      "name": "HPDC2016",
+      "ts": "2026-06-06T20:15:21"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpgp2016.html": {
+      "name": "HPDC2016",
+      "ts": "2026-06-06T20:15:45"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/ross2016.html": {
+      "name": "HPDC2016",
+      "ts": "2026-06-06T20:16:08"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/didc2016.html": {
+      "name": "HPDC2016",
+      "ts": "2026-06-06T20:16:32"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2017.html": {
+      "name": "HPDC2017",
+      "ts": "2026-06-06T20:16:56"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/sem4hpc2017.html": {
+      "name": "HPDC2017",
+      "ts": "2026-06-06T20:17:20"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/ftxs2017.html": {
+      "name": "HPDC2017",
+      "ts": "2026-06-06T20:17:44"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/ross2017.html": {
+      "name": "HPDC2017",
+      "ts": "2026-06-06T20:18:07"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/hpdc2018.html": {
+      "name": "HPDC2018",
+      "ts": "2026-06-06T20:18:32"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/aiscience2018.html": {
+      "name": "HPDC2018",
+      "ts": "2026-06-06T20:18:55"
+    },
+    "DBLP::https://dblp.org/db/conf/hpdc/ross2018.html": {
+      "name": "HPDC2018",
+      "ts": "2026-06-06T20:19:19"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2000.html": {
+      "name": "PLDI2000",
+      "ts": "2026-06-06T20:19:43"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2001.html": {
+      "name": "PLDI2001",
+      "ts": "2026-06-06T20:20:07"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/om2001.html": {
+      "name": "PLDI2001",
+      "ts": "2026-06-06T20:20:31"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2002.html": {
+      "name": "PLDI2002",
+      "ts": "2026-06-06T20:20:55"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2003.html": {
+      "name": "PLDI2003",
+      "ts": "2026-06-06T20:21:19"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2004.html": {
+      "name": "PLDI2004",
+      "ts": "2026-06-06T20:21:43"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2005.html": {
+      "name": "PLDI2005",
+      "ts": "2026-06-06T20:22:07"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2006.html": {
+      "name": "PLDI2006",
+      "ts": "2026-06-06T20:22:31"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2007.html": {
+      "name": "PLDI2007",
+      "ts": "2026-06-06T20:22:55"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2008.html": {
+      "name": "PLDI2008",
+      "ts": "2026-06-06T20:23:21"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2009.html": {
+      "name": "PLDI2009",
+      "ts": "2026-06-06T20:23:44"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2010.html": {
+      "name": "PLDI2010",
+      "ts": "2026-06-06T20:24:08"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2011.html": {
+      "name": "PLDI2011",
+      "ts": "2026-06-06T20:24:32"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/mspc2011.html": {
+      "name": "PLDI2011",
+      "ts": "2026-06-06T20:24:56"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2012.html": {
+      "name": "PLDI2012",
+      "ts": "2026-06-06T20:25:20"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/mspc2012.html": {
+      "name": "PLDI2012",
+      "ts": "2026-06-06T20:25:44"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2013.html": {
+      "name": "PLDI2013",
+      "ts": "2026-06-06T20:26:08"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/mspc2013.html": {
+      "name": "PLDI2013",
+      "ts": "2026-06-06T20:26:32"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/x10-2013.html": {
+      "name": "PLDI2013",
+      "ts": "2026-06-06T20:26:55"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2014.html": {
+      "name": "PLDI2014",
+      "ts": "2026-06-06T20:27:20"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/dyla2014.html": {
+      "name": "PLDI2014",
+      "ts": "2026-06-06T20:27:43"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/mspc2014.html": {
+      "name": "PLDI2014",
+      "ts": "2026-06-06T20:28:07"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/trust2014.html": {
+      "name": "PLDI2014",
+      "ts": "2026-06-06T20:28:31"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2015.html": {
+      "name": "PLDI2015",
+      "ts": "2026-06-06T20:28:55"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/scala2015.html": {
+      "name": "PLDI2015",
+      "ts": "2026-06-06T20:29:19"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/x10-2015.html": {
+      "name": "PLDI2015",
+      "ts": "2026-06-06T20:29:42"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2016.html": {
+      "name": "PLDI2016",
+      "ts": "2026-06-06T20:30:06"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/x10-2016.html": {
+      "name": "PLDI2016",
+      "ts": "2026-06-06T20:30:30"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2017.html": {
+      "name": "PLDI2017",
+      "ts": "2026-06-06T20:30:54"
+    },
+    "DBLP::https://dblp.org/db/conf/pldi/pldi2018.html": {
+      "name": "PLDI2018",
+      "ts": "2026-06-06T20:31:20"
+    },
+    "DBLP::https://dblp.org/db/conf/sigsoft/fse2000.html": {
+      "name": "FSE2000",
+      "ts": "2026-06-06T20:31:44"
     }
   }
 }
