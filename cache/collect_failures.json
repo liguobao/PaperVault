@@ -1,8 +1,8 @@
 [
   {
     "source": "DBLP",
-    "name": "ISWC2020",
-    "url": "https://dblp.org/db/conf/semweb/iswc2020.html",
-    "error": "HTTPSConnectionPool(host='dblp.org', port=443): Max retries exceeded with url: /db/conf/semweb/iswc2020.html (Caused by ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))"
+    "name": "Bioinformatics2021",
+    "url": "https://dblp.org/db/journals/bioinformatics/bioinformatics37.html",
+    "error": "Response ended prematurely"
   }
 ]
