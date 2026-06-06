@@ -517,30 +517,49 @@ def _ensure_chinese_font():
             except OSError:
                 pass
 
-    # Force matplotlib to rebuild its font manager
+    # Force matplotlib to rebuild its font manager so it picks up any
+    # system fonts installed after the environment was created (common in CI).
     try:
         fm.fontManager = fm.FontManager()
     except Exception:
         pass
 
-    family, font_path = _find_cjk_font()
+    # Set a comprehensive CJK font stack.  When fonts-noto-cjk-extra is
+    # installed, "Noto Sans CJK SC" (Regular weight) will be available and
+    # picked up automatically by matplotlib's findfont.  We list several
+    # fallbacks so that even if the exact family name differs across OS
+    # versions, a usable CJK font is found.
+    plt.rcParams["font.sans-serif"] = [
+        "Noto Sans CJK SC",
+        "Noto Sans SC",
+        "Noto Sans CJK KR",
+        "Noto Sans CJK JP",
+        "Noto Sans Mono CJK SC",
+        "Noto Serif CJK SC",
+        "WenQuanYi Micro Hei",
+        "SimHei",
+        "Microsoft YaHei",
+        "DejaVu Sans",
+        "sans-serif",
+    ]
+    plt.rcParams["axes.unicode_minus"] = False
+    plt.rcParams["svg.fonttype"] = "path"
 
+    # Try to locate a concrete font file for wordcloud (which needs a path).
+    family, font_path = _find_cjk_font()
     if family and font_path:
-        # Explicitly register the font with matplotlib so it is available
-        # even when the system font scan misses it (common in CI).
         try:
             fm.fontManager.addfont(font_path)
         except Exception as exc:
             print(f"[!] Warning: addfont failed for {font_path}: {exc}")
-        plt.rcParams["font.sans-serif"] = [family, "DejaVu Sans", "sans-serif"]
-        plt.rcParams["axes.unicode_minus"] = False
-        plt.rcParams["svg.fonttype"] = "path"
+        # Debug: verify matplotlib can resolve a CJK family
+        try:
+            resolved = fm.findfont(fm.FontProperties(family="Noto Sans CJK SC"))
+            print(f"[*] Matplotlib resolved 'Noto Sans CJK SC' -> {resolved}")
+        except Exception as exc:
+            print(f"[!] Could not resolve 'Noto Sans CJK SC': {exc}")
         return font_path
 
-    # Fallback: ensure we at least have a working sans-serif stack
-    plt.rcParams["font.sans-serif"] = ["DejaVu Sans", "sans-serif"]
-    plt.rcParams["axes.unicode_minus"] = False
-    plt.rcParams["svg.fonttype"] = "path"
     return None
 
 
