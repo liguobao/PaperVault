@@ -1,37 +1,37 @@
 [
     {
         "name": "EMNLP2000",
-        "tag": "^D00-*",
+        "tag": "^W00-*",
         "url": "https://aclanthology.org/events/emnlp-2000/"
     },
     {
         "name": "EMNLP2001",
-        "tag": "^D01-*",
+        "tag": "^W01-*",
         "url": "https://aclanthology.org/events/emnlp-2001/"
     },
     {
         "name": "EMNLP2002",
-        "tag": "^D02-*",
+        "tag": "^W02-*",
         "url": "https://aclanthology.org/events/emnlp-2002/"
     },
     {
         "name": "EMNLP2003",
-        "tag": "^D03-*",
+        "tag": "^W03-*",
         "url": "https://aclanthology.org/events/emnlp-2003/"
     },
     {
         "name": "EMNLP2004",
-        "tag": "^D04-*",
+        "tag": "^W04-*",
         "url": "https://aclanthology.org/events/emnlp-2004/"
     },
     {
         "name": "EMNLP2005",
-        "tag": "^D05-*",
+        "tag": "^H05-*",
         "url": "https://aclanthology.org/events/emnlp-2005/"
     },
     {
         "name": "EMNLP2006",
-        "tag": "^D06-*",
+        "tag": "^W06-*",
         "url": "https://aclanthology.org/events/emnlp-2006/"
     },
     {
@@ -211,7 +211,7 @@
     },
     {
         "name": "NAACL2000",
-        "tag": "^N00-*",
+        "tag": "^A00-*",
         "url": "https://aclanthology.org/events/naacl-2000/"
     },
     {
@@ -311,7 +311,7 @@
     },
     {
         "name": "COLING2006",
-        "tag": "^C06-*",
+        "tag": "^P06-*",
         "url": "https://aclanthology.org/events/coling-2006/"
     },
     {
