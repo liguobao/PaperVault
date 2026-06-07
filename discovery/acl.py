@@ -38,13 +38,6 @@ def _tag_for(prefix: str) -> str:
 class ACLDiscovery(BaseDiscovery):
     def discover(self, start_year: int, end_year: int) -> List[Dict[str, Any]]:
         results = []
-        session = getattr(self, "_session", None)
-        headers = {
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            )
-        }
 
         for venue_id, venue_name in CORE_VENUES.items():
             venue_url = f"https://aclanthology.org/venues/{venue_id}/"
