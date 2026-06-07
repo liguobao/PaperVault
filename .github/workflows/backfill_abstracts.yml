@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       target_conf:
-        description: "手动指定 conf（如 AAAI2020），留空则自动处理最多 6000 篇最高优先级论文"
+        description: "手动指定 conf（如 AAAI2020），留空则自动处理最高优先级论文，直到时间耗尽"
         required: false
         default: ""
 
