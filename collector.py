@@ -239,10 +239,14 @@ def _parse_acl_volume(volume_url: str, tag: str, name: str, res: dict):
     r = SESSION.get(volume_url, headers=HEADERS)
     soup = BeautifulSoup(r.text, "html.parser")
 
-    # 新版页面：论文链接在 <strong> 下的 <a>，href 格式如 /2023.acl-long.1/
+    # 新版页面：href 格式如 /2023.acl-long.1/
+    # 旧版页面（2019 年前）：href 格式如 /P05-1001/、/N12-1001/ 等
     strongs = soup.find_all("strong")
     for strong in strongs:
-        a = strong.find("a", href=re.compile(r"^/\d{4}\.[a-zA-Z0-9-]+\.\d+/$"))
+        a = strong.find(
+            "a",
+            href=re.compile(r"^/(?:\d{4}\.[a-zA-Z0-9-]+\.\d+|[A-Za-z]\d{2}-\d+)/$"),
+        )
         if not a:
             continue
         paper = a.text.strip()

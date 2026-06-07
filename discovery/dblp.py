@@ -115,7 +115,7 @@ CONFERENCES: Dict[str, Dict[str, Any]] = {
     "nsdi":   {"root": "https://dblp.org/db/conf/nsdi/index.html",   "start_year": 1980, "name": "NSDI"},
     # --- 网络与信息安全 ---
     "ccs":    {"root": "https://dblp.org/db/conf/ccs/index.html",    "start_year": 1980, "name": "CCS"},
-    "eurocrypt":{"root":"https://dblp.org/db/conf/eurocrypt/index.html","start_year":2019,"name":"EUROCRYPT"},
+    "eurocrypt":{"root":"https://dblp.org/db/conf/eurocrypt/index.html","start_year":1980,"name":"EUROCRYPT"},
     "crypto": {"root": "https://dblp.org/db/conf/crypto/index.html", "start_year": 1980, "name": "CRYPTO"},
     "sp":     {"root": "https://dblp.org/db/conf/sp/index.html",     "start_year": 1980, "name": "SP"},
     "uss":    {"root": "https://dblp.org/db/conf/uss/index.html",    "start_year": 1980, "name": "USS"},
@@ -189,14 +189,14 @@ JOURNALS: Dict[str, Dict[str, Any]] = {
     # --- 计算机科学理论 ---
     "tit":   {"root": "https://dblp.org/db/journals/tit/index.html",   "start_year": 1980, "name": "TIT"},
     "iandc": {"root": "https://dblp.org/db/journals/iandc/index.html", "start_year": 1980, "name": "IANDC"},
-    "siamcomp":{"root":"https://dblp.org/db/journals/siamcomp/index.html","start_year":2019,"name":"SICOMP"},
+    "siamcomp":{"root":"https://dblp.org/db/journals/siamcomp/index.html","start_year":1980,"name":"SICOMP"},
     # --- 人机交互与普适计算 ---
     "tochi": {"root": "https://dblp.org/db/journals/tochi/index.html", "start_year": 1980, "name": "TOCHI"},
     "ijhcs": {"root": "https://dblp.org/db/journals/ijhcs/index.html", "start_year": 1980, "name": "IJHCS"},
     "jacm":  {"root": "https://dblp.org/db/journals/jacm/index.html",  "start_year": 1980, "name": "JACM"},
     "pieee": {"root": "https://dblp.org/db/journals/pieee/index.html", "start_year": 1980, "name": "PROCIEEE"},
     "chinaf":{"root": "https://dblp.org/db/journals/chinaf/index.html","start_year": 1980, "name": "SCIS"},
-    "bioinformatics":{"root":"https://dblp.org/db/journals/bioinformatics/index.html","start_year":2019,"name":"Bioinformatics"},
+    "bioinformatics":{"root":"https://dblp.org/db/journals/bioinformatics/index.html","start_year":1980,"name":"Bioinformatics"},
     # --- 已有期刊（保留历史名称映射）---
     "tnn":   {"root": "https://dblp.org/db/journals/tnn/index.html",   "start_year": 1980, "name": "TNNLS"},
     "taslp": {"root": "https://dblp.org/db/journals/taslp/index.html", "start_year": 1980, "name": "TASLP"},
