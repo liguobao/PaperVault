@@ -47,7 +47,7 @@ export default defineConfig(({ command, mode }) => {
         '/api': {
           target: ENV.VUE_APP_BASE_URL,
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/api/, '/')
+          rewrite: path => path
         }
         // '/socket.io': {
         //   target: 'ws://localhost:3000',
