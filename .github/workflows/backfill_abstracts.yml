@@ -26,6 +26,8 @@ jobs:
     timeout-minutes: 330
     env:
       TZ: Asia/Shanghai
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      PAPERVAULT_HF_REPO_ID: ${{ vars.PAPERVAULT_HF_REPO_ID }}
     permissions:
       contents: write
       pull-requests: write

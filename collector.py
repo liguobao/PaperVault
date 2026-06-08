@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 from tqdm import tqdm
 
 import gzip
+from data_artifacts import sync_cache_artifacts
 
 # 忽略 ACL Anthology 某些 XML 页面被 HTML 解析器解析时的警告
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
@@ -783,6 +784,11 @@ def do_collect(cache_file=None, force=False, soft_timeout=None):
         print(f"[+] Collecting papers...")
         res = collect(cache_file, force=force, soft_timeout=soft_timeout)
         save_cache(cache_file, res)
+        if cache_file:
+            sync_cache_artifacts(
+                cache_path=cache_file,
+                commit_message="Update PaperVault data artifacts after collection",
+            )
     else:
         print(f"[+] Loading from cache...")
         res = load_cache(cache_file)

@@ -14,6 +14,7 @@ import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 
 from collector import collect, save_cache, load_cache
+from data_artifacts import sync_cache_artifacts
 
 try:
     from wordcloud import WordCloud
@@ -936,6 +937,10 @@ def update_readme():
 def force_update():
     res = collect(cache_file=None, force=True)
     save_cache(cache_path, res)
+    sync_cache_artifacts(
+        cache_path=cache_path,
+        commit_message="Update PaperVault data artifacts after force rebuild",
+    )
     stats = compute_stats(res)
     meta = {
         "last_update": datetime.now().strftime("%Y-%m-%d"),
@@ -962,6 +967,10 @@ def incremental_update(soft_timeout=None):
 
     res = collect(cache_file=cache_path, force=False, soft_timeout=soft_timeout)
     save_cache(cache_path, res)
+    sync_cache_artifacts(
+        cache_path=cache_path,
+        commit_message="Update PaperVault data artifacts after incremental collect",
+    )
 
     after_count = sum(len(papers) for papers in res.values())
     new_confs = set(res.keys()) - before_confs

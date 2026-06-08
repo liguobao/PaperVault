@@ -31,6 +31,11 @@ from typing import Dict, List, Optional, Set, Tuple
 import requests
 from requests.adapters import HTTPAdapter
 
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from data_artifacts import sync_cache_artifacts
+
 # Windows 控制台 UTF-8 编码修复
 if sys.platform == "win32":
     import io
@@ -86,6 +91,13 @@ CONF_PRIORITY: Dict[str, int] = {
     "TCSVT": 3, "TIST": 3, "TKDD": 3, "TWEB": 3,
     # Tier 4 — 其他 (默认)
 }
+
+
+def sync_artifacts_after_cache_update(commit_message: str):
+    sync_cache_artifacts(
+        cache_path=CACHE_FILE,
+        commit_message=commit_message,
+    )
 
 
 def _get_conf_tier(conf: str) -> int:
@@ -865,7 +877,7 @@ def run(
             print("[!] No papers to process. Exiting.")
             return
         progress = load_progress()
-        _process_targets(
+        success, failed, timed_out = _process_targets(
             targets,
             all_papers,
             chunk_size,
@@ -877,10 +889,13 @@ def run(
             max_failed_attempts=max_failed_attempts,
             progress=progress,
         )
+        if success > 0:
+            sync_artifacts_after_cache_update("Update PaperVault data artifacts after abstract backfill")
         return
 
     # --- 逐个 conf 处理 ---
     processed_total = 0
+    success_total = 0
     progress = load_progress()
     for conf in target_confs:
         # 软超时检查
@@ -912,6 +927,7 @@ def run(
         )
         attempted = success + failed
         processed_total += attempted
+        success_total += success
         elapsed = time.time() - start_ts
         if attempted > 0:
             print(f"[*] Conf {conf} summary: Success={success}, Failed={failed}, Time={elapsed:.0f}s")
@@ -920,6 +936,9 @@ def run(
             else:
                 print(f"[*] Conf {conf} interrupted by soft timeout; skip marking as completed.")
                 break
+
+    if success_total > 0:
+        sync_artifacts_after_cache_update("Update PaperVault data artifacts after abstract backfill")
 
 
 if __name__ == "__main__":
