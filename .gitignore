@@ -1,6 +1,8 @@
 # custom
 .DS_Store
 cache/dblp_discovery_cache.json
+cache/*.parquet
+cache/*.parquet.tmp
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -16,8 +16,14 @@ import json
 import os
 import re
 import shutil
+import sys
 from datetime import datetime
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from data_artifacts import sync_cache_artifacts
 
 CACHE_FILE = Path("cache/cache.jsonl.gz")
 BACKUP_FILE = Path("cache/cache.jsonl.gz.bak")
@@ -107,6 +113,10 @@ def run(year: str = None, retry_failed: bool = False) -> None:
             f.write(json.dumps(p, ensure_ascii=False) + "\n")
     os.replace(str(tmp_file), str(CACHE_FILE))
     print("[*] Cache saved.")
+    sync_cache_artifacts(
+        cache_path=CACHE_FILE,
+        commit_message="Update PaperVault data artifacts after code link scan",
+    )
 
 
 if __name__ == "__main__":
