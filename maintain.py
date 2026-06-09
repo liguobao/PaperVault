@@ -668,6 +668,37 @@ def generate_charts_svg(stats: dict):
     plt.close(fig)
 
     # ---------- Chart 3: Overview Infographic (big numbers) ----------
+    generate_overview_svg(stats, metrics=metrics)
+
+
+def generate_overview_svg(stats: dict, metrics=None):
+    """Generate only the stats_overview.svg infographic.
+
+    Allows callers (e.g. CI workflows) to refresh just the overview chart
+    without rewriting sibling SVGs produced by `generate_charts_svg`.
+    """
+    cjk_font_path = _ensure_chinese_font()
+    has_cjk = cjk_font_path is not None
+    os.makedirs(stats_dir, exist_ok=True)
+
+    if metrics is None:
+        if has_cjk:
+            metrics = [
+                ("收录刊物系列\nPublication Series", f"{stats['total_series']}", NATURE_COLORS[0]),
+                ("会议/年份实例\nConf / Year Instances", f"{stats['total_instances']}", NATURE_COLORS[1]),
+                ("总论文数量\nTotal Papers", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
+                ("含摘要论文\nPapers w/ Abstract", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
+                ("含开源代码论文\nPapers w/ Code", f"{stats['total_code']:,}", NATURE_COLORS[3]),
+            ]
+        else:
+            metrics = [
+                ("Publication Series", f"{stats['total_series']}", NATURE_COLORS[0]),
+                ("Conf / Year Instances", f"{stats['total_instances']}", NATURE_COLORS[1]),
+                ("Total Papers", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
+                ("Papers w/ Abstract", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
+                ("Papers w/ Code", f"{stats['total_code']:,}", NATURE_COLORS[3]),
+            ]
+
     n = len(metrics)
     col_width = 2.5
     total_width = n * col_width

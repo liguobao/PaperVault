@@ -95,15 +95,9 @@ jobs:
       - name: Regenerate stats overview chart
         run: |
           mkdir -p pics/stats
-          # 备份其它可能被 generate_charts_svg 一并刷新但本工作流不希望提交的图表
-          for sibling in pics/stats/papers_by_year.svg pics/stats/papers_by_category.svg; do
-            if [ -f "$sibling" ]; then
-              cp "$sibling" "$RUNNER_TEMP/$(basename "$sibling").bak"
-            fi
-          done
 
           python - <<'PY'
-          from maintain import cache_path, load_cache, compute_stats, generate_charts_svg
+          from maintain import cache_path, load_cache, compute_stats, generate_overview_svg
           import os
 
           if not os.path.exists(cache_path):
@@ -111,20 +105,9 @@ jobs:
 
           cache_data = load_cache(cache_path)
           stats = compute_stats(cache_data)
-          generate_charts_svg(stats)
+          generate_overview_svg(stats)
           print("Regenerated stats_overview.svg from latest cache.")
           PY
-
-          # 恢复非本工作流职责范围内的图表，避免无关 diff 进入 PR
-          for sibling in pics/stats/papers_by_year.svg pics/stats/papers_by_category.svg; do
-            backup="$RUNNER_TEMP/$(basename "$sibling").bak"
-            if [ -f "$backup" ]; then
-              mv "$backup" "$sibling"
-            else
-              # 原本不存在的话，删除新生成的版本，保持仓库状态
-              rm -f "$sibling"
-            fi
-          done
 
       - name: Check for changes
         id: check_changes
