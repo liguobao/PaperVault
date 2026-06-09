@@ -3,7 +3,7 @@ name: Backfill Abstracts
 env:
   PYTHON_VERSION: "3.10"
   AUTO_BACKFILL_BRANCH: "auto-backfill-abstracts"
-  AUTO_BACKFILL_FILES: "cache/cache.jsonl.gz cache/abstract_backfill_progress.json docs/abstract_backfill_progress.md"
+  AUTO_BACKFILL_FILES: "cache/cache.jsonl.gz cache/abstract_backfill_progress.json docs/abstract_backfill_progress.md pics/stats/stats_overview.svg"
 
 on:
   schedule:
@@ -92,6 +92,23 @@ jobs:
             python scripts/fetch_abstracts.py --batch --chunk-size 500 --soft-timeout 18000 --max-failed-attempts 3
           fi
 
+      - name: Regenerate stats overview chart
+        run: |
+          mkdir -p pics/stats
+
+          python - <<'PY'
+          from maintain import cache_path, load_cache, compute_stats, generate_overview_svg
+          import os
+
+          if not os.path.exists(cache_path):
+              raise SystemExit(f"Cache file not found: {cache_path}")
+
+          cache_data = load_cache(cache_path)
+          stats = compute_stats(cache_data)
+          generate_overview_svg(stats)
+          print("Regenerated stats_overview.svg from latest cache.")
+          PY
+
       - name: Check for changes
         id: check_changes
         run: |
@@ -134,6 +151,8 @@ jobs:
 
             It backfills abstracts for pending papers across conferences/journals,
             continuing from the latest in-progress auto-backfill branch state.
+            The `pics/stats/stats_overview.svg` chart is regenerated from the
+            updated cache so the README statistics overview stays in sync.
             Please review the changes before merging.
 
             ---
@@ -141,3 +160,8 @@ jobs:
             *For questions, please contact: im.young@foxmail.com*
           branch: ${{ env.AUTO_BACKFILL_BRANCH }}
           delete-branch: false
+          add-paths: |
+            cache/cache.jsonl.gz
+            cache/abstract_backfill_progress.json
+            docs/abstract_backfill_progress.md
+            pics/stats/stats_overview.svg
