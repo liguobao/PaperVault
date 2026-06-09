@@ -1,9 +1,15 @@
 import gzip
 import json
 import os
+import time
+import traceback
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterable, List, Tuple, Union
+
+
+HF_UPLOAD_MAX_ATTEMPTS = int(os.getenv("PAPERVAULT_HF_UPLOAD_MAX_ATTEMPTS", "3"))
+HF_UPLOAD_RETRY_BACKOFF = float(os.getenv("PAPERVAULT_HF_UPLOAD_RETRY_BACKOFF", "5"))
 
 
 ROOT = Path(__file__).resolve().parent
@@ -119,28 +125,71 @@ def upload_to_huggingface(paths: Iterable[PathLike], commit_message: str) -> Lis
 
     try:
         from huggingface_hub import HfApi
-    except ImportError as exc:
-        raise RuntimeError(
-            "Hugging Face upload requires huggingface_hub. Install requirements.txt first."
-        ) from exc
+    except ImportError:
+        print(
+            "[!] huggingface_hub is not installed; skipping Hugging Face upload. "
+            "Install requirements.txt to enable artifact sync."
+        )
+        return []
 
     repo_type = os.getenv("PAPERVAULT_HF_REPO_TYPE", "dataset")
-    api = HfApi(token=os.getenv("HF_TOKEN") or None)
-    uploaded = []
+    try:
+        api = HfApi(token=os.getenv("HF_TOKEN") or None)
+    except Exception as exc:
+        print(f"[!] Failed to initialize Hugging Face client; skipping upload: {exc}")
+        return []
+
+    uploaded: List[str] = []
+    failed: List[str] = []
+    max_attempts = max(1, HF_UPLOAD_MAX_ATTEMPTS)
+    backoff = max(0.0, HF_UPLOAD_RETRY_BACKOFF)
+
     for path in paths:
         path = Path(path).resolve()
         if not path.exists():
             continue
-        path_in_repo = path.relative_to(ROOT).as_posix()
-        api.upload_file(
-            path_or_fileobj=str(path),
-            path_in_repo=path_in_repo,
-            repo_id=repo_id,
-            repo_type=repo_type,
-            commit_message=commit_message,
+        try:
+            path_in_repo = path.relative_to(ROOT).as_posix()
+        except ValueError:
+            path_in_repo = path.name
+
+        last_exc: Exception = None
+        for attempt in range(1, max_attempts + 1):
+            try:
+                api.upload_file(
+                    path_or_fileobj=str(path),
+                    path_in_repo=path_in_repo,
+                    repo_id=repo_id,
+                    repo_type=repo_type,
+                    commit_message=commit_message,
+                )
+                uploaded.append(path_in_repo)
+                print(f"[+] Uploaded to Hugging Face: {repo_id}/{path_in_repo}")
+                last_exc = None
+                break
+            except Exception as exc:
+                last_exc = exc
+                print(
+                    f"[!] Hugging Face upload failed for {path_in_repo} "
+                    f"(attempt {attempt}/{max_attempts}): {exc}"
+                )
+                if attempt < max_attempts and backoff > 0:
+                    sleep_for = backoff * (2 ** (attempt - 1))
+                    print(f"[*] Retrying in {sleep_for:.1f}s ...")
+                    time.sleep(sleep_for)
+
+        if last_exc is not None:
+            failed.append(path_in_repo)
+            print(
+                f"[!] Giving up on Hugging Face upload for {path_in_repo} "
+                f"after {max_attempts} attempts."
+            )
+
+    if failed:
+        print(
+            f"[!] Hugging Face upload completed with failures: {failed}. "
+            "Workflow will continue without aborting."
         )
-        uploaded.append(path_in_repo)
-        print(f"[+] Uploaded to Hugging Face: {repo_id}/{path_in_repo}")
     return uploaded
 
 
@@ -157,7 +206,14 @@ def sync_cache_artifacts(
     print(f"[+] Parquet generated: {parquet_file} ({count} papers)")
 
     if upload:
-        upload_to_huggingface(
-            [cache_path, parquet_file],
-            commit_message=commit_message,
-        )
+        try:
+            upload_to_huggingface(
+                [cache_path, parquet_file],
+                commit_message=commit_message,
+            )
+        except Exception as exc:
+            print(
+                "[!] Hugging Face sync raised an unexpected error; continuing workflow. "
+                f"Error: {exc}"
+            )
+            traceback.print_exc()
