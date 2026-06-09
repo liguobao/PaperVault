@@ -173,7 +173,7 @@ h1 { text-align:center; margin-bottom:6px; font-weight:700; }
 <body>
 <div class="container">
   <h1>PaperVault 数据统计</h1>
-  <div class="subtitle">Data Statistics &middot; {{total_papers:,}} papers / {{total_series}} series / {{total_abstracts:,}} with abstracts</div>
+  <div class="subtitle">Data Statistics &middot; {{total_papers:,}} papers / {{total_series}} series / {{total_abstracts:,}} with abstracts / {{total_code:,}} with code</div>
 
   <div class="card">
     <div id="chart-category" class="chart"></div>
@@ -290,6 +290,7 @@ def compute_stats(cache_data: dict):
     """Compute statistics from cache data."""
     total_papers = sum(len(papers) for papers in cache_data.values())
     total_abstracts = 0
+    total_code = 0
     papers_by_year = defaultdict(int)
     papers_by_conf = defaultdict(int)
     papers_by_year_cat = defaultdict(lambda: defaultdict(int))
@@ -302,6 +303,9 @@ def compute_stats(cache_data: dict):
         for p in papers:
             if p.get("paper_abstract") and str(p.get("paper_abstract")).strip():
                 total_abstracts += 1
+            code_link = str(p.get("paper_code") or "").strip()
+            if code_link and code_link != "#":
+                total_code += 1
         # Categorize by year for stacked chart
         for cat, names in CATEGORY_MAP.items():
             if conf_base in names:
@@ -321,6 +325,7 @@ def compute_stats(cache_data: dict):
     return {
         "total_papers": total_papers,
         "total_abstracts": total_abstracts,
+        "total_code": total_code,
         "total_series": total_series,
         "total_instances": total_instances,
         "papers_by_year": dict(sorted(papers_by_year.items())),
@@ -365,6 +370,7 @@ def generate_stats_html(stats: dict):
     html = html.replace("{{total_papers:,}}", f"{stats['total_papers']:,}")
     html = html.replace("{{total_series}}", f"{stats['total_series']}")
     html = html.replace("{{total_abstracts:,}}", f"{stats['total_abstracts']:,}")
+    html = html.replace("{{total_code:,}}", f"{stats['total_code']:,}")
     html = html.replace("{{cat_data}}", json.dumps({
         "labels": cat_labels,
         "values": cat_values,
@@ -582,6 +588,7 @@ def generate_charts_svg(stats: dict):
             ("会议/年份实例\nConf / Year Instances", f"{stats['total_instances']}", NATURE_COLORS[1]),
             ("总论文数量\nTotal Papers", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
             ("含摘要论文\nPapers w/ Abstract", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
+            ("含开源代码论文\nPapers w/ Code", f"{stats['total_code']:,}", NATURE_COLORS[3]),
         ]
     else:
         cat_labels = list(CATEGORY_MAP_EN.keys())
@@ -595,6 +602,7 @@ def generate_charts_svg(stats: dict):
             ("Conf / Year Instances", f"{stats['total_instances']}", NATURE_COLORS[1]),
             ("Total Papers", f"{stats['total_papers']:,}", NATURE_COLORS[2]),
             ("Papers w/ Abstract", f"{stats['total_abstracts']:,}", NATURE_COLORS[5]),
+            ("Papers w/ Code", f"{stats['total_code']:,}", NATURE_COLORS[3]),
         ]
 
     # ---------- Chart 1: Papers by Category (horizontal bar) ----------
@@ -660,18 +668,20 @@ def generate_charts_svg(stats: dict):
     plt.close(fig)
 
     # ---------- Chart 3: Overview Infographic (big numbers) ----------
-    fig, ax = plt.subplots(figsize=(10, 2.4))
-    ax.set_xlim(0, 10)
+    n = len(metrics)
+    col_width = 2.5
+    total_width = n * col_width
+    fig, ax = plt.subplots(figsize=(max(10, total_width), 2.4))
+    ax.set_xlim(0, total_width)
     ax.set_ylim(0, 2.4)
     ax.axis("off")
 
-    n = len(metrics)
-    x_positions = [1.25 + i * 2.5 for i in range(n)]
+    x_positions = [col_width / 2 + i * col_width for i in range(n)]
     for (label, value, color), x in zip(metrics, x_positions):
         ax.text(x, 1.55, value, fontsize=32, fontweight="black", ha="center", va="center", color=color)
         ax.text(x, 0.55, label, fontsize=12, ha="center", va="center", color="#444444", linespacing=1.4)
         if x < x_positions[-1]:
-            ax.plot([x + 1.25, x + 1.25], [0.25, 1.85], color="#DDDDDD", linewidth=0.8)
+            ax.plot([x + col_width / 2, x + col_width / 2], [0.25, 1.85], color="#DDDDDD", linewidth=0.8)
 
     fig.tight_layout()
     fig.savefig(os.path.join(stats_dir, "stats_overview.svg"), format="svg", bbox_inches="tight", facecolor="white")
@@ -809,7 +819,7 @@ def build_recent_update_brief(meta: dict, stats: dict):
     ]
     if new_confs:
         lines.append(f"- 📢 **本次新增会议**: {new_confs} 个")
-    lines.append(f"- 📊 **数据库规模**: {stats['total_papers']:,} 篇论文 / {stats['total_series']} 个刊物系列 / {stats['total_abstracts']:,} 篇含摘要")
+    lines.append(f"- 📊 **数据库规模**: {stats['total_papers']:,} 篇论文 / {stats['total_series']} 个刊物系列 / {stats['total_abstracts']:,} 篇含摘要 / {stats['total_code']:,} 篇含开源代码")
 
     return "\n".join(lines)
 
@@ -826,7 +836,7 @@ def build_recent_update_brief_en(meta: dict, stats: dict):
     ]
     if new_confs:
         lines.append(f"- 📢 **New Conferences This Update**: {new_confs}")
-    lines.append(f"- 📊 **Database Scale**: {stats['total_papers']:,} papers / {stats['total_series']} publication series / {stats['total_abstracts']:,} with abstracts")
+    lines.append(f"- 📊 **Database Scale**: {stats['total_papers']:,} papers / {stats['total_series']} publication series / {stats['total_abstracts']:,} with abstracts / {stats['total_code']:,} with code")
 
     return "\n".join(lines)
 
