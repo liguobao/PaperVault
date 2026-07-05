@@ -390,3 +390,247 @@ def test_merge_with_cache_keeps_untouched_confs():
     }
     merged = collector._merge_with_cache(new_res, cache_res, set(), set())
     assert merged["CVPR 2024"] == cache_res["CVPR 2024"]
+
+
+# ---------------------------------------------------------------------------
+# Multi-volume ACL name legacy-skip exemption
+# ---------------------------------------------------------------------------
+
+
+_ACL_MAIN_VOLUME_HTML = """
+<html><body>
+<p>
+  <strong><a href="/2026.acl-long.1/">Main Paper One</a></strong>
+  <a href="/people/a/alice/">Alice</a>
+</p>
+<div id="abstract-2026--acl-long--1">Main abstract one.</div>
+</body></html>
+"""
+
+
+def test_collect_does_not_legacy_skip_findings_when_main_already_in_cache(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+):
+    """Regression for the ACL2026 findings mis-skip: when acl_conf.json ships
+    two entries with the same ``name`` (main conf on ``/events/`` and findings
+    on ``/volumes/``), the second entry must NOT be swallowed by the legacy
+    ``name in cache_conf`` branch of ``_should_skip`` just because the first
+    entry has already populated the cache.
+
+    Before the fix: the events entry ran, cache_conf gained ``ACL2026``, then
+    the findings-volume entry hit ``name in cache_conf`` and was marked
+    ``legacy: True`` in ``progress`` without ever fetching the URL. That is
+    exactly the behaviour Actions run #34 reproduced on origin/main.
+    """
+
+
+    # Two ACL confs sharing the same ``name``, pointing at distinct URLs.
+    acl_conf = [
+        {
+            "name": "ACL2026",
+            "tag": "^2026.acl*",
+            "url": "https://aclanthology.org/events/acl-2026/",
+        },
+        {
+            "name": "ACL2026",
+            "tag": "^2026.findings*",
+            "url": "https://aclanthology.org/volumes/2026.findings-acl/",
+        },
+    ]
+    # Pre-seed cache with the events-side result so ``name in cache_conf``
+    # is True by the time _should_skip evaluates the second entry.
+    cache_res = {
+        "ACL2026": [
+            {
+                "paper_name": "Main Paper One",
+                "paper_url": "https://aclanthology.org/2026.acl-long.1/",
+                "paper_authors": ["Alice"],
+                "paper_abstract": "Main abstract one.",
+                "paper_code": "#",
+            }
+        ]
+    }
+
+
+    def fake_json_load(fp, *args, **kwargs):  # noqa: ARG001
+        name = getattr(fp, "name", "")
+        if name.endswith("acl_conf.json"):
+            return acl_conf
+        return []
+
+    monkeypatch.setattr("collector.json.load", fake_json_load)
+
+    # Route every URL fetch to a fixture: findings URL returns 2 papers, the
+    # events URL returns an events page that itself points to a single
+    # sub-volume (the ``_ACL_MAIN_VOLUME_HTML`` above).
+    findings_html = _ACL_FINDINGS_VOLUME_HTML
+    main_events_html = (
+        '<html><body>'
+        '<a href="/volumes/2026.acl-long/">Main Volume</a>'
+        '</body></html>'
+    )
+    main_volume_html = _ACL_MAIN_VOLUME_HTML
+
+    def fake_get(url, headers=None):  # noqa: ARG001
+        if url.endswith("/volumes/2026.findings-acl/"):
+            return SimpleNamespace(text=findings_html)
+        if url.endswith("/events/acl-2026/"):
+            return SimpleNamespace(text=main_events_html)
+        if url.endswith("/volumes/2026.acl-long/"):
+            return SimpleNamespace(text=main_volume_html)
+        return SimpleNamespace(text="")
+
+    monkeypatch.setattr(collector.SESSION, "get", fake_get)
+
+    # Short-circuit cache load + HF sync + progress persistence.
+    monkeypatch.setattr(collector, "load_cache", lambda _p: cache_res)
+    monkeypatch.setattr(collector, "load_collect_progress", lambda: {})
+    monkeypatch.setattr(collector, "save_collect_progress", lambda _p: None)
+
+    def _stub_save_cache(path, _payload):
+        open(path, "wb").close()
+
+    monkeypatch.setattr(collector, "save_cache", _stub_save_cache)
+    monkeypatch.setattr(collector, "ensure_cache_local", lambda *a, **k: None)
+    # Redirect the failures file to tmp so we don't touch the repo copy.
+    monkeypatch.setattr(collector, "COLLECT_FAILURES_FILE", str(tmp_path / "failures.json"))
+
+    # Only exercise the ACL loop: neuter the other collectors.
+    monkeypatch.setattr(collector, "search_from_iclr", lambda url, name, res: res)
+    monkeypatch.setattr(collector, "search_from_thecvf", lambda url, name, res: res)
+    monkeypatch.setattr(collector, "search_from_nips", lambda url, name, res: res)
+    monkeypatch.setattr(collector, "search_from_dblp", lambda url, name, res: res)
+
+    # Provide a real gz path so ``collect`` takes the "cache exists" branch
+    # that populates cache_conf; the file itself doesn't need to be usable
+    # because we've replaced ``load_cache`` above.
+    fake_gz = tmp_path / "cache.jsonl.gz"
+    fake_gz.write_bytes(b"")
+
+    res = collector.collect(cache_file=str(fake_gz), force=False)
+
+    urls = {p["paper_url"] for p in res.get("ACL2026", [])}
+    assert "https://aclanthology.org/2026.findings-acl.1/" in urls, (
+        "findings volume entry must be collected even though ACL2026 was "
+        "already present in the pre-run cache (regression: legacy-skip)."
+    )
+    assert "https://aclanthology.org/2026.findings-acl.2/" in urls
+
+
+def test_collect_multi_volume_acl_names_heals_legacy_progress_entry(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+):
+    """Second half of the fix: if a previous run has already written a
+    legacy-skip marker into ``progress`` for the findings-volume URL of a
+    multi-entry ACL name, the next run must scrub that marker and re-collect
+    instead of honouring it forever."""
+
+
+    acl_conf = [
+        {
+            "name": "ACL2026",
+            "tag": "^2026.acl*",
+            "url": "https://aclanthology.org/events/acl-2026/",
+        },
+        {
+            "name": "ACL2026",
+            "tag": "^2026.findings*",
+            "url": "https://aclanthology.org/volumes/2026.findings-acl/",
+        },
+    ]
+    cache_res = {"ACL2026": [
+        {
+            "paper_name": "Main Paper One",
+            "paper_url": "https://aclanthology.org/2026.acl-long.1/",
+            "paper_authors": ["Alice"],
+            "paper_abstract": "",
+            "paper_code": "#",
+        }
+    ]}
+    # The stale marker that previous versions of collector.py would have
+    # planted on the findings-volume URL.
+    stale_progress = {
+        "ACL::https://aclanthology.org/volumes/2026.findings-acl/": {
+            "name": "ACL2026",
+            "ts": "2026-07-01T00:00:00",
+            "legacy": True,
+        }
+    }
+
+    def fake_json_load(fp, *args, **kwargs):  # noqa: ARG001
+        name = getattr(fp, "name", "")
+        if name.endswith("acl_conf.json"):
+            return acl_conf
+        return []
+
+    monkeypatch.setattr("collector.json.load", fake_json_load)
+    monkeypatch.setattr(collector, "load_cache", lambda _p: cache_res)
+    monkeypatch.setattr(collector, "load_collect_progress", lambda: dict(stale_progress))
+    saved_progress_snapshots: List[Dict[str, Any]] = []
+
+    def _capture_progress(p):
+        saved_progress_snapshots.append({k: (v.copy() if isinstance(v, dict) else v) for k, v in p.items()})
+
+    monkeypatch.setattr(collector, "save_collect_progress", _capture_progress)
+
+    def _stub_save_cache(path, _payload):
+        # Real ``save_cache`` writes gzip so ``os.replace`` can move it into
+        # place. Since we don't care about the on-disk artefact here, just
+        # touch the tmp path so ``os.replace`` inside ``_save_state`` does
+        # not raise WinError 2 and abort the ACL loop early.
+        open(path, "wb").close()
+
+    monkeypatch.setattr(collector, "save_cache", _stub_save_cache)
+    monkeypatch.setattr(collector, "ensure_cache_local", lambda *a, **k: None)
+    # Bypass the 5s throttle inside ``_save_state`` so every conf iteration
+    # actually persists progress. Without this, only the first save fires
+    # and we cannot observe the post-fix state of the findings URL entry.
+    _fake_clock = {"t": 0.0}
+
+    def _tick():
+        _fake_clock["t"] += 10.0
+        return _fake_clock["t"]
+
+    monkeypatch.setattr(collector.time, "time", _tick)
+    monkeypatch.setattr(collector, "COLLECT_FAILURES_FILE", str(tmp_path / "failures.json"))
+    monkeypatch.setattr(collector, "search_from_iclr", lambda url, name, res: res)
+    monkeypatch.setattr(collector, "search_from_thecvf", lambda url, name, res: res)
+    monkeypatch.setattr(collector, "search_from_nips", lambda url, name, res: res)
+    monkeypatch.setattr(collector, "search_from_dblp", lambda url, name, res: res)
+
+    def fake_get(url, headers=None):  # noqa: ARG001
+        if url.endswith("/volumes/2026.findings-acl/"):
+            return SimpleNamespace(text=_ACL_FINDINGS_VOLUME_HTML)
+        return SimpleNamespace(text="")
+
+    monkeypatch.setattr(collector.SESSION, "get", fake_get)
+
+    fake_gz = tmp_path / "cache.jsonl.gz"
+    fake_gz.write_bytes(b"")
+
+    res = collector.collect(cache_file=str(fake_gz), force=False)
+
+    urls = {p["paper_url"] for p in res.get("ACL2026", [])}
+    assert "https://aclanthology.org/2026.findings-acl.1/" in urls, (
+        "stale ``legacy: True`` progress entry for a multi-entry ACL name "
+        "must be scrubbed and the URL re-collected on the next run."
+    )
+
+    # Directly observe the self-heal: after ``collect()`` finishes, the stale
+    # ``legacy: True`` marker for the findings URL must be gone from the
+    # persisted progress. It is fine for intermediate snapshots to still
+    # carry the marker (``_save_state`` fires between the events entry and
+    # the findings entry, i.e. before ``_should_skip`` sees the findings
+    # URL and pops the stale key). What matters is that the FINAL persisted
+    # state no longer honours the legacy marker, so the next workflow run
+    # will re-collect. This pins the pop() branch in ``_should_skip`` — a
+    # future regression that keeps the guard-return but drops the pop()
+    # would still be caught here because the final snapshot would then
+    # retain the ``legacy: True`` entry unchanged.
+    findings_key = "ACL::https://aclanthology.org/volumes/2026.findings-acl/"
+    assert saved_progress_snapshots, "collect() must call save_collect_progress at least once"
+    final_snap = saved_progress_snapshots[-1]
+    final_entry = final_snap.get(findings_key)
+    assert not (isinstance(final_entry, dict) and final_entry.get("legacy")), (
+        f"stale legacy marker persisted after collect(): {final_entry!r}"
+    )
