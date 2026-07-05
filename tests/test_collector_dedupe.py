@@ -192,6 +192,102 @@ def test_parse_acl_volume_dedupes_repeated_invocations(monkeypatch: pytest.Monke
 
 
 # ---------------------------------------------------------------------------
+# search_from_acl: volume-entry vs events-entry routing
+# ---------------------------------------------------------------------------
+
+
+_ACL_FINDINGS_VOLUME_HTML = """
+<html><body>
+<p>
+  <strong><a href="/2026.findings-acl.1/">Findings Paper One</a></strong>
+  <a href="/people/a/alice/">Alice</a>
+</p>
+<div id="abstract-2026--findings-acl--1">Findings abstract one.</div>
+
+<p>
+  <strong><a href="/2026.findings-acl.2/">Findings Paper Two</a></strong>
+  <a href="/people/b/bob/">Bob</a>
+</p>
+<div id="abstract-2026--findings-acl--2">Findings abstract two.</div>
+
+<a href="/volumes/2026.findings-acl.bib">BibTeX</a>
+<a href="/volumes/2026.findings-acl.xml">XML</a>
+<a href="/volumes/2026.findings-acl.enw">Endnote</a>
+</body></html>
+"""
+
+
+def test_search_from_acl_handles_volume_entry(monkeypatch: pytest.MonkeyPatch):
+    """Regression: when the conf entry URL is already a volume page (as ACL
+    findings entries are configured), ``search_from_acl`` must parse the page
+    itself instead of enumerating the ``.bib`` / ``.enw`` / ``.xml`` metadata
+    links it finds inside. Previously that mis-routing produced
+    ``empty result for tag='^YYYY.findings*'``."""
+
+    _patch_acl_get(monkeypatch, _ACL_FINDINGS_VOLUME_HTML)
+
+    res: Dict[str, List[dict]] = {}
+    collector.search_from_acl(
+        "https://aclanthology.org/volumes/2026.findings-acl/",
+        "^2026.findings*",
+        "ACL2026",
+        res,
+    )
+
+    assert "ACL2026" in res
+    urls = sorted(p["paper_url"] for p in res["ACL2026"])
+    assert urls == [
+        "https://aclanthology.org/2026.findings-acl.1/",
+        "https://aclanthology.org/2026.findings-acl.2/",
+    ]
+
+
+def test_is_acl_volume_entry_predicate():
+    """Whitebox: the volume-entry classifier must accept /volumes/XXX/ but
+    reject the events root and the metadata download URLs that Anthology
+    exposes alongside a volume page."""
+
+    assert collector._is_acl_volume_entry(
+        "https://aclanthology.org/volumes/2026.findings-acl/"
+    )
+    assert collector._is_acl_volume_entry(
+        "https://aclanthology.org/volumes/2023.acl-long/"
+    )
+    assert not collector._is_acl_volume_entry(
+        "https://aclanthology.org/events/acl-2026/"
+    )
+    assert not collector._is_acl_volume_entry(
+        "https://aclanthology.org/volumes/2026.findings-acl.bib"
+    )
+    assert not collector._is_acl_volume_entry(
+        "https://aclanthology.org/volumes/2026.findings-acl.xml"
+    )
+    # Trailing-slash policy: the predicate must require the path to end with
+    # "/"; hrefs without it (e.g. some Anthology templates strip it) should
+    # not silently be accepted as volume entries.
+    assert not collector._is_acl_volume_entry(
+        "https://aclanthology.org/volumes/2026.findings-acl"
+    )
+    # Query strings / fragments must not affect the routing decision: they
+    # are peeled off by urlparse and the .path still ends with "/".
+    assert collector._is_acl_volume_entry(
+        "https://aclanthology.org/volumes/2026.findings-acl/?utm=foo"
+    )
+    assert collector._is_acl_volume_entry(
+        "https://aclanthology.org/volumes/2026.findings-acl/#top"
+    )
+    # Host whitelist: reject any non-Anthology domain even if the path
+    # happens to match the volume shape.
+    assert not collector._is_acl_volume_entry(
+        "https://example.com/volumes/2026.findings-acl/"
+    )
+    # www subdomain is a valid Anthology alias and must be accepted.
+    assert collector._is_acl_volume_entry(
+        "https://www.aclanthology.org/volumes/2026.findings-acl/"
+    )
+
+
+# ---------------------------------------------------------------------------
 # _merge_with_cache: URL dedupe + abstract merge across all confs
 # ---------------------------------------------------------------------------
 
