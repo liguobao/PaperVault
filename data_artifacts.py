@@ -27,6 +27,24 @@ PathLike = Union[str, Path]
 
 
 _HF_PARENT_COMMITS: dict = {}
+# TODO(review #3, fourth pass): ``_HF_PARENT_COMMITS`` is a plain module
+# global and its readers/writers currently run only from the main thread
+# (Flask request handlers touch it serially, GH Actions jobs are
+# single-process). If we ever expose the upload path to a
+# ``ThreadPoolExecutor`` (e.g. parallel per-file HF pushes) this dict
+# needs a ``threading.Lock`` — otherwise a racy read-then-write can
+# stamp an older ``parent_commit`` back over a newer one and re-trigger
+# the 412 rebase loop unnecessarily. Not a bug today; noting it here so
+# the invariant is explicit for the next reader.
+#
+# TODO(review #7, fourth pass): the dict is keyed by ``path_in_repo``
+# (cache vs. progress) but the underlying HF API's ``list_repo_commits``
+# only returns the *dataset-wide* HEAD — so the values for two
+# different keys always resolve to the same commit id. That's fine for
+# correctness (any commit that touched *any* file in the dataset
+# invalidates the local snapshot of *every* file) but it means the
+# per-key granularity is cosmetic. If HF ever exposes per-path
+# revisions we can tighten the invalidation set.
 
 
 def _hf_repo_id() -> Optional[str]:
@@ -113,6 +131,54 @@ def _get_remote_commit(api, repo_id: str, path_in_repo: str) -> Optional[str]:
     return None
 
 
+def _hf_local_dir_mode() -> bool:
+    """Return True if hf_hub_download should be forced into local_dir mode.
+
+    Motivation: on Windows the default HF cache stores blobs as symlinks,
+    which fails with ``OSError: [WinError 14007]`` on many developer boxes
+    (privilege not held, non-NTFS mount, etc.). Passing ``local_dir=<root>``
+    switches ``huggingface_hub`` to a copy-based layout that has no symlinks
+    at all. We keep the classic cache-dir path on Linux CI to stay in sync
+    with GitHub Actions behaviour.
+    """
+    override = os.getenv("PAPERVAULT_HF_LOCAL_DIR")
+    if override is not None:
+        return override.lower() in ("1", "true", "yes")
+    return os.name == "nt"
+
+
+def _download_with_fallback(
+    *,
+    repo_id: str,
+    filename: str,
+    repo_type: str,
+    token: Optional[str],
+    revision: str,
+    local_dir: Path,
+) -> str:
+    """Thin wrapper around ``hf_hub_download`` with a Windows-safe branch.
+
+    Isolated so tests can assert the exact kwargs we pass. Do NOT inline
+    this back into ``ensure_cache_local`` -- ``tests/test_data_artifacts_download.py``
+    relies on this seam.
+    """
+    from huggingface_hub import hf_hub_download
+
+    kwargs = dict(
+        repo_id=repo_id,
+        filename=filename,
+        repo_type=repo_type,
+        token=token,
+        revision=revision,
+    )
+    if _hf_local_dir_mode():
+        # local_dir lays the file out as <local_dir>/<filename> with a plain
+        # copy instead of a symlink into the shared HF blob cache. That
+        # sidesteps WinError 14007 without needing admin/Developer Mode.
+        kwargs["local_dir"] = str(local_dir)
+    return hf_hub_download(**kwargs)
+
+
 def ensure_cache_local(
     cache_path: PathLike = DEFAULT_CACHE_PATH,
     refresh: bool = True,
@@ -162,7 +228,7 @@ def ensure_cache_local(
         return cache_path, commit
 
     try:
-        from huggingface_hub import hf_hub_download
+        from huggingface_hub import hf_hub_download  # noqa: F401  (imported for ImportError signalling)
         from huggingface_hub.utils import EntryNotFoundError
     except ImportError:
         print("[!] huggingface_hub missing; cannot refresh cache from HF.")
@@ -170,12 +236,13 @@ def ensure_cache_local(
 
     path_in_repo = _path_in_repo(cache_path)
     try:
-        downloaded = hf_hub_download(
+        downloaded = _download_with_fallback(
             repo_id=repo_id,
             filename=path_in_repo,
             repo_type=_hf_repo_type(),
             token=_hf_token(),
             revision="main",
+            local_dir=ROOT,
         )
     except EntryNotFoundError:
         if allow_missing_remote:
@@ -347,6 +414,46 @@ def upload_to_huggingface(paths: Iterable[PathLike], commit_message: str) -> Lis
             "Workflow will continue without aborting."
         )
     return uploaded
+
+
+def upload_progress_only(
+    path: PathLike = DEFAULT_PROGRESS_PATH,
+    *,
+    commit_message: str = "Update abstract backfill progress (local)",
+) -> List[str]:
+    """Whitelisted local uploader for the backfill progress file only.
+
+    This is the single sanctioned entry point for pushing a locally-edited
+    ``cache/abstract_backfill_progress.jsonl.gz`` back to Hugging Face from a
+    developer machine (see AGENTS.md / spec.md ``FR-13`` / ``AC-13``).
+
+    Any other path -- most importantly ``cache/cache.jsonl.gz`` -- is rejected
+    with ``RuntimeError`` so a fat-fingered developer script cannot bypass the
+    "no cache uploads from local" policy. Uploads to the main cache must go
+    through the GitHub Actions workflow.
+    """
+    resolved = Path(path).resolve()
+    # Strict whitelist: the path *must* live inside the repo root at the
+    # canonical location. This closes review issue #5 (a
+    # ``ValueError`` from ``relative_to`` used to fall back to
+    # ``resolved.name``, letting any file named
+    # ``abstract_backfill_progress.jsonl.gz`` bypass the check).
+    expected = (ROOT / "cache" / "abstract_backfill_progress.jsonl.gz").resolve()
+    if resolved != expected:
+        raise RuntimeError(
+            "upload_progress_only refuses to upload "
+            f"{resolved!s}: only "
+            f"{expected!s} is allowed from a local machine. "
+            "cache.jsonl.gz uploads must go through the GitHub Actions "
+            "workflow."
+        )
+
+    print(
+        "[*] progress-only upload: pushing "
+        "cache/abstract_backfill_progress.jsonl.gz to Hugging Face "
+        "(cache.jsonl.gz will NOT be touched)."
+    )
+    return upload_to_huggingface([resolved], commit_message=commit_message)
 
 
 def sync_cache_artifacts(

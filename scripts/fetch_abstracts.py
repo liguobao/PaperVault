@@ -35,12 +35,25 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from data_artifacts import sync_cache_artifacts, ensure_cache_local, ensure_progress_local
+from collector.url_types import classify_paper_url
+from papervault.services.abstract_fetchers import dispatch as _dispatch_domain_fetcher
 
 # Windows 控制台 UTF-8 编码修复
-if sys.platform == "win32":
-    import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
+def _install_utf8_console() -> None:
+    """Rewrap ``sys.stdout``/``sys.stderr`` as UTF-8 on Windows.
+
+    Historically this ran unconditionally at import time, which broke
+    pytest's output capture (``ValueError: I/O operation on closed file``
+    at teardown) because pytest keeps a handle to the *original* stdout
+    stream. We now only rewrap when the module is invoked as a script
+    (called from the ``__main__`` block below); test suites that
+    ``import scripts.fetch_abstracts`` for its constants keep the pristine
+    streams.
+    """
+    if sys.platform == "win32":
+        import io as _io
+        sys.stdout = _io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+        sys.stderr = _io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
 
 # ---------- 配置 ----------
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "im.young@foxmail.com")
@@ -65,8 +78,79 @@ PROGRESS_FILE = CACHE_DIR / "abstract_backfill_progress.jsonl.gz"
 LEGACY_PROGRESS_FILE = CACHE_DIR / "abstract_backfill_progress.json"
 BACKUP_FILE = CACHE_DIR / "cache.jsonl.gz.bak"
 
-PROGRESS_SCHEMA = "abstract_backfill_progress/v3"
-PROGRESS_SCHEMA_VERSION = 3
+PROGRESS_SCHEMA = "abstract_backfill_progress/v4"
+PROGRESS_SCHEMA_VERSION = 4
+# ---------- Failure reason vocabulary (added in schema v4) ----------
+# We only record a single canonical string per record so downstream tools
+# (analyze_backfill.py / --reason-in) can filter without ambiguity. New
+# reasons MUST be added here so tests can assert schema completeness.
+REASON_ENUM = frozenset(
+    {
+        "no_doi",
+        "doi_not_found",
+        "empty_abstract",
+        "rate_limited",
+        "timeout",
+        "network",
+        "title_mismatch",
+        "venue_index",
+        "delegated_to_specialised_fetcher",
+        "no_abstract_available",
+    }
+)
+# ---------- v3 -> v4 back-compat ----------
+# Files written under schema v3 do not carry ``reason``. When we read them
+# we leave the missing field alone; when we write new failure records we
+# always call ``normalize_reason(...)`` so anything unknown is coerced to
+# ``"network"`` (least specific bucket) and never silently corrupts the
+# vocabulary above.
+
+
+def normalize_reason(text: Optional[str]) -> str:
+    """Coerce any human-readable failure blurb into a REASON_ENUM member.
+
+    The mapping is intentionally forgiving: substring hits win, so that
+    error messages from CrossRef ("429 Too Many Requests") map cleanly to
+    ``rate_limited`` without every call site having to switch on strings.
+    Unknown inputs fall through to ``"network"`` — the goal of schema v4
+    is to *always* have a reason, so returning an out-of-vocab string here
+    would defeat the whole point.
+    """
+    if not text:
+        return "network"
+    lowered = str(text).strip().lower()
+    if lowered in REASON_ENUM:
+        return lowered
+    if "429" in lowered or "rate" in lowered or "too many" in lowered:
+        return "rate_limited"
+    if "timeout" in lowered or "timed out" in lowered:
+        return "timeout"
+    # Order matters: probe "missing/no doi" *before* the generic
+    # "not found" branch — otherwise a message like "missing doi info:
+    # not found upstream" would be misclassified as ``doi_not_found``.
+    if "no doi" in lowered or "missing doi" in lowered or lowered == "nodoi":
+        return "no_doi"
+    if "not found" in lowered or "404" in lowered:
+        return "doi_not_found"
+    # Order matters (review issue R2): probe the exact free-text phrase
+    # "no abstract available" BEFORE the generic ``no abstract`` /
+    # ``empty`` bucket, otherwise upstream text such as
+    # "Crossref returned no abstract available for this DOI" would be
+    # misclassified as ``empty_abstract`` (which usually means "the
+    # page loaded but the extractor got an empty string"). The two
+    # buckets are semantically distinct on the analyse dashboard.
+    if "no abstract available" in lowered:
+        return "no_abstract_available"
+    if "empty" in lowered or "no abstract" in lowered:
+        return "empty_abstract"
+    if "title" in lowered and "mismatch" in lowered:
+        return "title_mismatch"
+    if "venue" in lowered:
+        return "venue_index"
+    if "delegated" in lowered:
+        return "delegated_to_specialised_fetcher"
+    return "network"
+
 # 当物理行数 > 活跃 url 数 * COMPACTION_RATIO 时，触发整文件 compaction
 PROGRESS_COMPACTION_RATIO = 2.0
 # 用于 append 写入时跟踪"自上次落盘以来的脏行数"，配合活跃 key 数判断 compaction 时机
@@ -451,15 +535,110 @@ def _fetch_doi_sources_concurrent(
 def fetch_abstract_for_paper(
     paper: dict, last_time: dict, sleep_sec: float = 1.5, max_retries: int = 3,
     query_doi_by_title_enabled: bool = False,
-) -> Tuple[Optional[str], dict, str]:
+) -> Tuple[Optional[str], dict, str, dict]:
+    """Fetch an abstract for ``paper`` via the multi-source fallback chain.
+
+    Returns a 4-tuple ``(abstract, last_time, source, err_info)`` where
+    ``err_info`` is a dict describing *why* no abstract came back — used
+    by the caller to populate the progress-file ``reason`` /
+    ``last_source`` fields (schema v4, spec AC-8).
+
+    ``err_info`` shape (all fields optional):
+      * ``reason``       — one of :data:`REASON_ENUM`.
+      * ``last_source``  — the last source that was actually tried
+                           (``crossref`` / ``semanticscholar`` / ``arxiv``
+                           / ``openalex`` / ``""``).
+      * ``title_mismatch`` — ``True`` when at least one candidate came
+                             back but was rejected due to title
+                             disagreement (retained so the caller can log
+                             a more actionable "why did this fail" line).
+
+    On success ``err_info`` is ``{}``.
     """
-    返回: (abstract, last_time, source)
-    source 取值: "crossref", "semanticscholar", "arxiv", "openalex", ""
-    """
-    doi = extract_doi(paper.get("paper_url", ""))
+    url = paper.get("paper_url", "")
     title = (paper.get("paper_name") or "").strip()
+
+    # ---- Cheap short-circuit: venue-index URLs never contain a paper. ---
+    # See ``collector/url_types.py`` and spec AC-3 / AC-4.
+    if url:
+        kind = classify_paper_url(url)
+        if kind == "venue-index":
+            return None, last_time, "", {
+                "reason": "venue_index",
+                "last_source": "",
+            }
+
+    # ---- Specialised-fetcher shortcut (spec AC-5). ----------------------
+    # theCVF and OpenReview each have their own dedicated backfill scripts
+    # (``scripts/fetch_cvf_abstracts.py`` / ``scripts/fetch_openreview_abstracts.py``)
+    # that scrape the page HTML / call the OpenReview API directly. The
+    # main DOI-based pipeline should NOT waste requests on these hosts:
+    # abstracts land there via a different code path, so we tag the
+    # record with ``reason="delegated_to_specialised_fetcher"`` and let
+    # the caller record that in progress.
+    delegated_hosts = ("openaccess.thecvf.com", "openreview.net")
+    if url:
+        host = (urlparse(url).netloc or "").lower()
+        if host.startswith("www."):
+            host = host[4:]
+        if host in delegated_hosts:
+            return None, last_time, "", {
+                "reason": "delegated_to_specialised_fetcher",
+                "last_source": "",
+            }
+
+    # ---- First-line domain-specific fetcher (spec AC-4 / Task 6). -------
+    # Try the dedicated conference-site fetchers before the DOI chain.
+    # A success here short-circuits with ``source == <domain>`` and no
+    # further HTTP is issued.
+    #
+    # Review issue #1 (fourth pass): when the domain fetcher fails with
+    # a *concrete* reason (e.g. VLDB/CEUR short-circuit to
+    # ``no_abstract_available``, an IJCAI page whose DOM yielded no
+    # abstract block returns ``empty_abstract``), we remember that
+    # ``domain_reason`` / ``domain_source`` so the DOI-chain fall-through
+    # can surface it verbatim on final failure instead of degrading it
+    # into a generic ``empty_abstract`` / ``network`` bucket.
+    #
+    # IMPORTANT: only preserve the reason when the URL actually matched a
+    # *registered* domain fetcher — the dispatcher returns
+    # ``reason="no_abstract_available"`` both for "no fetcher claimed
+    # this URL" *and* for "matched fetcher chose not to try" (e.g. VLDB /
+    # CEUR PDF-only). If we surfaced the reason unconditionally, every
+    # unknown-domain URL (``example.org``, ``doi.org``, ...) would
+    # incorrectly stamp ``no_abstract_available`` on top of the more
+    # specific ``no_doi`` / ``empty_abstract`` / ``title_mismatch``
+    # deductions below. We therefore probe the registry membership first.
+    from papervault.services.abstract_fetchers import FETCHER_REGISTRY as _FETCHER_REGISTRY
+
+    def _matched_registered_fetcher(u: str) -> bool:
+        if not u:
+            return False
+        host = (urlparse(u).netloc or "").lower()
+        if host.startswith("www."):
+            host = host[4:]
+        return host in _FETCHER_REGISTRY
+
+    domain_reason = ""
+    domain_source = ""
+    if url:
+        dispatched = _dispatch_domain_fetcher(url)
+        if dispatched.ok and dispatched.abstract:
+            return dispatched.abstract, last_time, dispatched.source, {}
+        # On dispatcher failure we fall through to the legacy DOI/title
+        # chain. We do *not* return early because e.g. an older ACL page
+        # without a ``.acl-abstract`` block can still be recovered via
+        # CrossRef.
+        if dispatched.reason and _matched_registered_fetcher(url):
+            domain_reason = dispatched.reason
+            domain_source = dispatched.source or ""
+
+    doi = extract_doi(url)
     abstract = None
     source = ""
+    err_info: dict = {}
+    title_mismatch = False
+    last_source = ""
 
     # 可选：对非 DOI 论文尝试用标题查询 DOI
     if not doi and query_doi_by_title_enabled and title:
@@ -471,18 +650,75 @@ def fetch_abstract_for_paper(
         abstract, api_title, source, last_time = _fetch_doi_sources_concurrent(
             doi, title, last_time, sleep_sec=sleep_sec, max_retries=max_retries
         )
+        # ``_fetch_doi_sources_concurrent`` returns ``source == ""`` when
+        # every DOI-based candidate either failed or was dropped due to a
+        # title mismatch. We don't have per-source http_status right here
+        # (the underlying fetchers only surface ``abstract, api_title,
+        # new_time``), so ``last_source`` is best-effort.
+        #
+        # Review issue #6 (fourth pass): the previous implementation
+        # hard-coded ``last_source = "crossref"`` here, which is
+        # misleading — the three DOI sources run concurrently via
+        # ``as_completed`` and the *actual* last-attempted source is
+        # unpredictable. Use ``doi_chain`` as an honest summary so the
+        # analyse dashboard doesn't blame crossref for every DOI-chain
+        # failure.
+        if not abstract:
+            last_source = "doi_chain"
 
     if not abstract and title:
-        abstract, api_title, last_time["arxiv"] = fetch_arxiv_abstract(
+        arxiv_abs, api_title, last_time["arxiv"] = fetch_arxiv_abstract(
             title, last_time["arxiv"], min_interval=sleep_sec, max_retries=max_retries
         )
-        if abstract and api_title and not is_title_match(api_title, title):
+        last_source = "arxiv"
+        if arxiv_abs and api_title and not is_title_match(api_title, title):
             print(f"    [!] Title mismatch (arxiv): api='{api_title[:80]}' vs local='{title[:80]}'")
-            abstract = None
-        if abstract:
+            title_mismatch = True
+            arxiv_abs = None
+        if arxiv_abs:
+            abstract = arxiv_abs
             source = "arxiv"
 
-    return abstract, last_time, source
+    if abstract:
+        return abstract, last_time, source, {}
+
+    # ---- Synthesise a machine-readable failure reason. ------------------
+    # Review issue #1 (fourth pass): if the domain fetcher produced a
+    # *concrete* reason (e.g. VLDB/CEUR ``no_abstract_available``, IJCAI
+    # DOM empty ``empty_abstract``) we surface it as the primary
+    # explanation — it is more informative than the generic DOI-chain
+    # deductions below and keeps the analyse dashboard's reason
+    # breakdown honest.
+    if domain_reason:
+        err_info["reason"] = normalize_reason(domain_reason)
+        err_info["last_source"] = domain_source or last_source
+        if title_mismatch:
+            err_info["title_mismatch"] = True
+        return None, last_time, source, err_info
+
+    if not doi and not title:
+        err_info["reason"] = "no_doi"
+    elif not doi:
+        # No DOI available and title-based arxiv lookup didn't yield.
+        # Distinguish between "arxiv returned nothing" vs. "title
+        # mismatch across every source" vs. plain "empty_abstract".
+        if title_mismatch:
+            err_info["reason"] = "title_mismatch"
+        else:
+            err_info["reason"] = "no_abstract_available"
+    else:
+        # We had a DOI but every source came back empty (or with a title
+        # mismatch). ``title_mismatch`` here reflects the arxiv fallback
+        # only; without per-source http_status we can't reliably say
+        # ``doi_not_found`` vs ``empty_abstract``, so bias towards the
+        # more descriptive value.
+        err_info["reason"] = "title_mismatch" if title_mismatch else "empty_abstract"
+
+    err_info["last_source"] = last_source
+    if title_mismatch:
+        err_info["title_mismatch"] = True
+
+    return None, last_time, source, err_info
 
 
 # ---------- 进度管理（v3 JSONL.gz 格式，兼容旧 JSON / 旧 v2 格式） ----------
@@ -584,6 +820,16 @@ def _load_jsonl_gz(path: Path) -> Tuple[Dict[str, dict], int]:
                 # 后写覆盖前写：天然实现事件溯源式去重
                 progress[url] = _record_to_meta(obj)
     except (OSError, EOFError, gzip.BadGzipFile) as exc:
+        # TODO(review #8, fourth pass): ``backup`` embeds an integer
+        # ``time.time()`` for uniqueness. In the extraordinarily unlikely
+        # case that two processes race into corruption recovery within
+        # the same wall-clock second the second ``os.replace`` will
+        # clobber the first backup. Not fixing today because (a) all
+        # cache-mutating workflows already share the ``papervault-cache``
+        # concurrency group so this is impossible in CI and (b) local
+        # dev virtually never hits corruption. If we ever loosen the
+        # concurrency guard, switch to ``time.time_ns()`` or a uuid4
+        # suffix.
         backup = path.with_name(f"{path.name}.broken-{int(time.time())}")
         try:
             os.replace(path, backup)
@@ -627,10 +873,22 @@ def load_progress() -> Dict[str, dict]:
     return {}
 
 
-def _compact_progress(progress: Dict[str, dict]) -> None:
-    """整文件原子重写：丢弃历史 append，只保留每个 url 的最新状态。"""
-    PROGRESS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    tmp = PROGRESS_FILE.with_suffix(PROGRESS_FILE.suffix + ".tmp")
+def _compact_progress(
+    progress: Dict[str, dict],
+    *,
+    path: Optional[Path] = None,
+) -> None:
+    """整文件原子重写：丢弃历史 append，只保留每个 url 的最新状态。
+
+    ``path`` defaults to the module-level ``PROGRESS_FILE`` but can be
+    overridden (spec Task 12, review issue #6) so downstream one-shot
+    scripts (``rescue_short_success`` / ``cleanup_venue_index``) can
+    reuse the compaction primitive without monkey-patching module state
+    -- which is not thread-safe when the pipeline runs alongside them.
+    """
+    target = Path(path) if path is not None else PROGRESS_FILE
+    target.parent.mkdir(parents=True, exist_ok=True)
+    tmp = target.with_suffix(target.suffix + ".tmp")
     try:
         with gzip.open(tmp, "wt", encoding="utf-8") as f:
             meta = _meta_line()
@@ -639,14 +897,15 @@ def _compact_progress(progress: Dict[str, dict]) -> None:
             for url, rec_meta in progress.items():
                 rec = _meta_to_record(url, rec_meta)
                 f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-        os.replace(tmp, PROGRESS_FILE)
+        os.replace(tmp, target)
     finally:
         if tmp.exists():
             try:
                 tmp.unlink()
             except OSError:
                 pass
-    _progress_runtime["physical_lines"] = len(progress)
+    if target == PROGRESS_FILE:
+        _progress_runtime["physical_lines"] = len(progress)
 
 
 def _append_progress(records: List[dict]) -> None:
@@ -655,6 +914,14 @@ def _append_progress(records: List[dict]) -> None:
     特殊情况：若 PROGRESS_FILE 还不存在，则改走 ``_compact_progress`` 的原子
     路径（``.tmp + os.replace``）而不是直接 ``gzip.open("ab")``——后者在写到
     一半被打断时会留下一个 *只含半段 gzip 流* 的文件，导致下次启动加载失败。
+
+    Review issue #2 (fourth pass): any OSError / gzip failure during the
+    append **must propagate**. The caller (:func:`save_progress`) uses
+    ``_last_saved_snapshot`` as an in-memory mirror of "what's on disk";
+    if we swallow a write failure here the snapshot stays behind, the
+    next save re-appends the same diff, and physical_lines silently
+    balloons until the next compact. Log + raise so the operator sees
+    the failure and progress remains coherent.
     """
     if not records:
         return
@@ -669,17 +936,27 @@ def _append_progress(records: List[dict]) -> None:
             seed[url] = _record_to_meta(rec)
         _compact_progress(seed)
         return
-    with gzip.open(PROGRESS_FILE, "ab") as raw:
-        # gzip.open ab 不直接接受 text；自己手工编码以保证可控
-        buf_lines = []
-        for rec in records:
-            buf_lines.append(json.dumps(rec, ensure_ascii=False))
-        payload = ("\n".join(buf_lines) + "\n").encode("utf-8")
-        raw.write(payload)
-        try:
-            raw.flush()
-        except Exception:
-            pass
+    try:
+        with gzip.open(PROGRESS_FILE, "ab") as raw:
+            # gzip.open ab 不直接接受 text；自己手工编码以保证可控
+            buf_lines = []
+            for rec in records:
+                buf_lines.append(json.dumps(rec, ensure_ascii=False))
+            payload = ("\n".join(buf_lines) + "\n").encode("utf-8")
+            raw.write(payload)
+            try:
+                raw.flush()
+            except Exception:
+                pass
+    except (OSError, gzip.BadGzipFile) as exc:
+        # Do NOT update physical_lines / _last_saved_snapshot -- caller
+        # relies on those two mirrors staying in lock-step with disk.
+        print(
+            f"[!] _append_progress: failed to append {len(records)} record(s) "
+            f"to {PROGRESS_FILE.name}: {exc!r}. Snapshot NOT advanced; the "
+            "next save() will re-attempt the same diff."
+        )
+        raise
     _progress_runtime["physical_lines"] += len(records)
 
 
@@ -823,9 +1100,23 @@ def list_pending_confs(papers: List[dict]) -> List[Tuple[str, dict]]:
 
 
 def update_conf_progress_md(conf: str, total: int, success: int, failed: int, elapsed_sec: float):
-    """更新 docs/abstract_backfill_progress.md，将指定 conf 从'待处理'移到'已完成'。"""
+    """更新 docs/abstract_backfill_progress.md，将指定 conf 从'待处理'移到'已完成'。
+
+    Review issue #9 (fourth pass): the previous silent-return path
+    (``if not md_path.exists(): return``) was fine at unit level but hid
+    a legitimate operational signal — a fresh clone or a workflow that
+    ran ``rm docs/abstract_backfill_progress.md`` would silently stop
+    receiving progress updates. We now log the miss (once per invocation,
+    stdout only — never raise) so an operator watching the CI log can
+    diagnose the drop quickly.
+    """
     md_path = Path("docs/abstract_backfill_progress.md")
     if not md_path.exists():
+        print(
+            f"[i] update_conf_progress_md: {md_path} missing; skipping "
+            f"markdown update for conf={conf} (success={success}/{total}, "
+            f"failed={failed}). This is fine locally but unexpected in CI."
+        )
         return
 
     with open(md_path, "r", encoding="utf-8") as f:
@@ -910,8 +1201,23 @@ def _process_targets(
     soft_timeout: float = None,
     max_failed_attempts: int = 3,
     progress: Dict[str, dict] = None,
+    reason_in: Optional[Set[str]] = None,
+    include_legacy: bool = True,
 ) -> Tuple[int, int, bool]:
-    """处理一组目标论文，返回 (success_count, failed_count, timed_out)。"""
+    """处理一组目标论文，返回 (success_count, failed_count, timed_out)。
+
+    ``reason_in`` (spec AC-7 / Task 7) — when set, and ``retry_failed`` is
+    active, only re-attempt papers whose *previous* failure ``reason`` is
+    in this set.
+
+    ``include_legacy`` (review issue #9): controls how legacy v3 progress
+    entries (records without a ``reason`` field) interact with the
+    ``reason_in`` whitelist. Default ``True`` keeps the historical
+    behaviour (legacy records are always retryable). Pass ``False`` in
+    workflows that must strictly honour the reason whitelist — e.g. the
+    Actions retry step which is intentionally scoped to recoverable
+    failures only.
+    """
     if progress is None:
         progress = load_progress()
     if not retry_failed and not retry_partial:
@@ -929,6 +1235,29 @@ def _process_targets(
             url for url, meta in progress.items()
             if meta.get("status") == "failed" and meta.get("attempts", 0) < max_failed_attempts
         }
+        if reason_in is not None:
+            # ``normalize_reason`` guarantees an in-vocab value; records
+            # that were written under schema v3 (no ``reason`` at all)
+            # are included by default (``include_legacy=True``) so
+            # legacy runs stay retryable. Set ``include_legacy=False``
+            # to strictly honour the whitelist.
+            reason_norm = {normalize_reason(r) for r in reason_in}
+            if include_legacy:
+                failed_urls = {
+                    url for url in failed_urls
+                    if "reason" not in progress[url]
+                    or normalize_reason(progress[url].get("reason")) in reason_norm
+                }
+            else:
+                failed_urls = {
+                    url for url in failed_urls
+                    if "reason" in progress[url]
+                    and normalize_reason(progress[url].get("reason")) in reason_norm
+                }
+            print(
+                f"[*] Retry filter: reason_in={sorted(reason_norm)} "
+                f"include_legacy={include_legacy} -> {len(failed_urls)} urls remain"
+            )
         targets = [p for p in targets if p.get("paper_url") in failed_urls]
         print(f"[*] Retry failed mode: {len(targets)} failed papers to retry (max_attempts={max_failed_attempts})")
 
@@ -960,7 +1289,7 @@ def _process_targets(
         url = paper.get("paper_url", "")
         print(f"[{i}/{len(targets)}] {title[:60]}...")
 
-        abstract, last_time, source = fetch_abstract_for_paper(
+        abstract, last_time, source, err_info = fetch_abstract_for_paper(
             paper, last_time, query_doi_by_title_enabled=query_doi_by_title
         )
 
@@ -981,11 +1310,25 @@ def _process_targets(
             failed += 1
             print("  -> Failed")
             old_attempts = progress.get(url, {}).get("attempts", 0)
-            progress[url] = {
+            failure_record = {
                 "status": "failed",
                 "attempts": old_attempts + 1,
                 "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
             }
+            # v4 schema: pass through the reason / last_source hints so
+            # downstream analysis can filter "no DOI" vs. "title mismatch"
+            # vs. "venue index" without re-running the fetch. Values are
+            # normalised into :data:`REASON_ENUM` to guarantee a stable
+            # vocabulary.
+            reason = err_info.get("reason")
+            if reason:
+                failure_record["reason"] = normalize_reason(reason)
+            last_src = err_info.get("last_source")
+            if last_src:
+                failure_record["last_source"] = last_src
+            if err_info.get("title_mismatch"):
+                failure_record["title_mismatch"] = True
+            progress[url] = failure_record
 
         if i % chunk_size == 0 or i == len(targets):
             print(f"[*] Saving progress... (chunk success: {chunk_success}, total success: {success}, failed: {failed})")
@@ -1016,6 +1359,8 @@ def run(
     max_papers: Optional[int] = None,
     soft_timeout: float = None,
     max_failed_attempts: int = 3,
+    reason_in: Optional[Set[str]] = None,
+    include_legacy: bool = True,
 ) -> None:
     global_start = time.time()
     # Pull the latest cache from Hugging Face before reading/writing anything.
@@ -1137,6 +1482,8 @@ def run(
             soft_timeout=soft_timeout,
             max_failed_attempts=max_failed_attempts,
             progress=progress,
+            reason_in=reason_in,
+            include_legacy=include_legacy,
         )
         if success > 0:
             sync_artifacts_after_cache_update("Update PaperVault data artifacts after abstract backfill")
@@ -1172,7 +1519,7 @@ def run(
         success, failed, timed_out = _process_targets(
             conf_papers, all_papers, chunk_size, retry_failed, retry_partial, query_doi_by_title,
             start_time=global_start, soft_timeout=soft_timeout, max_failed_attempts=max_failed_attempts,
-            progress=progress,
+            progress=progress, reason_in=reason_in, include_legacy=include_legacy,
         )
         attempted = success + failed
         processed_total += attempted
@@ -1191,6 +1538,7 @@ def run(
 
 
 if __name__ == "__main__":
+    _install_utf8_console()
     parser = argparse.ArgumentParser(description="Backfill paper abstracts from multiple APIs")
     parser.add_argument("--phase", type=str, default="1", choices=["1", "2", "3", "all"],
                         help="Phase: 1=DOI papers (high ROI), 2=core conf non-DOI, 3=remaining non-DOI, all=everything")
@@ -1214,7 +1562,34 @@ if __name__ == "__main__":
                         help="Soft timeout in seconds. Save progress and exit gracefully when reached (e.g. 18000 for 5h)")
     parser.add_argument("--max-failed-attempts", type=int, default=3,
                         help="Max retry attempts for failed papers before permanently skipping them (default: 3)")
+    parser.add_argument(
+        "--reason-in",
+        type=str,
+        default=None,
+        help=(
+            "Whitelist of failure reasons to retry (comma-separated). "
+            "Requires --retry-failed. Recommended: 'rate_limited,timeout,network,empty_abstract'. "
+            "Legacy v3 records without a 'reason' field are handled per --include-legacy."
+        ),
+    )
+    parser.add_argument(
+        "--include-legacy",
+        dest="include_legacy",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "Include legacy v3 records (no 'reason' field) in the retry set "
+            "even when --reason-in is set. Enabled by default; pass "
+            "--no-include-legacy to strictly honour the whitelist. "
+            "(Review issue R4: refactored from a manual store_true / "
+            "store_false pair to BooleanOptionalAction for a cleaner "
+            "--help surface.)"
+        ),
+    )
     args = parser.parse_args()
+    reason_in_set: Optional[Set[str]] = None
+    if args.reason_in:
+        reason_in_set = {r.strip() for r in args.reason_in.split(",") if r.strip()}
     run(
         phase=args.phase,
         target_conf=args.conf,
@@ -1228,4 +1603,6 @@ if __name__ == "__main__":
         max_papers=args.max_papers,
         soft_timeout=args.soft_timeout,
         max_failed_attempts=args.max_failed_attempts,
+        reason_in=reason_in_set,
+        include_legacy=args.include_legacy,
     )
