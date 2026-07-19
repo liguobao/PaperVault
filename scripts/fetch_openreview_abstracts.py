@@ -207,8 +207,11 @@ def build_task(records: List[dict], *, conf_filter, year_filter, retry_failed: b
 def run(args) -> int:
     # Pull the latest cache from Hugging Face before touching it locally; this
     # is necessary because another workflow (e.g. collect_papers) may have
-    # pushed a newer cache while this script was queued.
-    ensure_cache_local(CACHE_FILE, refresh=True)
+    # pushed a newer cache while this script was queued. --offline skips this
+    # entirely for air-gapped runs / when the caller already knows the local
+    # copy is authoritative.
+    if not args.offline:
+        ensure_cache_local(CACHE_FILE, refresh=True)
     if not CACHE_FILE.exists():
         print(f"[!] Cache file not found: {CACHE_FILE}")
         return 1
@@ -361,8 +364,10 @@ def run(args) -> int:
     # Push the updated cache to Hugging Face so other workflows / the live app
     # see the new abstracts. parent_commit optimistic locking inside
     # data_artifacts will reject the push if another writer landed first.
+    # --no-sync defers the push (caller will sync manually later);
+    # --offline is a stronger form that also skipped the initial pull.
     sync_failed = False
-    if total_filled > 0 and not args.dry_run:
+    if total_filled > 0 and not args.dry_run and not args.no_sync and not args.offline:
         try:
             sync_cache_artifacts(
                 cache_path=CACHE_FILE,
@@ -378,6 +383,14 @@ def run(args) -> int:
                 "Re-run sync_cache_artifacts manually before re-launching "
                 "any other workflow that touches the cache."
             )
+    elif total_filled > 0 and (args.no_sync or args.offline):
+        mode = "--offline" if args.offline else "--no-sync"
+        print(
+            f"[*] {mode} set; skipped Hugging Face push. "
+            f"Local cache has +{total_filled} new abstracts; remember to run "
+            "`python -c \"from data_artifacts import sync_cache_artifacts; "
+            "sync_cache_artifacts()\"` before any other workflow touches HF."
+        )
     return 1 if sync_failed else 0
 
 
@@ -404,6 +417,10 @@ def parse_args(argv=None) -> argparse.Namespace:
                    help="重试之前 tried 但未拿到 abstract 的 forum id")
     p.add_argument("--always-flush", action="store_true",
                    help="即使本轮无新增，也写一次 cache（默认仅在有新增时写）")
+    p.add_argument("--no-sync", action="store_true",
+                   help="结束后不推 Hugging Face（后续需手工 sync_cache_artifacts）")
+    p.add_argument("--offline", action="store_true",
+                   help="跳过 ensure_cache_local 与 sync_cache_artifacts（air-gapped 场景）")
     return p.parse_args(argv)
 
 

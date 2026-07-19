@@ -1361,14 +1361,20 @@ def run(
     max_failed_attempts: int = 3,
     reason_in: Optional[Set[str]] = None,
     include_legacy: bool = True,
+    no_sync: bool = False,
+    offline: bool = False,
 ) -> None:
     global_start = time.time()
     # Pull the latest cache from Hugging Face before reading/writing anything.
     # This is the canonical source of truth across all workflows.
-    ensure_cache_local(CACHE_FILE, refresh=True)
-    # Progress file lives on the same HF dataset. Pull it too so multi-machine
-    # / multi-day runs share a single coherent progress ledger.
-    ensure_progress_local(PROGRESS_FILE, refresh=True)
+    # --offline skips both the initial pull *and* the final push (for
+    # air-gapped runs / when the caller has already refreshed the local
+    # copy in the same shell).
+    if not offline:
+        ensure_cache_local(CACHE_FILE, refresh=True)
+        # Progress file lives on the same HF dataset. Pull it too so multi-machine
+        # / multi-day runs share a single coherent progress ledger.
+        ensure_progress_local(PROGRESS_FILE, refresh=True)
     print(f"[*] Phase: {phase}, conf: {target_conf or 'all'}, chunk_size: {chunk_size}, max_papers: {max_papers or 'unlimited'}")
     if query_doi_by_title:
         print("[*] DOI query by title: ENABLED (slower, use with caution)")
@@ -1486,7 +1492,16 @@ def run(
             include_legacy=include_legacy,
         )
         if success > 0:
-            sync_artifacts_after_cache_update("Update PaperVault data artifacts after abstract backfill")
+            if no_sync or offline:
+                mode = "--offline" if offline else "--no-sync"
+                print(
+                    f"[*] {mode} set; skipped Hugging Face push. "
+                    "Local cache has been updated; remember to run "
+                    "`python -c \"from data_artifacts import sync_cache_artifacts; "
+                    "sync_cache_artifacts()\"` before any other workflow touches HF."
+                )
+            else:
+                sync_artifacts_after_cache_update("Update PaperVault data artifacts after abstract backfill")
         return
 
     # --- 逐个 conf 处理 ---
@@ -1534,7 +1549,16 @@ def run(
                 break
 
     if success_total > 0:
-        sync_artifacts_after_cache_update("Update PaperVault data artifacts after abstract backfill")
+        if no_sync or offline:
+            mode = "--offline" if offline else "--no-sync"
+            print(
+                f"[*] {mode} set; skipped Hugging Face push. "
+                "Local cache has been updated; remember to run "
+                "`python -c \"from data_artifacts import sync_cache_artifacts; "
+                "sync_cache_artifacts()\"` before any other workflow touches HF."
+            )
+        else:
+            sync_artifacts_after_cache_update("Update PaperVault data artifacts after abstract backfill")
 
 
 if __name__ == "__main__":
@@ -1586,6 +1610,27 @@ if __name__ == "__main__":
             "--help surface.)"
         ),
     )
+    parser.add_argument(
+        "--no-sync",
+        dest="no_sync",
+        action="store_true",
+        help=(
+            "Skip the final sync_cache_artifacts() push to Hugging Face. "
+            "The initial ensure_cache_local(refresh=True) pull still runs. "
+            "Useful when chaining multiple backfill scripts locally and "
+            "you want to coalesce the pushes into one final manual sync."
+        ),
+    )
+    parser.add_argument(
+        "--offline",
+        dest="offline",
+        action="store_true",
+        help=(
+            "Skip BOTH ensure_cache_local / ensure_progress_local AND the "
+            "final sync (air-gapped scenarios / when the caller has just "
+            "refreshed the local copy in the same shell)."
+        ),
+    )
     args = parser.parse_args()
     reason_in_set: Optional[Set[str]] = None
     if args.reason_in:
@@ -1605,4 +1650,6 @@ if __name__ == "__main__":
         max_failed_attempts=args.max_failed_attempts,
         reason_in=reason_in_set,
         include_legacy=args.include_legacy,
+        no_sync=args.no_sync,
+        offline=args.offline,
     )
