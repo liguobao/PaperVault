@@ -10,8 +10,8 @@ env:
 
 on:
   schedule:
-    # 每天运行一次 (UTC 00:00)，运行时长由 --soft-timeout 控制（约5小时后自动保存进度退出）
-    - cron: "0 0 * * *"
+    # 每 6 小时运行一次 (UTC 00:00 / 06:00 / 12:00 / 18:00)，运行时长由 --soft-timeout 控制（约5小时后自动保存进度退出）
+    - cron: "0 */6 * * *"
   workflow_dispatch:
     inputs:
       target_conf:
@@ -178,18 +178,28 @@ jobs:
         # graceful save / HF upload. See review issue #10 for the
         # rationale (defence-in-depth against a wedged HTTP client).
         #
+        # ``--max-papers 10000`` caps each scheduled retry pass so the workflow
+        # does not spend the whole 60 min retry budget chewing through a large
+        # backlog of transient failures. The backlog is drained gradually
+        # across multiple runs while keeping the total runtime close to the
+        # pre-merge ~10 min baseline. When the run is manually triggered with
+        # ``force=true`` the cap is removed so an operator can still perform a
+        # full unbounded retry.
+        #
         # See spec AC-7 / Task 7 and Task 11 for the design rationale.
         if: success() || failure()
         timeout-minutes: 70
         run: |
           force_flag=""
+          max_papers_flag="--max-papers 10000"
           if [ "${{ github.event.inputs.force }}" = "true" ]; then
             force_flag="--force"
+            max_papers_flag=""
           fi
           if [ -n "${{ github.event.inputs.target_conf }}" ]; then
-            python scripts/fetch_abstracts.py --conf "${{ github.event.inputs.target_conf }}" --chunk-size 500 --soft-timeout 3600 --max-failed-attempts 3 --retry-failed --reason-in "rate_limited,timeout,network,empty_abstract" --no-include-legacy $force_flag
+            python scripts/fetch_abstracts.py --conf "${{ github.event.inputs.target_conf }}" --chunk-size 500 --soft-timeout 3600 --max-failed-attempts 3 --retry-failed --reason-in "rate_limited,timeout,network,empty_abstract" --no-include-legacy $max_papers_flag $force_flag
           else
-            python scripts/fetch_abstracts.py --batch --chunk-size 500 --soft-timeout 3600 --max-failed-attempts 3 --retry-failed --reason-in "rate_limited,timeout,network,empty_abstract" --no-include-legacy $force_flag
+            python scripts/fetch_abstracts.py --batch --chunk-size 500 --soft-timeout 3600 --max-failed-attempts 3 --retry-failed --reason-in "rate_limited,timeout,network,empty_abstract" --no-include-legacy $max_papers_flag $force_flag
           fi
 
       - name: Backfill CVF Open Access abstracts
