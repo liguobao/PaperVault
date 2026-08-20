@@ -88,7 +88,7 @@ SAMPLE_PAPERS: Dict[str, List[dict]] = {
         },
     ],
     # Negative sample: conf key without a 4-digit year.
-    # PaperRepository._load should log a warning and skip it.
+    # PaperRepository's startup materialiser should log a warning and skip it.
     "WorkshopNoYear": [
         {
             "paper_name": "Should Be Skipped",

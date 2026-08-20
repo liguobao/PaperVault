@@ -18,7 +18,7 @@ from papervault.services.rerank import _normalise_score, _parse_rerank_response
 
 @pytest.fixture
 def fake_papers(monkeypatch):
-    """Seed two papers into the in-memory repo so ``paper_ids`` resolves.
+    """Seed two papers into the repository stub so ``paper_ids`` resolves.
 
     ``PaperRepository.all_papers`` is replaced with a stub that returns a
     fixed list with deterministic ids; we don't touch disk to keep the

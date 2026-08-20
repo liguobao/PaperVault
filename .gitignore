@@ -8,6 +8,11 @@ cache/*.parquet.tmp
 # committed to git.
 cache/cache.jsonl.gz
 cache/cache.jsonl.gz.tmp
+# Derived online search index. It is rebuilt atomically from cache.jsonl.gz
+# at application startup and is never an authoritative data artifact.
+cache/*.sqlite3
+cache/*.sqlite3-*
+cache/.*.sqlite3.*.tmp
 # abstract_backfill_progress.jsonl.gz follows the same workflow: it is pulled
 # / pushed via data_artifacts.ensure_progress_local() and never committed.
 # The legacy .json variant is also ignored to prevent re-introducing the

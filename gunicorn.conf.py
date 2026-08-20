@@ -15,8 +15,9 @@ timeout = int(os.getenv("GUNICORN_TIMEOUT", "120"))
 graceful_timeout = int(os.getenv("GUNICORN_GRACEFUL_TIMEOUT", "30"))
 keepalive = int(os.getenv("GUNICORN_KEEPALIVE", "5"))
 
-# The paper corpus is read-mostly. Loading it before workers are forked lets
-# Linux share its memory pages between workers through copy-on-write.
+# Verify or build the derived SQLite index once in the Gunicorn master before
+# workers fork. This prevents every worker racing to materialise the same HF
+# artifact on a cold boot; request-time connections remain short-lived/read-only.
 preload_app = True
 
 accesslog = "-"

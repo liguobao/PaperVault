@@ -12,7 +12,7 @@ This project was originally forked from [MLNLP-World/AI-Paper-Collector](https:/
 
 | Layer | Technology |
 |-------|-----------|
-| **Backend** | Python 3.8+ (CI uses 3.10), Flask 3.x, Werkzeug 3.x, **application factory** (`papervault.create_app`), **Pydantic v2** request/response schemas (`papervault/schemas.py`), unified JSON error envelope (`papervault/errors.py`), request-id structured logging (`papervault/logging.py`); `Settings` is a plain `@dataclass(frozen=True)` driven by env vars (`papervault/config.py`) — **not** `pydantic-settings` |
+| **Backend** | Python 3.8+ (CI uses 3.10), Flask 3.x, Werkzeug 3.x, **application factory** (`papervault.create_app`), **Pydantic v2** request/response schemas (`papervault/schemas.py`), unified JSON error envelope (`papervault/errors.py`), request-id structured logging (`papervault/logging.py`); `Settings` is a plain `@dataclass(frozen=True)` driven by env vars (`papervault/config.py`) — **not** `pydantic-settings`; the HF JSONL.gz cache is materialised at startup into a derived SQLite/FTS5 online search index |
 | **Frontend** | Vue 3.5 (Composition API + `<script setup>`), TypeScript 5.9, Vite 8, Vue Router 4 (hash mode), in-house **i18n** layer (`src/utils/i18n.ts`), WoS-style **query DSL** parser/evaluator (`src/utils/queryDsl.ts` + `src/utils/fields.ts`) powering both Smart Search and the dedicated Advanced Search view |
 | **UI Framework** | Element Plus 2.14 (auto-imported via `unplugin-vue-components`), `@vueuse/core` |
 | **HTTP Client** | Axios 1.x |
@@ -31,7 +31,7 @@ This project was originally forked from [MLNLP-World/AI-Paper-Collector](https:/
 PaperVault/
 ├── Dockerfile                    # Multi-stage production image: Vue build + non-root Gunicorn runtime
 ├── .dockerignore                 # Excludes local caches, credentials and development artifacts from image context
-├── gunicorn.conf.py              # Env-configurable production server settings; preloads the read-mostly paper index
+├── gunicorn.conf.py              # Env-configurable production server settings; verifies/builds SQLite once before workers fork
 ├── app.py                        # Thin Flask entrypoint: builds `app = create_app(settings)`; no business logic here
 ├── collector/                    # Multi-source data collector package for paper metadata
 │   ├── __init__.py               # Re-exports full legacy public API (HEADERS, SESSION, collect, do_collect, load_cache, save_cache, all search_from_* etc.) for backwards-compat
@@ -71,7 +71,7 @@ PaperVault/
 │   │       └── ai.py             # `POST /api/v1/ai/rerank` (LLM-driven result re-ranking)
 │   └── services/
 │       ├── __init__.py
-│       ├── papers.py             # `PaperRepository` (lazy/eager cache load, `get_by_id` O(1) index) + `search_papers` / `SearchCriteria`
+│       ├── papers.py             # `PaperRepository` (startup JSONL.gz → SQLite/FTS5 materialisation, read-only queries, atomic rebuild) + `search_papers` / `SearchCriteria`
 │       ├── suggest.py            # `suggest_keywords` (multi-provider dispatch, provider resolution)
 │       ├── rerank.py             # `rank_papers` (LLM relevance scoring; JSON output parsing, score normalisation)
 │       ├── ai_clients.py         # Vendor-neutral SDK dispatch: `call_openai_compatible`, `call_anthropic` (with StepFun `thinking:disabled` compatibility)
@@ -228,6 +228,7 @@ The Flask server runs on `http://127.0.0.1:5001` by default. Override the bind a
 - `PAPERVAULT_LOG_LEVEL` - Backend log level (default `INFO`)
 - `PAPERVAULT_CORS_ORIGINS` - Comma-separated CORS allow-list (empty by default)
 - `PAPERVAULT_MAX_PAGE_SIZE` / `PAPERVAULT_DEFAULT_PAGE_SIZE` - Pagination guards for `/api/v1/papers` (defaults 200 / 50)
+- `PAPERVAULT_SEARCH_DB_PATH` - Optional path for the derived SQLite/FTS5 search index; defaults to `papers.sqlite3` beside `cache/cache.jsonl.gz`
 - `CONTACT_EMAIL` - Contact email injected into `User-Agent` for discovery / scraping (default `im.young@foxmail.com`)
 
 *AI providers (used by `/api/v1/suggest` and `/api/v1/ai/rerank`)*

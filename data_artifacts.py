@@ -269,7 +269,11 @@ def ensure_cache_local(
         # killed, soft-timeout, Ctrl-C) cannot leave a corrupt gzip behind.
         tmp_path = cache_path.with_suffix(cache_path.suffix + ".tmp")
         try:
-            shutil.copyfile(downloaded_path, tmp_path)
+            # Preserve the HF blob's mtime. PaperRepository fingerprints the
+            # local source by size + mtime; ``copyfile`` would assign a fresh
+            # timestamp on every otherwise-identical startup and force an
+            # unnecessary multi-second SQLite/FTS rebuild.
+            shutil.copy2(downloaded_path, tmp_path)
             os.replace(tmp_path, cache_path)
         finally:
             if tmp_path.exists():

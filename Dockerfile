@@ -38,7 +38,10 @@ USER papervault
 
 EXPOSE 5001
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+# The first boot may need to download the HF artifact and build the derived
+# SQLite/FTS5 index. Subsequent boots reuse it in milliseconds when /app/cache
+# is mounted persistently.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5m --retries=3 \
     CMD python -c "import os, urllib.request; urllib.request.urlopen('http://127.0.0.1:' + os.getenv('PORT', '5001') + '/api/v1/healthz', timeout=5)"
 
 CMD ["gunicorn", "--config", "gunicorn.conf.py", "app:app"]

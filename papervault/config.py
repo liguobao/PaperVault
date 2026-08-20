@@ -52,6 +52,16 @@ def _env_bool(name: str, default: bool = False) -> bool:
 class Settings:
     base_dir: Path = _BASE_DIR
     cache_path: Path = _BASE_DIR / "cache" / "cache.jsonl.gz"
+    # ``None`` means "derive papers.sqlite3 beside cache_path". Keeping the
+    # derivation in PaperRepository makes custom cache paths in tests and
+    # deployments automatically get an isolated search database.
+    search_db_path: Path | None = field(
+        default_factory=lambda: (
+            Path(value)
+            if (value := os.environ.get("PAPERVAULT_SEARCH_DB_PATH"))
+            else None
+        )
+    )
     static_folder: Path = _BASE_DIR / "static" / "dist"
 
     host: str = field(default_factory=lambda: _env_str("HOST", "127.0.0.1"))
