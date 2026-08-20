@@ -56,11 +56,12 @@ export interface SuggestResponse {
   model: string
 }
 
-export const searchPapers = (params: PaperSearchQuery) =>
+export const searchPapers = (params: PaperSearchQuery, signal?: AbortSignal) =>
   request<PaperSearchResponse>({
     url: '/v1/papers',
     method: 'get',
     params,
+    signal,
     // Backend ``PaperSearchParams._split_conf`` accepts both repeated query
     // parameters (``?conf=A&conf=B``) and a single comma-separated value.
     // We emit repeated params here so callers can pass ``conf: ['A', 'B']``

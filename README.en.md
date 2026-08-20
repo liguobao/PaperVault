@@ -127,11 +127,16 @@ python app.py            # Start the web search server
 The image uses a multi-stage build: Node.js compiles the Vue frontend, then Gunicorn in the Python runtime serves both the API and static site.
 
 ```bash
-docker build -t papervault .
+docker build \
+  --build-arg VITE_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX \
+  --build-arg VITE_GOOGLE_SITE_VERIFICATION=xxxxxxxxxxxxxxxx \
+  -t papervault .
 docker run --rm -p 5001:5001 --env-file .env papervault
 ```
 
 Open `http://127.0.0.1:5001` after startup. The health endpoint is `http://127.0.0.1:5001/api/v1/healthz`. Tune the server with `GUNICORN_WORKERS`, `GUNICORN_THREADS`, and `GUNICORN_TIMEOUT`; defaults are documented in `.env.example`.
+
+Google Analytics and Search Console are optional. Without these build arguments, the app does not load GA or inject a site-verification tag. For non-Docker builds, export the same variables before running `npm run build`.
 
 ## :open_book: Coverage
 
