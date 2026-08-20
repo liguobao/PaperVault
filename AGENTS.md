@@ -21,6 +21,7 @@ This project was originally forked from [MLNLP-World/AI-Paper-Collector](https:/
 | **AI Features** | Multi-provider LLM catalog (OpenAI, DeepSeek, Anthropic Claude, Qwen/DashScope, GLM, StepFun, custom) for keyword suggestion (`POST /api/v1/suggest`) and LLM-driven result re-ranking (`POST /api/v1/ai/rerank`). Wire formats: `openai-compatible` (via `openai` SDK) and `anthropic` (via `anthropic` SDK). Presets exposed through `GET /api/v1/ai/providers`; per-request overrides for provider / base_url / model / api_key. `tiktoken` for token counting |
 | **Stats / Visualization** | numpy, matplotlib, wordcloud |
 | **Build Tool** | Vite 8 with `vite-plugin-compression2` (gzip), `unplugin-auto-import`, `unplugin-vue-components` (auto-generated `auto-imports.d.ts` / `components.d.ts`) |
+| **Deployment** | Multi-stage Docker image (Node 22 frontend builder + Python 3.10 runtime), Gunicorn 23 with configurable gthread workers and preloaded application state |
 | **Tests** | Backend: `pytest` under `tests/` (`pytest.ini` → `testpaths=tests`); Frontend: zero-dependency `node:test` regression suite for the DSL parser (`web-vue/src/utils/__tests__/queryDsl.test.mjs`) |
 | **Automation** | Playwright (used by `scripts/capture_screenshot.py` to regenerate the README hero screenshot) |
 
@@ -28,6 +29,9 @@ This project was originally forked from [MLNLP-World/AI-Paper-Collector](https:/
 
 ```
 PaperVault/
+├── Dockerfile                    # Multi-stage production image: Vue build + non-root Gunicorn runtime
+├── .dockerignore                 # Excludes local caches, credentials and development artifacts from image context
+├── gunicorn.conf.py              # Env-configurable production server settings; preloads the read-mostly paper index
 ├── app.py                        # Thin Flask entrypoint: builds `app = create_app(settings)`; no business logic here
 ├── collector/                    # Multi-source data collector package for paper metadata
 │   ├── __init__.py               # Re-exports full legacy public API (HEADERS, SESSION, collect, do_collect, load_cache, save_cache, all search_from_* etc.) for backwards-compat
@@ -47,7 +51,7 @@ PaperVault/
 │       └── thecvf.py             # CVF Open Access pages (search_from_thecvf, search_abs_from_thecvf; deferred import of scripts.cvf_abstract)
 ├── maintain.py                   # README updater, stats renderer, cache refresh utility
 ├── data_artifacts.py             # Hugging Face dataset sync helpers (cache.jsonl.gz upload with parent_commit optimistic locking)
-├── requirements.txt              # Python dependencies (includes pydantic>=2.6,<3, python-dotenv, openai>=1, anthropic>=0.40, huggingface_hub, tiktoken, …)
+├── requirements.txt              # Python dependencies (includes Gunicorn, pydantic>=2.6,<3, python-dotenv, openai>=1, anthropic>=0.40, huggingface_hub, tiktoken, …)
 ├── pytest.ini                    # `testpaths=tests`, quiet mode, DeprecationWarning filter
 ├── papervault/                   # Backend application package (Flask app factory + v1 REST surface)
 │   ├── __init__.py               # Re-exports `create_app`
@@ -341,7 +345,7 @@ cd web-vue
 npm run build          # runs `type-check` + `build-only` in parallel
 ```
 
-This builds the frontend into the `static/` directory at the project root, which Flask serves directly. The build also emits gzipped assets via `vite-plugin-compression2`.
+This builds the frontend into `static/dist/` at the project root, which Flask serves directly. The build also emits gzipped assets via `vite-plugin-compression2`. For production, run `gunicorn --config gunicorn.conf.py app:app`, or use `docker build -t papervault .` to build the combined frontend/backend image.
 
 Other frontend scripts:
 - `npm run type-check` - run `vue-tsc --noEmit`
@@ -353,6 +357,8 @@ Other frontend scripts:
 | Command | Description |
 |---------|-------------|
 | `python app.py` | Start Flask backend server (binds to `HOST:PORT`, defaults `127.0.0.1:5001`) |
+| `gunicorn --config gunicorn.conf.py app:app` | Start the production web server (defaults to 2 gthread workers, 4 threads each, on port 5001) |
+| `docker build -t papervault .` | Build the production image, including the Vue frontend and Gunicorn backend |
 | `pytest -q` | Run the backend test suite (`tests/`). For CI parity also export `PAPERVAULT_OFFLINE=1` so the cache loader skips HF |
 | `python -m collector` | Run collector to update `cache/cache.jsonl.gz` (equivalent to the legacy `python collector.py`; the collector was refactored into the `collector/` package) |
 | `python maintain.py` | Update README conference list & stats from config files |
@@ -448,7 +454,7 @@ Code links are enriched from [MLNLP-World/Top-AI-Conferences-Paper-with-Code](ht
 
 | Workflow | Trigger | Action |
 |----------|---------|--------|
-| `ci.yml` | Push / PR on `papervault/**`, `tests/**`, `web-vue/**`, `app.py`, `data_artifacts.py`, `collector.py`, `requirements.txt`, `pytest.ini` (and friends) / Manual | Two parallel jobs: **backend** runs `pytest -q` with `PAPERVAULT_OFFLINE=1`; **frontend** runs `npm run type-check` + `npm run lint:check` on Node 20.19.0. The only quality gate that fails PRs |
+| `ci.yml` | Push / PR on application, frontend, dependency, and container-build files / Manual | Three parallel jobs: **backend** runs `pytest -q` with `PAPERVAULT_OFFLINE=1`; **frontend** runs `npm run type-check` + `npm run lint:check` on Node 20.19.0; **docker** builds the production image. The only quality gate that fails PRs |
 | `discover_and_update.yml` | Daily schedule / Manual | Auto-discovers new conference configs and creates PR |
 | `collect_papers.yml` | Weekly (Tue 16:00 UTC) / Manual / Push on `conf/**` | Incrementally collects papers with per-URL progress tracking and soft-timeout graceful save; creates PR to `auto-collect-papers` branch |
 | `backfill_abstracts.yml` | Every 6 hours / Manual | Backfills missing abstracts (timeout-aware, ~5h budget) and then re-scans GitHub code links from the freshly backfilled abstracts (`scripts/fetch_code_links.py --year all --retry-failed`), pushes to `auto-backfill-abstracts` branch |

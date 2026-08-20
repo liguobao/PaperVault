@@ -255,6 +255,9 @@ cache_conf = [name for name in cache_res.keys()]
 | `PAPERVAULT_MAX_PAGE_SIZE` / `PAPERVAULT_DEFAULT_PAGE_SIZE` | `/api/v1/papers` 分页上限（默认 200 / 50） |
 | `PAPERVAULT_CORS_ORIGINS` | 允许的跨域来源（逗号分隔），不设置则关闭 CORS |
 | `HOST` / `PORT` | Flask 监听地址（默认 `127.0.0.1:5001`） |
+| `GUNICORN_BIND` | Gunicorn 监听地址（默认 `0.0.0.0:$PORT`） |
+| `GUNICORN_WORKERS` / `GUNICORN_THREADS` | Gunicorn 进程和每进程线程数（默认 `2` / `4`） |
+| `GUNICORN_TIMEOUT` | Gunicorn 请求超时秒数（默认 `120`，兼容较慢的 AI 请求） |
 | `HF_TOKEN` | Hugging Face 写入 token，用于上传数据产物 |
 | `PAPERVAULT_HF_REPO_ID` | Hugging Face Dataset 仓库 ID，如 `youngfish42/PaperVault`；未设置时跳过上传 |
 | `PAPERVAULT_HF_REPO_TYPE` | Hugging Face 仓库类型，默认 `dataset` |
@@ -267,7 +270,14 @@ cd web-vue && npm install && npm run build
 # 产物输出到 ../static
 
 # 2. 启动后端
-python app.py
+gunicorn --config gunicorn.conf.py app:app
+```
+
+也可以使用多阶段 Docker 镜像一次完成前端构建和服务打包：
+
+```bash
+docker build -t papervault .
+docker run --rm -p 5001:5001 --env-file .env papervault
 ```
 
 ### 6.3 缓存存储（Hugging Face，已替代 Git LFS）
