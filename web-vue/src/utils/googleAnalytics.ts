@@ -23,8 +23,10 @@ export function installGoogleAnalytics(router: Router) {
   window.dataLayer = window.dataLayer || []
   window.gtag =
     window.gtag ||
-    function (...args: unknown[]) {
-      window.dataLayer.push(args)
+    function () {
+      // Google Tag distinguishes the native Arguments object from a rest array.
+      // eslint-disable-next-line prefer-rest-params
+      window.dataLayer.push(arguments)
     }
 
   window.gtag('js', new Date())
