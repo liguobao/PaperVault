@@ -35,8 +35,9 @@ _YEAR_RE = re.compile(r"\d{4}")
 _TRAILING_YEAR_RE = re.compile(r"\d{4}(.*)$")
 _WS_RE = re.compile(r"\s+")
 
-_SEARCH_SCHEMA_VERSION = 1
+_SEARCH_SCHEMA_VERSION = 2
 _INSERT_BATCH_SIZE = 2_000
+_FTS_TRIGRAM_MIN_CHARS = 3
 
 
 @dataclass(slots=True)
@@ -216,7 +217,7 @@ class PaperRepository:
                     abstract,
                     authors,
                     content='',
-                    tokenize='unicode61 remove_diacritics 2'
+                    tokenize='trigram'
                 );
                 """
             )
@@ -462,20 +463,37 @@ class PaperRepository:
         use_abstract = use_title
         use_author = criteria.field in ("author", "any") and bool(query_tokens)
 
+        # The trigram tokenizer preserves the legacy arbitrary-substring
+        # semantics while still narrowing the candidate set for terms of at
+        # least three characters. FTS5 cannot match shorter trigram terms, so
+        # those are deliberately left to the exact ``instr`` filters below.
+        query_fts_tokens = _fts_eligible_tokens(query_tokens)
+        author_fts_tokens = _fts_eligible_tokens(author_tokens)
+
         fts_parts: List[str] = []
-        if query_tokens:
+        if query_fts_tokens:
             field_parts = []
             if use_title:
-                field_parts.append(_fts_field_expression("title", query_tokens, "AND"))
+                field_parts.append(
+                    _fts_field_expression("title", query_fts_tokens, "AND")
+                )
             if use_abstract:
                 field_parts.append(
-                    _fts_field_expression("abstract", query_tokens, "AND")
+                    _fts_field_expression("abstract", query_fts_tokens, "AND")
                 )
             if use_author:
-                field_parts.append(_fts_field_expression("authors", query_tokens, "AND"))
+                field_parts.append(
+                    _fts_field_expression("authors", query_fts_tokens, "AND")
+                )
             fts_parts.append(f"({' OR '.join(field_parts)})")
-        if author_tokens:
-            fts_parts.append(_fts_field_expression("authors", author_tokens, "OR"))
+        # The independent author filter is OR-based. It is safe to narrow via
+        # FTS only when every alternative is trigram-eligible; otherwise a row
+        # matching only a short token would be excluded before ``instr`` can
+        # validate it.
+        if author_fts_tokens and len(author_fts_tokens) == len(author_tokens):
+            fts_parts.append(
+                _fts_field_expression("authors", author_fts_tokens, "OR")
+            )
         fts_query = " AND ".join(fts_parts)
 
         filters: List[str] = []
@@ -591,7 +609,11 @@ def _normalize(value: Optional[str]) -> str:
 
 
 def _fts_quote(token: str) -> str:
-    return f'"{token.replace(chr(34), chr(34) * 2)}"*'
+    return f'"{token.replace(chr(34), chr(34) * 2)}"'
+
+
+def _fts_eligible_tokens(tokens: List[str]) -> List[str]:
+    return [token for token in tokens if len(token) >= _FTS_TRIGRAM_MIN_CHARS]
 
 
 def _fts_field_expression(field_name: str, tokens: List[str], operator: str) -> str:

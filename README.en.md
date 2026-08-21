@@ -136,7 +136,7 @@ docker run --rm -p 5001:5001 --env-file .env papervault
 
 Open `http://127.0.0.1:5001` after startup. The health endpoint is `http://127.0.0.1:5001/api/v1/healthz`. Tune the server with `GUNICORN_WORKERS`, `GUNICORN_THREADS`, and `GUNICORN_TIMEOUT`; defaults are documented in `.env.example`.
 
-Google Analytics and Search Console are optional. Without these build arguments, the app does not load GA or inject a site-verification tag. For non-Docker builds, export the same variables before running `npm run build`.
+Google Analytics and Search Console are optional, and the committed production environment leaves both values unset. Without these build arguments, the app does not load GA or inject a site-verification tag. For non-Docker builds, export the same variables before running `npm run build`.
 
 ## :open_book: Coverage
 

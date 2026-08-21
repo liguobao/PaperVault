@@ -7,7 +7,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-from papervault.services.papers import PaperRepository
+from papervault.services.papers import PaperRepository, SearchCriteria
 
 
 def _write_rows(path: Path, rows: list[dict]) -> None:
@@ -39,7 +39,7 @@ def test_first_load_materialises_versioned_sqlite_index(tmp_path: Path):
     assert repo.database_path.is_file()
     assert repo.paper_count() == 2
     with sqlite3.connect(repo.database_path) as conn:
-        assert conn.execute("PRAGMA user_version").fetchone()[0] == 1
+        assert conn.execute("PRAGMA user_version").fetchone()[0] == 2
         names = {
             row[0]
             for row in conn.execute(
@@ -95,3 +95,117 @@ def test_missing_cache_builds_valid_empty_database(tmp_path: Path):
 
     assert repo.paper_count() == 0
     assert repo.conference_count() == 0
+
+
+def _criteria(**overrides) -> SearchCriteria:
+    values = {
+        "query": None,
+        "field": "any",
+        "confs": [],
+        "since": None,
+        "until": None,
+        "author": None,
+        "sort": "-year",
+        "page": 1,
+        "size": 50,
+    }
+    values.update(overrides)
+    return SearchCriteria(**values)
+
+
+def test_search_preserves_non_prefix_and_short_substring_matches(
+    repository_with_sample,
+):
+    hits, total = repository_with_sample.search(
+        _criteria(query="tion", field="title")
+    )
+
+    assert total == 4
+    assert {paper.title for paper in hits} == {
+        "Attention Is All You Need Revisited",
+        "Diffusion Models for Text",
+        "Legacy Title with-Hyphen Inside",
+        "Retrieval Augmented Generation at Scale",
+    }
+
+    short_hits, short_total = repository_with_sample.search(
+        _criteria(query="is", field="title")
+    )
+    assert short_total == 2
+    assert {paper.title for paper in short_hits} == {
+        "Attention Is All You Need Revisited",
+        "Vision Transformers Revisited",
+    }
+
+
+def test_search_respects_title_author_and_any_field_semantics(
+    repository_with_sample,
+):
+    title_hits, title_total = repository_with_sample.search(
+        _criteria(query="attention", field="title")
+    )
+    assert title_total == 1
+    assert [paper.title for paper in title_hits] == [
+        "Attention Is All You Need Revisited"
+    ]
+
+    author_hits, author_total = repository_with_sample.search(
+        _criteria(query="alice", field="author")
+    )
+    assert author_total == 2
+    assert {paper.title for paper in author_hits} == {
+        "Attention Is All You Need Revisited",
+        "Retrieval Augmented Generation at Scale",
+    }
+
+    any_hits, any_total = repository_with_sample.search(
+        _criteria(query="alice", field="any")
+    )
+    assert any_total == author_total
+    assert {paper.title for paper in any_hits} == {
+        paper.title for paper in author_hits
+    }
+
+
+def test_search_combines_author_filter_with_query_and_short_alternatives(
+    repository_with_sample,
+):
+    hits, total = repository_with_sample.search(
+        _criteria(query="revisited", field="title", author="ivy")
+    )
+    assert total == 1
+    assert [paper.title for paper in hits] == ["Vision Transformers Revisited"]
+
+    mixed_hits, mixed_total = repository_with_sample.search(
+        _criteria(author="iv alice")
+    )
+    assert mixed_total == 3
+    assert {paper.title for paper in mixed_hits} == {
+        "Attention Is All You Need Revisited",
+        "Retrieval Augmented Generation at Scale",
+        "Vision Transformers Revisited",
+    }
+
+
+def test_search_orders_by_relevance_then_requested_sort(repository_with_sample):
+    hits, total = repository_with_sample.search(
+        _criteria(query="revisited", field="title", sort="-year")
+    )
+
+    assert total == 2
+    assert [paper.title for paper in hits] == [
+        "Vision Transformers Revisited",
+        "Attention Is All You Need Revisited",
+    ]
+
+
+def test_search_pagination_total_and_hyphen_normalisation(repository_with_sample):
+    page, total = repository_with_sample.search(_criteria(page=2, size=2))
+    assert total == 7
+    assert len(page) == 2
+
+    hits, hyphen_total = repository_with_sample.search(
+        _criteria(query="with hyphen", field="title")
+    )
+    assert hyphen_total == 1
+    assert [paper.title for paper in hits] == ["Legacy Title with-Hyphen Inside"]

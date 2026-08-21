@@ -188,6 +188,7 @@ export function useHomeSearch() {
     queryResult.value = {}
     searchMeta.value = { total: 0, fetched: 0, truncated: false }
     guessList.value = []
+    guessLoading.value = false
     activeTreeSelection = { level: 1 }
     const baseParams = buildBaseQuery()
     // Fetch a real first page immediately (rather than probing with size=1),

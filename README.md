@@ -136,7 +136,7 @@ docker run --rm -p 5001:5001 --env-file .env papervault
 
 启动后访问 `http://127.0.0.1:5001`，健康检查地址为 `http://127.0.0.1:5001/api/v1/healthz`。可通过 `GUNICORN_WORKERS`、`GUNICORN_THREADS` 和 `GUNICORN_TIMEOUT` 调整服务参数；默认值见 `.env.example`。
 
-Google Analytics 与 Search Console 均为可选项：不传上述构建参数时不会加载 GA，也不会注入站点验证标签。非 Docker 构建可在运行 `npm run build` 前导出同名环境变量。
+Google Analytics 与 Search Console 均为可选项，仓库提交的生产环境配置不会设置这两个值：不传上述构建参数时不会加载 GA，也不会注入站点验证标签。非 Docker 构建可在运行 `npm run build` 前导出同名环境变量。
 
 ## :open_book: 收录会议范围
 
