@@ -51,6 +51,9 @@ service.interceptors.response.use(
     return body as unknown as AxiosResponse
   },
   err => {
+    // An aborted search is expected when the user submits a newer query.
+    // Do not turn that normal control flow into a console error or a toast.
+    if (axios.isCancel(err)) return Promise.reject(err)
     // Log the raw failure so DevTools always shows what really came back
     // (status, body shape, headers). The interceptor's job is just to
     // surface a readable message; debugging info lives here.

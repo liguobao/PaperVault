@@ -12,6 +12,11 @@ const MAX_FETCH = 5000
 const PAGE_SIZE = 200
 type SearchMeta = { total: number; fetched: number; truncated: boolean }
 type SearchResultRef = InstanceType<typeof SearchResultList> | null
+type TreeSelection = {
+  level: number
+  key?: string
+  parent?: string
+}
 export function useHomeSearch() {
   const { t } = useI18n()
   const firstEntry = ref(true)
@@ -44,6 +49,10 @@ export function useHomeSearch() {
   const originalTopic = ref('')
 
   let externalRef: Ref<SearchResultRef> | null = null
+  let activeTreeSelection: TreeSelection = { level: 1 }
+  let activeSearchController: AbortController | null = null
+  let activeLoadingClose: (() => void) | null = null
+  let searchSequence = 0
   const setSearchResultRef = (r: Ref<SearchResultRef>): void => {
     externalRef = r
   }
@@ -131,13 +140,15 @@ export function useHomeSearch() {
     return params
   }
 
-  const handleTreeClick = (data: {
-    level: number
-    key?: string
-    parent?: string
-  }): void => {
+  const handleTreeClick = (data: TreeSelection): void => {
+    activeTreeSelection = data
     const r = externalRef?.value
     if (r) (r as any).filterResult(queryResult.value, data)
+  }
+
+  const updateVisibleResult = (): void => {
+    const r = externalRef?.value
+    if (r) (r as any).updateResult(queryResult.value, activeTreeSelection)
   }
 
   const search = (): void => {
@@ -154,66 +165,95 @@ export function useHomeSearch() {
     // composite.
     if (!/\s+OR\s+/i.test(searchContent.query))
       originalTopic.value = searchContent.query.trim()
+    activeSearchController?.abort()
+    activeLoadingClose?.()
+    const controller = new AbortController()
+    activeSearchController = controller
+    const searchId = ++searchSequence
+    const isActive = (): boolean =>
+      searchId === searchSequence && !controller.signal.aborted
+
     const loading = ElLoading.service({
       lock: true,
       text: t('search.button') + '...'
     })
+    let loadingClosed = false
+    const closeLoading = (): void => {
+      if (loadingClosed) return
+      loadingClosed = true
+      loading.close()
+      if (activeLoadingClose === closeLoading) activeLoadingClose = null
+    }
+    activeLoadingClose = closeLoading
     queryResult.value = {}
     searchMeta.value = { total: 0, fetched: 0, truncated: false }
     guessList.value = []
+    guessLoading.value = false
+    activeTreeSelection = { level: 1 }
     const baseParams = buildBaseQuery()
-    // Phase 1: probe total count with a minimal payload, then phase 2 fetches
-    // up to MAX_FETCH (paginated by PAGE_SIZE because the backend caps each
-    // page at settings.max_page_size = 200). The sidebar buckets / facets /
-    // sort / pagination then operate on the *full* result set instead of an
-    // arbitrary first page.
-    searchPapers({ ...baseParams, page: 1, size: 1 })
-      .then(async probe => {
-        const total = probe.meta?.total ?? 0
-        if (total === 0) {
-          queryResult.value = {}
-          searchMeta.value = { total: 0, fetched: 0, truncated: false }
-          // Switch from the hero view to the results view *before* invoking
-          // handleTreeClick, otherwise the <SearchResultList> child is not
-          // mounted yet (firstEntry === true) and ``searchResult.value`` is
-          // null, so the very first search would silently drop its payload
-          // and the user would only see results after clicking Search a
-          // second time. ``nextTick`` waits for the v-else branch to mount.
-          firstEntry.value = false
-          await nextTick()
-          handleTreeClick({ level: 1 })
-          return
-        }
+    // Fetch a real first page immediately (rather than probing with size=1),
+    // render it as soon as it arrives, then extend the local facet/export set
+    // in the background. Broad terms can match tens of thousands of papers;
+    // waiting for all 5,000 candidates used to leave the full-screen loader
+    // up for over a minute and made a healthy search look empty.
+    const runSearch = async (): Promise<void> => {
+      try {
+        const first = await searchPapers(
+          { ...baseParams, page: 1, size: PAGE_SIZE },
+          controller.signal
+        )
+        if (!isActive()) return
+
+        const total = first.meta?.total ?? 0
         const target = Math.min(total, MAX_FETCH)
         const truncated = total > MAX_FETCH
-        const pages = Math.ceil(target / PAGE_SIZE)
-        const collected: PaperItem[] = []
-        for (let page = 1; page <= pages; page += 1) {
-          const remaining = target - collected.length
-          const pageSize = Math.min(PAGE_SIZE, remaining)
-          const resp = await searchPapers({
-            ...baseParams,
-            page,
-            size: pageSize
-          })
-          const items = resp.items || []
-          collected.push(...items)
-          if (items.length < pageSize) break
-        }
+        const collected = (first.items || []).slice(0, target)
+
         queryResult.value = groupByConfYear(collected)
         searchMeta.value = { total, fetched: collected.length, truncated }
-        // Same rationale as the zero-result branch above: mount the results
-        // view first, then push data into it.
+        // Mount the result view before invoking its exposed list updater.
         firstEntry.value = false
         await nextTick()
+        if (!isActive()) return
         handleTreeClick({ level: 1 })
-        if (truncated)
+        closeLoading()
+
+        if (collected.length >= target) {
+          if (truncated)
+            ElMessage.warning(
+              t('search.warn.truncated').replace('{n}', String(MAX_FETCH))
+            )
+          return
+        }
+
+        const pages = Math.ceil(target / PAGE_SIZE)
+        for (let page = 2; page <= pages; page += 1) {
+          const remaining = target - collected.length
+          const pageSize = Math.min(PAGE_SIZE, remaining)
+          const resp = await searchPapers(
+            { ...baseParams, page, size: pageSize },
+            controller.signal
+          )
+          if (!isActive()) return
+          const items = resp.items || []
+          collected.push(...items)
+          queryResult.value = groupByConfYear(collected)
+          searchMeta.value = { total, fetched: collected.length, truncated }
+          updateVisibleResult()
+          if (items.length < pageSize) break
+        }
+
+        if (isActive() && truncated)
           ElMessage.warning(
             t('search.warn.truncated').replace('{n}', String(MAX_FETCH))
           )
-      })
-      .catch(err => console.error(err))
-      .finally(() => loading && loading.close())
+      } catch (err) {
+        if (isActive()) console.error(err)
+      } finally {
+        if (isActive()) closeLoading()
+      }
+    }
+    void runSearch()
     // Strip DSL syntax (field tags, quotes, year ranges, operators…) before
     // asking the LLM for related keywords. ``baseParams.q`` is exactly the
     // free-text topic the splitter already hoisted out of the user expression
@@ -238,6 +278,7 @@ export function useHomeSearch() {
       const payload = toApiPayload(loadAiSettings(), loadApiKey())
       suggestKeywordsWithSettings(suggestSeed, payload)
         .then(res => {
+          if (!isActive()) return
           guessList.value = res.keywords || []
           if (res.provider && res.model)
             guessProviderLabel.value = t('guess.provider', {
@@ -247,7 +288,7 @@ export function useHomeSearch() {
         })
         .catch(err => console.error(err))
         .finally(() => {
-          guessLoading.value = false
+          if (isActive()) guessLoading.value = false
         })
     }
   }

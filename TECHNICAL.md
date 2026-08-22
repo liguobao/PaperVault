@@ -4,14 +4,17 @@
 
 PaperVault 采用**前后端分离**架构：
 
-- **后端**：Python Flask 3.x，基于 `papervault.create_app` **应用工厂** 装配；通过 `/api/v1/*` 蓝图对外暴露 RESTful 接口（Pydantic v2 校验 + 统一错误信封 + request-id 日志），启动时一次性加载本地 JSON 缓存，所有检索均在内存中完成，不依赖数据库。
+- **后端**：Python Flask 3.x，基于 `papervault.create_app` **应用工厂** 装配；通过 `/api/v1/*` 蓝图对外暴露 RESTful 接口（Pydantic v2 校验 + 统一错误信封 + request-id 日志）。启动时将本地 JSONL.gz 缓存物化为 SQLite/FTS5 搜索库，运行期通过只读连接检索，不再把完整语料常驻 Python 内存。
 - **前端**：Vue 3.5 + Vite 8 + TypeScript 5 构建的单页应用（SPA），提供「智能搜索」与「高级搜索」两条路由，打包后输出为静态文件，由 Flask 直接托管。检索表达式遵循 **Web of Science 风格的 DSL**（详见 §3.4）。
-- **数据层**：`cache/cache.jsonl.gz` 是原始论文目录缓存（JSON Lines + gzip），**权威副本托管于 Hugging Face Dataset**（由 `PAPERVAULT_HF_REPO_ID` 指定），本地副本由 `data_artifacts.ensure_cache_local()` 在每个入口启动时同步拉取，并通过 `parent_commit` 乐观锁回写；`conf/*.json` 定义需要采集的会议列表。
+- **数据层**：`cache/cache.jsonl.gz` 是权威论文目录缓存（JSON Lines + gzip），**权威副本托管于 Hugging Face Dataset**（由 `PAPERVAULT_HF_REPO_ID` 指定），本地副本由 `data_artifacts.ensure_cache_local()` 在每个入口启动时同步拉取，并通过 `parent_commit` 乐观锁回写。Web 服务从它派生 `cache/papers.sqlite3`；SQLite 文件可随时重建，既不上传 HF 也不提交 Git。`conf/*.json` 定义需要采集的会议列表。
 
 ```
 conf/*.json  ──►  collector.py  ──►  cache/cache.jsonl.gz
+                                         │ 启动时物化 / 源指纹变更时重建
+                                         ▼
+                                  cache/papers.sqlite3
                                          ▲
-                                         │
+                                         │ SQLite + FTS5 只读查询
                               papervault.create_app() (Flask)
                                          │
                               ┌──────────┴──────────────┐
@@ -38,7 +41,7 @@ conf/*.json  ──►  collector.py  ──►  cache/cache.jsonl.gz
 | `papervault/app.py` | 应用工厂；注册蓝图、错误处理、SPA 历史回退 |
 | `papervault/config.py` | `Settings` dataclass，所有运行参数从环境变量读取 |
 | `papervault/api/v1/{papers,confs,suggest,health}.py` | 各 v1 接口蓝图 |
-| `papervault/services/papers.py` | `PaperRepository` 缓存加载 + `search_papers` 内存检索 |
+| `papervault/services/papers.py` | `PaperRepository` 启动期 SQLite/FTS5 物化、原子重建、只读分页检索 |
 | `papervault/services/suggest.py` | LLM 关键词推荐（DeepSeek 兼容 / OpenAI） |
 | `papervault/schemas.py` | Pydantic v2 请求/响应模型 |
 | `papervault/errors.py` / `logging.py` | 统一错误信封、request-id 日志 |
@@ -80,9 +83,13 @@ conf/*.json  ──►  collector.py  ──►  cache/cache.jsonl.gz
 
 后端会按 `PAPERVAULT_SUGGEST_PROVIDER` 选择 DeepSeek 兼容接口或 OpenAI；前端在调用前会先用 `queryDsl.ts` 把 WoS 风格语法清洗为纯关键词，再请求 LLM。
 
-### 2.3 缓存加载机制
+### 2.3 在线搜索索引
 
-`papervault/services/papers.py` 中的 `PaperRepository` 在 `create_app(eager_load=True)` 时即流式读入 `cache/cache.jsonl.gz`，按会议/年份组织为内存索引；之后所有搜索均零磁盘 I/O。`/api/v1/healthz`、`/api/v1/confs` 等接口在请求阶段调用 `ensure_loaded()` 进行幂等保护，避免冷启动失败导致首次请求 500。
+`papervault/services/papers.py` 中的 `PaperRepository` 在 `create_app(eager_load=True)` 时先同步 `cache/cache.jsonl.gz`，然后比较源文件大小、纳秒级修改时间及 SQLite schema 版本。指纹一致时直接复用现有 `papers.sqlite3`；不一致时逐行解压、去重并批量写入临时 SQLite 文件，创建会议/年份 B-tree 索引与 title/abstract/authors FTS5 索引，最后通过 `os.replace` 原子切换。
+
+运行期每个请求使用短生命周期只读 SQLite 连接。全文索引先缩小候选集，原有逐 token AND、字段权重和用户指定副排序语义仍由 SQL 保持；`COUNT(*)`、分页和排序均在数据库内完成。`all_papers()` / `confs()` 只作为旧脚本兼容接口保留，健康检查和 API 热路径不会调用它们。
+
+默认派生路径是缓存同目录的 `papers.sqlite3`，可通过 `PAPERVAULT_SEARCH_DB_PATH` 覆盖。生产环境应把缓存目录挂载到持久化数据盘，这样只有源缓存发生变化时才支付一次构建成本。
 
 `cache/cache.jsonl.gz` 被重新生成或更新后，`data_artifacts.py` 会在配置 Hugging Face 环境变量时将其上传到对应的 Dataset 仓库。Hugging Face 会自动将 JSON Lines 数据集转换为 Parquet 视图，因此本仓库不再在本地生成或维护 Parquet 文件。
 
@@ -253,8 +260,12 @@ cache_conf = [name for name in cache_res.keys()]
 | `DEEPSEEK_API_KEY` | DeepSeek API Key（`provider=deepseek` 时必填） |
 | `PAPERVAULT_OPENAI_MODEL` / `PAPERVAULT_OPENAI_TEMPERATURE` / `PAPERVAULT_OPENAI_MAX_KEYWORDS` | LLM 调用参数 |
 | `PAPERVAULT_MAX_PAGE_SIZE` / `PAPERVAULT_DEFAULT_PAGE_SIZE` | `/api/v1/papers` 分页上限（默认 200 / 50） |
+| `PAPERVAULT_SEARCH_DB_PATH` | 派生 SQLite/FTS5 搜索库路径；默认与 `cache.jsonl.gz` 同目录的 `papers.sqlite3` |
 | `PAPERVAULT_CORS_ORIGINS` | 允许的跨域来源（逗号分隔），不设置则关闭 CORS |
 | `HOST` / `PORT` | Flask 监听地址（默认 `127.0.0.1:5001`） |
+| `GUNICORN_BIND` | Gunicorn 监听地址（默认 `0.0.0.0:$PORT`） |
+| `GUNICORN_WORKERS` / `GUNICORN_THREADS` | Gunicorn 进程和每进程线程数（默认 `2` / `4`） |
+| `GUNICORN_TIMEOUT` | Gunicorn 请求超时秒数（默认 `120`，兼容较慢的 AI 请求） |
 | `HF_TOKEN` | Hugging Face 写入 token，用于上传数据产物 |
 | `PAPERVAULT_HF_REPO_ID` | Hugging Face Dataset 仓库 ID，如 `youngfish42/PaperVault`；未设置时跳过上传 |
 | `PAPERVAULT_HF_REPO_TYPE` | Hugging Face 仓库类型，默认 `dataset` |
@@ -267,7 +278,14 @@ cd web-vue && npm install && npm run build
 # 产物输出到 ../static
 
 # 2. 启动后端
-python app.py
+gunicorn --config gunicorn.conf.py app:app
+```
+
+也可以使用多阶段 Docker 镜像一次完成前端构建和服务打包：
+
+```bash
+docker build -t papervault .
+docker run --rm -p 5001:5001 --env-file .env papervault
 ```
 
 ### 6.3 缓存存储（Hugging Face，已替代 Git LFS）

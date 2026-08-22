@@ -30,7 +30,10 @@ def create_app(settings: Settings | None = None, *, eager_load: bool = True) -> 
     app.config["JSON_SORT_KEYS"] = False
     app.config["TEMPLATES_AUTO_RELOAD"] = False
 
-    repository = PaperRepository(cache_path=settings.cache_path)
+    repository = PaperRepository(
+        cache_path=settings.cache_path,
+        db_path=settings.search_db_path,
+    )
     if eager_load:
         try:
             repository.ensure_loaded()

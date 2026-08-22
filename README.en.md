@@ -122,6 +122,22 @@ python app.py            # Start the web search server
 
 > For details on the sync mechanism, concurrency control, offline options such as `PAPERVAULT_OFFLINE`, and how to host the dataset yourself, see [TECHNICAL.md](TECHNICAL.md) and [AGENTS.md](AGENTS.md).
 
+### Docker deployment
+
+The image uses a multi-stage build: Node.js compiles the Vue frontend, then Gunicorn in the Python runtime serves both the API and static site.
+
+```bash
+docker build \
+  --build-arg VITE_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX \
+  --build-arg VITE_GOOGLE_SITE_VERIFICATION=xxxxxxxxxxxxxxxx \
+  -t papervault .
+docker run --rm -p 5001:5001 --env-file .env papervault
+```
+
+Open `http://127.0.0.1:5001` after startup. The health endpoint is `http://127.0.0.1:5001/api/v1/healthz`. Tune the server with `GUNICORN_WORKERS`, `GUNICORN_THREADS`, and `GUNICORN_TIMEOUT`; defaults are documented in `.env.example`.
+
+Google Analytics and Search Console are optional, and the committed production environment leaves both values unset. Without these build arguments, the app does not load GA or inject a site-verification tag. For non-Docker builds, export the same variables before running `npm run build`.
+
 ## :open_book: Coverage
 
 <!-- confs-list-start -->

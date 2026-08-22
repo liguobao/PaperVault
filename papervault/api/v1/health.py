@@ -11,6 +11,6 @@ def healthz():
     repo.ensure_loaded()
     return jsonify({
         "status": "ok",
-        "papers": len(repo.all_papers()),
-        "confs": len(repo.confs()),
+        "papers": repo.paper_count(),
+        "confs": repo.conference_count(),
     })

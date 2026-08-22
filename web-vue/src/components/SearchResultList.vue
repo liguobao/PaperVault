@@ -162,7 +162,7 @@ const copyText = async (text: string): Promise<void> => {
   }
 }
 
-const filterResult: (target: any, option: any) => void = (target, option) => {
+const selectResult = (target: any, option: any): PaperItem[] => {
   let next: PaperItem[] = []
   const { level, key, parent } = option
   if (Number(level) === 1) {
@@ -173,6 +173,11 @@ const filterResult: (target: any, option: any) => void = (target, option) => {
   } else if (Number(level) === 3) {
     next = next.concat(target?.[parent]?.[key] ?? [])
   }
+  return next
+}
+
+const filterResult: (target: any, option: any) => void = (target, option) => {
+  const next = selectResult(target, option)
   rawList.value = next
   expandedSet.value = new Set()
   refine.keyword = ''
@@ -182,6 +187,13 @@ const filterResult: (target: any, option: any) => void = (target, option) => {
   const [lo, hi] = yearBounds.value
   refine.yearRange = [lo, hi]
   page.current = 1
+}
+
+// Background search pages extend the current result set after the first page
+// is already visible. Preserve the user's sort/refine/page state while the
+// backing list grows; only an explicit tree click should reset those controls.
+const updateResult: (target: any, option: any) => void = (target, option) => {
+  rawList.value = selectResult(target, option)
 }
 
 const collectAll = (target: any): PaperItem[] => {
@@ -389,6 +401,7 @@ const isRefineDirty = computed<boolean>(
 
 defineExpose({
   filterResult,
+  updateResult,
   setRefineKeyword: (kw: string) => {
     refine.keyword = kw
   },

@@ -1,0 +1,47 @@
+import { nextTick } from 'vue'
+import type { Router } from 'vue-router'
+
+declare global {
+  interface Window {
+    dataLayer: unknown[]
+    gtag: (...args: unknown[]) => void
+  }
+}
+
+const measurementId = import.meta.env.VITE_GOOGLE_ANALYTICS_ID?.trim()
+
+function trackPageView() {
+  window.gtag('event', 'page_view', {
+    page_title: document.title,
+    page_location: window.location.href
+  })
+}
+
+export function installGoogleAnalytics(router: Router) {
+  if (!measurementId || typeof window === 'undefined') return
+
+  window.dataLayer = window.dataLayer || []
+  window.gtag =
+    window.gtag ||
+    function () {
+      // Google Tag distinguishes the native Arguments object from a rest array.
+      // eslint-disable-next-line prefer-rest-params
+      window.dataLayer.push(arguments)
+    }
+
+  window.gtag('js', new Date())
+  window.gtag('config', measurementId, { send_page_view: false })
+
+  const script = document.createElement('script')
+  script.async = true
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
+    measurementId
+  )}`
+  document.head.appendChild(script)
+
+  router.afterEach(async (_to, _from, failure) => {
+    if (failure) return
+    await nextTick()
+    trackPageView()
+  })
+}

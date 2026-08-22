@@ -122,6 +122,22 @@ python app.py            # 启动 Web 检索服务
 
 > 关于同步机制、并发控制、`PAPERVAULT_OFFLINE` 等离线选项及自托管数据集的详细说明，请参阅 [TECHNICAL.md](TECHNICAL.md) 与 [AGENTS.md](AGENTS.md)。
 
+### Docker 部署
+
+Docker 镜像使用多阶段构建：先用 Node.js 编译 Vue 前端，再由 Python 运行时中的 Gunicorn 同时提供 API 和静态页面。
+
+```bash
+docker build \
+  --build-arg VITE_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX \
+  --build-arg VITE_GOOGLE_SITE_VERIFICATION=xxxxxxxxxxxxxxxx \
+  -t papervault .
+docker run --rm -p 5001:5001 --env-file .env papervault
+```
+
+启动后访问 `http://127.0.0.1:5001`，健康检查地址为 `http://127.0.0.1:5001/api/v1/healthz`。可通过 `GUNICORN_WORKERS`、`GUNICORN_THREADS` 和 `GUNICORN_TIMEOUT` 调整服务参数；默认值见 `.env.example`。
+
+Google Analytics 与 Search Console 均为可选项，仓库提交的生产环境配置不会设置这两个值：不传上述构建参数时不会加载 GA，也不会注入站点验证标签。非 Docker 构建可在运行 `npm run build` 前导出同名环境变量。
+
 ## :open_book: 收录会议范围
 
 <!-- confs-list-start -->
