@@ -138,6 +138,30 @@ def test_search_preserves_non_prefix_and_short_substring_matches(
     }
 
 
+def test_search_trigram_tokens_may_include_punctuation(tmp_path: Path):
+    cache = tmp_path / "cache.jsonl.gz"
+    _write_rows(
+        cache,
+        [
+            _paper("Modern C++11 Programming"),
+            _paper("Practical R&D Methods"),
+            _paper("Node.js Systems"),
+        ],
+    )
+    repo = PaperRepository(cache_path=cache, refresh_on_load=False)
+    repo.ensure_loaded()
+
+    for query, expected_title in (
+        ("c++", "Modern C++11 Programming"),
+        ("c++11", "Modern C++11 Programming"),
+        ("r&d", "Practical R&D Methods"),
+        ("node.js", "Node.js Systems"),
+    ):
+        hits, total = repo.search(_criteria(query=query, field="title"))
+        assert total == 1
+        assert [paper.title for paper in hits] == [expected_title]
+
+
 def test_search_respects_title_author_and_any_field_semantics(
     repository_with_sample,
 ):
