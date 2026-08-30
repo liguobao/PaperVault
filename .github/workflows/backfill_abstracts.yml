@@ -9,9 +9,6 @@ env:
   AUTO_BACKFILL_FILES: "docs/abstract_backfill_progress.md pics/stats/stats_overview.svg"
 
 on:
-  schedule:
-    # 每 6 小时运行一次 (UTC 00:00 / 06:00 / 12:00 / 18:00)，运行时长由 --soft-timeout 控制（约5小时后自动保存进度退出）
-    - cron: "0 */6 * * *"
   workflow_dispatch:
     inputs:
       target_conf:

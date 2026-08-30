@@ -4,9 +4,6 @@ env:
   PYTHON_VERSION: "3.10"
 
 on:
-  schedule:
-    # 每天北京时间 02:00 (UTC 18:00) 运行 
-    - cron: "0 18 * * *"
   workflow_dispatch:
     inputs:
       start_year:
